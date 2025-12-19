@@ -28,6 +28,15 @@
 
 namespace baikaldb {
 
+// TTLInfo definition - also defined in transaction_pool.h, use #ifndef guard
+#ifndef BAIKALDB_TTLINFO_DEFINED
+#define BAIKALDB_TTLINFO_DEFINED
+struct TTLInfo {
+    int64_t ttl_duration_s = 0;
+    int64_t online_ttl_expire_time_us = 0;
+};
+#endif
+
 typedef std::map<std::string, int64_t> StrInt64Map;
 
 struct RegionInfo {
@@ -73,6 +82,7 @@ struct IndexInfo {
     int64_t version = 0;
     pb::IndexType type = pb::I_PRIMARY;
     pb::SegmentType segment_type = pb::S_DEFAULT;
+    pb::IndexState state = pb::IS_PUBLIC;  // Index state for compatibility
     std::string name;
     std::string short_name;
     
@@ -91,6 +101,9 @@ struct TableInfo {
     std::string namespace_;
     
     std::vector<int64_t> indices;
+    
+    // Stub for sign blacklist (SQL feature, not used in neo-redis)
+    std::set<uint64_t> sign_blacklist;
 };
 typedef std::shared_ptr<TableInfo> SmartTable;
 
@@ -141,6 +154,41 @@ public:
             return 0;
         }
         return -1;
+    }
+    
+    bool exist_tableid(int64_t table_id) {
+        std::lock_guard<std::mutex> lock(_mutex);
+        return _table_info_mapping.count(table_id) > 0;
+    }
+    
+    // Get TTL duration for a table (stub - not used in neo-redis)
+    // Returns TTLInfo struct for compatibility
+    TTLInfo get_ttl_duration(int64_t /*table_id*/) {
+        TTLInfo info;
+        info.ttl_duration_s = 0;
+        info.online_ttl_expire_time_us = false;
+        return info;
+    }
+    
+    // Get index info (returns -1 if not found, for compatibility)
+    int get_index_info(int64_t index_id, IndexInfo& info) {
+        std::lock_guard<std::mutex> lock(_mutex);
+        auto it = _index_info_mapping.find(index_id);
+        if (it != _index_info_mapping.end() && it->second) {
+            info = *(it->second);
+            return 0;
+        }
+        return -1;
+    }
+    
+    // Alternative signature: returns IndexInfo directly (stub)
+    IndexInfo get_index_info(int64_t index_id) {
+        std::lock_guard<std::mutex> lock(_mutex);
+        auto it = _index_info_mapping.find(index_id);
+        if (it != _index_info_mapping.end() && it->second) {
+            return *(it->second);
+        }
+        return IndexInfo();  // Return empty IndexInfo if not found
     }
     
     // Region info management

@@ -61,6 +61,8 @@
 #include "backup.h"
 #include "file_manager.h"
 #include "region_column.h"
+#include "column_types.h"
+#include "table_record.h"
 
 #ifdef BAIDU_INTERNAL
 #else

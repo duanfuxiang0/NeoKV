@@ -48,6 +48,8 @@ private:
     DISALLOW_COPY_AND_ASSIGN(MemoryGCHandler);
 };
 
+#ifndef BAIKALDB_MEMTRACKER_DEFINED
+#define BAIKALDB_MEMTRACKER_DEFINED
 class MemTracker {
 public:
     explicit MemTracker(uint64_t log_id, int64_t bytes_limit, MemTracker* parent = nullptr);
@@ -112,6 +114,7 @@ private:
 };
 
 typedef std::shared_ptr<MemTracker> SmartMemTracker;
+#endif // BAIKALDB_MEMTRACKER_DEFINED
 
 class MemTrackerPool {
 public:

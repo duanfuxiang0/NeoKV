@@ -35,6 +35,7 @@
 #include "redis_common.h"
 #include "rapidjson/rapidjson.h"
 #include "qos.h"
+// Neo-redis: Arrow/SQL execution stubs
 #include "arrow_io_excutor.h"
 #include "exchange_sender_node.h"
 #ifdef BAIDU_INTERNAL

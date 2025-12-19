@@ -9,12 +9,36 @@
 namespace baikaldb {
 
 // Simplified compaction filter - just passes through all keys for neo-redis
+// Forward declaration
+namespace pb {
+class RegionInfo;
+}
+
 class SplitCompactionFilter : public rocksdb::CompactionFilter {
 public:
     SplitCompactionFilter() = default;
     
+    static SplitCompactionFilter* get_instance() {
+        static SplitCompactionFilter instance;
+        return &instance;
+    }
+    
     const char* Name() const override {
         return "SplitCompactionFilter";
+    }
+    
+    // Set filter region info (stub - no filtering in neo-redis)
+    // Overload with 4 parameters: region_id, end_key, use_ttl, ttl_expire_time
+    void set_filter_region_info(int64_t /*region_id*/, 
+                                const std::string& /*end_key*/,
+                                bool /*use_ttl*/,
+                                int64_t /*ttl_expire_time*/) {
+        // Stub - no split compaction filtering in neo-redis
+    }
+    
+    // Overload for pb::RegionInfo
+    void set_filter_region_info(const pb::RegionInfo& /*info*/) {
+        // Stub - no split compaction filtering in neo-redis
     }
     
     // For neo-redis, we don't filter any keys during compaction

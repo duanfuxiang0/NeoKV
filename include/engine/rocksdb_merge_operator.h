@@ -28,4 +28,7 @@ public:
     }
 };
 
+// OLAPMergeOperator - for compatibility, just an alias
+using OLAPMergeOperator = MyMergeOperator;
+
 } // namespace baikaldb

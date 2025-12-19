@@ -78,6 +78,11 @@ public:
         key.append((char*)&be, sizeof(be));
     }
     
+    static void append_u32(std::string& key, uint32_t val) {
+        uint32_t be = htonl(val);
+        key.append((char*)&be, sizeof(be));
+    }
+    
     static void append_u16(std::string& key, uint16_t val) {
         uint16_t be = htons(val);
         key.append((char*)&be, sizeof(be));

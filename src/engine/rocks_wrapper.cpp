@@ -16,6 +16,7 @@
 #include "rocksdb/table.h"
 #include "rocksdb/filter_policy.h"
 #include <iostream>
+#include <ctime>
 #include "common.h"
 #include "mut_table_key.h"
 #include "table_key.h"
@@ -28,6 +29,22 @@
 #include "rocksdb/statistics.h"
 
 namespace baikaldb {
+
+// ts_to_datetime_str is now defined in common.h
+
+// Helper function to populate RocksdbGFLAGS proto from current gflags
+inline void set_rocksdb_flags(pb::RocksdbGFLAGS* rocksdb_gflags) {
+    rocksdb_gflags->set_rocks_use_partitioned_index_filters(FLAGS_rocks_use_partitioned_index_filters);
+    rocksdb_gflags->set_rocks_use_ribbon_filter(FLAGS_rocks_use_ribbon_filter);
+    rocksdb_gflags->set_olap_table_only(FLAGS_olap_table_only);
+    rocksdb_gflags->set_olap_import_mode(FLAGS_olap_import_mode);
+    rocksdb_gflags->set_rocks_use_sst_partitioner_fixed_prefix(FLAGS_rocks_use_sst_partitioner_fixed_prefix);
+    rocksdb_gflags->set_key_point_collector_interval(FLAGS_key_point_collector_interval);
+    rocksdb_gflags->set_rocks_block_cache_size_mb(FLAGS_rocks_block_cache_size_mb);
+    rocksdb_gflags->set_rocks_high_pri_pool_ratio(FLAGS_rocks_high_pri_pool_ratio);
+    rocksdb_gflags->set_rocks_use_hyper_clock_cache(FLAGS_rocks_use_hyper_clock_cache);
+    rocksdb_gflags->set_rocks_block_size(FLAGS_rocks_block_size);
+}
 
 DEFINE_int32(rocks_transaction_lock_timeout_ms, 20000, "rocksdb transaction_lock_timeout, real lock_time is 'time + rand_less(time)' (ms)");
 DEFINE_int32(rocks_default_lock_timeout_ms, 30000, "rocksdb default_lock_timeout(ms)");
@@ -150,15 +167,17 @@ int32_t RocksWrapper::init(const std::string& path) {
         db_options.allow_concurrent_memtable_write = false;
         db_options.memtable_factory.reset(new rocksdb::VectorRepFactory(1024*1024));
     }
-    if (FLAGS_enable_remote_compaction) {
-        db_options.compaction_service.reset(new MyCompactionService(path, FLAGS_compaction_server_bns));
-    }
+    // Neo-redis: Remote compaction disabled
+    // if (FLAGS_enable_remote_compaction) {
+    //     db_options.compaction_service.reset(new MyCompactionService(path, FLAGS_compaction_server_bns));
+    // }
     rocksdb::TransactionDBOptions txn_db_options;
     DB_NOTICE("FLAGS_rocks_transaction_lock_timeout_ms:%d FLAGS_rocks_default_lock_timeout_ms:%d", FLAGS_rocks_transaction_lock_timeout_ms, FLAGS_rocks_default_lock_timeout_ms);
     txn_db_options.transaction_lock_timeout = FLAGS_rocks_transaction_lock_timeout_ms;
     txn_db_options.default_lock_timeout = FLAGS_rocks_default_lock_timeout_ms;
-    txn_db_options.custom_mutex_factory = std::shared_ptr<rocksdb::TransactionDBMutexFactory>(
-                          new TransactionDBBthreadFactory());
+    // Neo-redis: Use default mutex factory
+    // txn_db_options.custom_mutex_factory = std::shared_ptr<rocksdb::TransactionDBMutexFactory>(
+    //                       new TransactionDBBthreadFactory());
 
     //todo
     _log_cf_option.prefix_extractor.reset(

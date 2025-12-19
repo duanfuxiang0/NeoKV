@@ -1975,30 +1975,6 @@ src/raft_store/update_region_status.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/baikalStore.dir/build.make CMakeFiles/baikalStore.dir/src/raft_store/update_region_status.cpp.s
 .PHONY : src/raft_store/update_region_status.cpp.s
 
-src/store/backup.o: src/store/backup.cpp.o
-.PHONY : src/store/backup.o
-
-# target to build an object file
-src/store/backup.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/store/backup.cpp.o
-.PHONY : src/store/backup.cpp.o
-
-src/store/backup.i: src/store/backup.cpp.i
-.PHONY : src/store/backup.i
-
-# target to preprocess a source file
-src/store/backup.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/store/backup.cpp.i
-.PHONY : src/store/backup.cpp.i
-
-src/store/backup.s: src/store/backup.cpp.s
-.PHONY : src/store/backup.s
-
-# target to generate assembly for a file
-src/store/backup.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/store/backup.cpp.s
-.PHONY : src/store/backup.cpp.s
-
 src/store/closure.o: src/store/closure.cpp.o
 .PHONY : src/store/closure.o
 
@@ -2486,9 +2462,6 @@ help:
 	@echo "... src/raft_store/update_region_status.o"
 	@echo "... src/raft_store/update_region_status.i"
 	@echo "... src/raft_store/update_region_status.s"
-	@echo "... src/store/backup.o"
-	@echo "... src/store/backup.i"
-	@echo "... src/store/backup.s"
 	@echo "... src/store/closure.o"
 	@echo "... src/store/closure.i"
 	@echo "... src/store/closure.s"

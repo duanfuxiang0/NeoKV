@@ -46,6 +46,22 @@ public:
         return KeyEncoder::to_endian_u16(val);
     }
     
+    uint8_t extract_u8(int pos) const {
+        if (pos >= (int)_data.size()) {
+            return 0;
+        }
+        return static_cast<uint8_t>(_data.data()[pos]);
+    }
+    
+    // Extract a string/char array
+    void extract_char(int pos, int len, std::string& out) const {
+        if (pos + len > (int)_data.size()) {
+            out.clear();
+            return;
+        }
+        out.assign(_data.data() + pos, len);
+    }
+    
     rocksdb::Slice data() const {
         return _data;
     }

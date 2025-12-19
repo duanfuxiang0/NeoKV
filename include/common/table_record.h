@@ -5,9 +5,11 @@
 
 #include <memory>
 #include <string>
+#include <cstdint>
 
 namespace baikaldb {
 
+// Stub TableRecord - SQL record structure not used in neo-redis
 class TableRecord {
 public:
     TableRecord() = default;
@@ -15,5 +17,9 @@ public:
 };
 
 typedef std::shared_ptr<TableRecord> SmartRecord;
+
+inline SmartRecord create_record() {
+    return std::make_shared<TableRecord>();
+}
 
 } // namespace baikaldb

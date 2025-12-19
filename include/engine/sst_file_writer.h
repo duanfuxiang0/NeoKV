@@ -28,7 +28,8 @@ public:
         return _sst_writer.Finish(file_info);
     }
     
-    uint64_t file_size() const {
+    // Note: FileSize() is non-const in RocksDB API
+    uint64_t file_size() {
         return _sst_writer.FileSize();
     }
     

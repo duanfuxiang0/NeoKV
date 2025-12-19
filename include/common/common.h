@@ -17,6 +17,7 @@
 #include <functional>
 #include <execinfo.h>
 #include <iconv.h>
+#include <ctime>
 #include <type_traits>
 #include <fstream>
 #include <cmath>
@@ -94,6 +95,20 @@ DECLARE_int32(redis_advertise_port);
 DECLARE_int32(redis_ttl_cleanup_interval_s);
 DECLARE_string(secondary_db_path);
 DECLARE_string(compaction_db_path);
+
+// Helper function for timestamp to string conversion (for logging)
+inline std::string ts_to_datetime_str(int64_t ts) {
+    if (ts <= 0) {
+        return "N/A";
+    }
+    // Assume ts is in microseconds, convert to seconds
+    time_t t = ts / 1000000;
+    struct tm tm_info;
+    localtime_r(&t, &tm_info);
+    char buf[32];
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tm_info);
+    return std::string(buf);
+}
 
 #define BAIKALDB_LIKELY(x)   __builtin_expect(!!(x), 1)
 #define BAIKALDB_UNLIKELY(x) __builtin_expect(!!(x), 0)

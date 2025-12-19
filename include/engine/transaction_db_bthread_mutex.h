@@ -7,17 +7,14 @@
 
 namespace baikaldb {
 
-// Neo-redis: No special mutex needed, use standard TransactionDB
-inline rocksdb::TransactionDB* create_transaction_db(
-    const rocksdb::Options& options,
-    const rocksdb::TransactionDBOptions& txn_db_options,
-    const std::string& path,
-    rocksdb::TransactionDB** dbptr) {
-    rocksdb::Status s = rocksdb::TransactionDB::Open(options, txn_db_options, path, dbptr);
-    if (!s.ok()) {
-        return nullptr;
-    }
-    return *dbptr;
-}
+// Neo-redis: No custom mutex factory needed
+// TransactionDB will use its default mutex implementation
+
+// Stub class - not actually used but keeps compilation compatible
+class TransactionDBBthreadFactory {
+public:
+    // This stub is here only for compilation compatibility
+    // The actual mutex factory is set to nullptr in rocks_wrapper.cpp
+};
 
 } // namespace baikaldb
