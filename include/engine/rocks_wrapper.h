@@ -25,11 +25,10 @@
 #include "rocksdb/slice_transform.h"
 #include "rocksdb/utilities/transaction.h"
 #include "rocksdb/utilities/transaction_db.h"
-#include "key_encoder.h"
 #include "common.h"
+#include "key_encoder.h"
 #include "rocksdb/advanced_cache.h"
-#include "rocksdb_compaction_service.h"
-//#include "proto/store.interface.pb.h"
+#include "proto/compaction.interface.pb.h"
 
 namespace baikaldb {
 DECLARE_int32(rocks_max_background_compactions);

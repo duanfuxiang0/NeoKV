@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(BaikalDB C CXX)
 
-option(WITH_BAIKAL_CLIENT "build baikal-client" ON)
+option(WITH_BAIKAL_CLIENT "build baikal-client" OFF)
 option(DEBUG "Print debug logs" OFF)
 option(WITH_SYSTEM_LIBS "use system installed headers and libraries instead of auto dependency" OFF)
 option(WITH_DEBUG_SYMBOLS "With debug symbols" OFF)
@@ -110,29 +110,8 @@ else ()
     include(rapidjson)
 endif ()
 
-#openblas
-if (WITH_SYSTEM_LIBS)
-    find_path(OPENBLAS_INCLUDE_DIR NAMES openblas/api.h)
-    find_library(OPENBLAS_LIBRARIES NAMES openblas)
-    if ((NOT OPENBLAS_INCLUDE_DIR) OR (NOT OPENBLAS_LIBRARIES))
-        message(FATAL_ERROR "Fail to find openblas")
-    endif ()
-    ADD_LIBRARY(openblas SHARED IMPORTED GLOBAL)
-else ()
-    include(openblas)
-endif ()
-
-#faiss
-if (WITH_SYSTEM_LIBS)
-    find_path(FAISS_INCLUDE_DIR NAMES faiss/api.h)
-    find_library(FAISS_LIBRARIES NAMES faiss)
-    if ((NOT FAISS_INCLUDE_DIR) OR (NOT FAISS_LIBRARIES))
-        message(FATAL_ERROR "Fail to find faiss")
-    endif ()
-    ADD_LIBRARY(faiss SHARED IMPORTED GLOBAL)
-else ()
-    include(faiss)
-endif ()
+# openblas - removed for neo-redis (SQL/vector features removed)
+# faiss - removed for neo-redis (SQL/vector features removed)
 
 #croaring
 if (WITH_SYSTEM_LIBS)
@@ -267,25 +246,7 @@ else ()
 endif ()
 message(braft lib : ${BRAFT_LIBRARIES})
 
-if (WITH_BAIKAL_CLIENT)
-    #mysqlclient
-    if (WITH_SYSTEM_LIBS)
-        find_path(MARIADB_INCLUDE_DIR NAMES mariadb/mysql.h)
-        if (MARIADB_INCLUDE_DIR)
-            set(MARIADB_INCLUDE_DIR ${MARIADB_INCLUDE_DIR}/mariadb)
-        else ()
-            find_path(MARIADB_INCLUDE_DIR NAMES mysql.h)
-        endif ()
-        find_library(MARIADB_LIBRARIES NAMES mariadbclient)
-        if ((NOT MARIADB_INCLUDE_DIR) OR (NOT MARIADB_LIBRARIES))
-            message(FATAL_ERROR "Fail to find mariadbclient")
-        endif ()
-        ADD_LIBRARY(mariadb SHARED IMPORTED GLOBAL)
-    else ()
-        include(mariadb)
-    endif ()
-    message(mysqlclient: ${MARIADB_INCLUDE_DIR}, ${MARIADB_LIBRARIES})
-endif ()
+# mariadb/mysql client - removed for neo-redis (SQL features removed)
 
 #tcmalloc
 if (WITH_GPERF)
@@ -300,18 +261,7 @@ if (WITH_GPERF)
     endif ()
 endif ()
 
-#apache arrow
-if (WITH_SYSTEM_LIBS)
-    find_path(ARROW_INCLUDE_DIR NAMES arrow/api.h)
-    find_library(ARROW_LIBRARIES NAMES arrow)
-    if ((NOT ARROW_INCLUDE_DIR) OR (NOT ARROW_LIBRARIES))
-        message(FATAL_ERROR "Fail to find arrow")
-    endif ()
-    ADD_LIBRARY(arrow SHARED IMPORTED GLOBAL)
-else ()
-    include(arrow)
-    include_directories(SYSTEM ${ARROW_INSTALL_DIR}/include)
-endif ()
+# apache arrow - removed for neo-redis (OLAP features removed)
 
 message(CUR_DIR : ${CMAKE_CURRENT_BINARY_DIR}, SRC_DIR : ${CMAKE_SOURCE_DIR})
 
@@ -336,27 +286,15 @@ endforeach ()
 add_library(PROTO_OBJS OBJECT ${PROTO_SRCS} ${PROTO_HDRS})
 message("protoc: ${PROTOBUF_PROTOC_EXECUTABLE}, proto srcs : ${PROTO_SRCS}")
 
-#sql parser
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sqlparser)
-execute_process(
-        COMMAND bash ${CMAKE_SOURCE_DIR}/include/sqlparser/gen_source.sh ${CMAKE_SOURCE_DIR} opensource ${CMAKE_CURRENT_BINARY_DIR}/sqlparser
-        RESULT_VARIABLE CMD_RET
-)
-if (NOT CMD_RET EQUAL 0)
-    message(FATAL_ERROR "failed to generate expression, please install flex and bison first")
-endif ()
+# sql parser - removed for neo-redis (SQL features removed)
 
 SET(DEP_INC
         ${CMAKE_CURRENT_BINARY_DIR}/proto
 
         ${OPENSSL_INCLUDE_DIR}
         ${ZLIB_INCLUDE_DIR}
-        #        ${BZ2_INCLUDE_DIR}
 
         ${Boost_INCLUDE_DIR}
-        ${ARROW_INCLUDE_DIR}
-        ${OPENBLAS_INCLUDE_DIR}
-        ${FAISS_INCLUDE_DIR}
         ${CROARING_INCLUDE_DIR}
         ${RAPIDJSON_INCLUDE_DIR}
 
@@ -385,18 +323,10 @@ SET(DEP_LIB
         ${ROCKSDB_LIBRARIES}
         )
 
-if (WITH_BAIKAL_CLIENT)
-    SET(DEP_LIB ${DEP_LIB} ${MARIADB_LIBRARIES})
-    SET(DEP_INC ${DEP_INC} ${MARIADB_INCLUDE_DIR})
-endif ()
+# mariadb dependencies removed for neo-redis
 
 SET(DEP_LIB
         ${DEP_LIB}
-        ${ARROW_ACERO_LIB}
-        ${ARROW_LIBRARIES}
-        ${ARROW_ACERO_LIB}
-        ${ARROW_PARQUET_LIB}
-        ${ARROW_BUNDLED_DEP_LIB}
         ${PROTOBUF_LIBRARIES}
         ${PROTOBUF_PROTOC_LIBRARY}
         ${GFLAGS_LIBRARIES}
@@ -405,8 +335,6 @@ SET(DEP_LIB
         ${ZSTD_LIBRARIES}
         ${LZ4_LIBRARIES}
         ${LIBURING_LIBRARIES}
-        ${FAISS_LIBRARIES}
-        ${OPENBLAS_LIBRARIES}
         ${CROARING_LIBRARIES}
         ${Boost_LIBRARIES}
         )
@@ -454,78 +382,41 @@ add_definitions(
 )
 
 file(GLOB ENGINE src/engine/*.cpp)
-file(GLOB COLUMN src/column/*.cpp)
-file(GLOB EXEC src/exec/*.cpp)
-file(GLOB EXPR src/expr/*.cpp)
-file(GLOB LOGICAL_PLAN src/logical_plan/*.cpp)
-file(GLOB MEM_ROW src/mem_row/*.cpp)
-file(GLOB PHYSICAL_PLAN src/physical_plan/*.cpp)
-file(GLOB PROTOCOL src/protocol/*.cpp)
-list(REMOVE_ITEM PROTOCOL src/protocol/main.cpp)
 file(GLOB RAFT src/raft/*.cpp)
 file(GLOB RAFT_META src/raft_meta/*.cpp)
-file(GLOB REVERSE src/reverse/*.cpp src/vector_index/*.cpp)
-file(GLOB RUNTIME src/runtime/*.cpp)
-file(GLOB SESSION src/session/*.cpp)
-file(GLOB SQLPARSER include/sqlparser/*.cc ${CMAKE_CURRENT_BINARY_DIR}/sqlparser/*.cc)
 file(GLOB STORE src/store/*.cpp)
 list(REMOVE_ITEM STORE src/store/main.cpp)
-# Ensure new Redis service sources are linked even if CMake cache predates the files.
-set(STORE ${STORE}
-    src/store/redis_service.cpp
-    src/store/redis_codec.cpp
-    src/store/redis_router.cpp
-    src/store/redis_ttl_cleaner.cpp
-)
 
 set(COMMON_INC
         ${DEP_INC}
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}/proto
-        ${CMAKE_CURRENT_BINARY_DIR}/sqlparser
         include/common
         include/engine
-        include/column
-        include/exec
-        include/expr
-        include/logical_plan
-        include/mem_row
-        include/physical_plan
-        include/protocol
         include/raft
+        include/store
         include/reverse
         include/vector_index
-        include/reverse/boolean_engine
         include/runtime
-        include/session
-        include/sqlparser
-        include/store
+        include/exec
+        include/column
+        include/mem_row
+        include/meta_server
         )
 
 file(GLOB COMMON
         ${CMAKE_CURRENT_BINARY_DIR}/proto/*.pb.*
         src/common/*.cpp
         ${ENGINE}
-        ${COLUMN}
-        ${EXEC}
-        ${EXPR}
-        ${LOGICAL_PLAN}
-        ${MEM_ROW}
-        ${PHYSICAL_PLAN}
-        ${PROTOCOL}
         ${RAFT}
         ${RAFT_META}
-        ${REVERSE}
-        ${RUNTIME}
-        ${SESSION}
-        ${SQLPARSER}
         ${STORE}
         )
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output/bin)
 
-set(COMMON_DEPS ssl crypto zlib boost rapidjson arrow openblas faiss croaring glog gflags protobuf re2 snappy lz4 zstd rocksdb brpc braft liburing)
+set(COMMON_DEPS ssl crypto zlib boost rapidjson croaring glog gflags protobuf re2 snappy lz4 zstd rocksdb brpc braft liburing)
 if (WITH_GPERF)
     set(COMMON_DEPS ${COMMON_DEPS} gperf)
 endif ()
@@ -551,17 +442,9 @@ add_dependencies(baikalStore common)
 target_include_directories(baikalStore PUBLIC ${BAIKALSTORE_INC})
 target_link_libraries(baikalStore PUBLIC common ${DEP_LIB})
 
-# baikaldb
-file(GLOB RAFT_DUMMPY src/raft_dummy/*.cpp)
-set(BAIKALDB_INC ${COMMON_INC})
-add_executable(baikaldb src/protocol/main.cpp ${RAFT_DUMMPY})
-add_dependencies(baikaldb common)
-target_include_directories(baikaldb PUBLIC ${BAIKALDB_INC})
-target_link_libraries(baikaldb PUBLIC common ${DEP_LIB})
+# baikaldb - removed for neo-redis (SQL proxy removed)
 
-if (WITH_BAIKAL_CLIENT)
-    add_subdirectory(baikal-client)
-endif ()
+# baikal-client disabled for neo-redis
 
 # Tests
 if (WITH_TESTS)

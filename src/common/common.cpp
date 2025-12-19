@@ -44,12 +44,7 @@
 #include "rocksdb/slice.h"
 #include <boost/algorithm/string.hpp>
 #include <google/protobuf/descriptor.pb.h>
-#include "rocksdb/slice.h"
-#include "expr_value.h"
 #include "re2/re2.h"
-
-#include <boost/algorithm/string.hpp>
-#include <arrow/type_fwd.h>
 
 using google::protobuf::FieldDescriptorProto;
 
@@ -516,30 +511,30 @@ int primitive_type_bytes_len(pb::PrimitiveType type) {
     return _mysql_pb_type_bytes_count[type];
 }
 
+// Arrow type mapping removed for neo-redis
 std::pair<int32_t, int32_t> primitive_to_other_type(pb::PrimitiveType type) {
     using google::protobuf::FieldDescriptorProto;
-    // arrow type和proto type保持一致
     static std::unordered_map<int32_t, std::pair<int32_t, int32_t>> _mysql_pb_type_mapping = {
-        { pb::INT8,         {FieldDescriptorProto::TYPE_SINT32,   arrow::Type::type::INT32}},
-        { pb::INT16,        {FieldDescriptorProto::TYPE_SINT32,   arrow::Type::type::INT32}},
-        { pb::INT32,        {FieldDescriptorProto::TYPE_SINT32,   arrow::Type::type::INT32}},
-        { pb::INT64,        {FieldDescriptorProto::TYPE_SINT64,   arrow::Type::type::INT64}},
-        { pb::UINT8,        {FieldDescriptorProto::TYPE_UINT32,   arrow::Type::type::UINT32}},
-        { pb::UINT16,       {FieldDescriptorProto::TYPE_UINT32,   arrow::Type::type::UINT32}},
-        { pb::UINT32,       {FieldDescriptorProto::TYPE_UINT32,   arrow::Type::type::UINT32}},
-        { pb::UINT64,       {FieldDescriptorProto::TYPE_UINT64,   arrow::Type::type::UINT64}},
-        { pb::FLOAT,        {FieldDescriptorProto::TYPE_FLOAT,    arrow::Type::type::FLOAT}},
-        { pb::DOUBLE,       {FieldDescriptorProto::TYPE_DOUBLE,   arrow::Type::type::DOUBLE}},
-        { pb::STRING,       {FieldDescriptorProto::TYPE_BYTES,    arrow::Type::type::LARGE_BINARY}},
-        { pb::DATETIME,     {FieldDescriptorProto::TYPE_FIXED64,  arrow::Type::type::UINT64}},
-        { pb::TIMESTAMP,    {FieldDescriptorProto::TYPE_FIXED32,  arrow::Type::type::UINT32}},
-        { pb::DATE,         {FieldDescriptorProto::TYPE_FIXED32,  arrow::Type::type::UINT32}},
-        { pb::TIME,         {FieldDescriptorProto::TYPE_SFIXED32, arrow::Type::type::INT32}},
-        { pb::HLL,          {FieldDescriptorProto::TYPE_BYTES,    arrow::Type::type::LARGE_BINARY}},
-        { pb::BOOL,         {FieldDescriptorProto::TYPE_BOOL,     arrow::Type::type::BOOL}},
-        { pb::BITMAP,       {FieldDescriptorProto::TYPE_BYTES,    arrow::Type::type::LARGE_BINARY}},
-        { pb::TDIGEST,      {FieldDescriptorProto::TYPE_BYTES,    arrow::Type::type::LARGE_BINARY}},
-        { pb::NULL_TYPE,    {FieldDescriptorProto::TYPE_BOOL,     arrow::Type::type::BOOL}}
+        { pb::INT8,         {FieldDescriptorProto::TYPE_SINT32,   0}},
+        { pb::INT16,        {FieldDescriptorProto::TYPE_SINT32,   0}},
+        { pb::INT32,        {FieldDescriptorProto::TYPE_SINT32,   0}},
+        { pb::INT64,        {FieldDescriptorProto::TYPE_SINT64,   0}},
+        { pb::UINT8,        {FieldDescriptorProto::TYPE_UINT32,   0}},
+        { pb::UINT16,       {FieldDescriptorProto::TYPE_UINT32,   0}},
+        { pb::UINT32,       {FieldDescriptorProto::TYPE_UINT32,   0}},
+        { pb::UINT64,       {FieldDescriptorProto::TYPE_UINT64,   0}},
+        { pb::FLOAT,        {FieldDescriptorProto::TYPE_FLOAT,    0}},
+        { pb::DOUBLE,       {FieldDescriptorProto::TYPE_DOUBLE,   0}},
+        { pb::STRING,       {FieldDescriptorProto::TYPE_BYTES,    0}},
+        { pb::DATETIME,     {FieldDescriptorProto::TYPE_FIXED64,  0}},
+        { pb::TIMESTAMP,    {FieldDescriptorProto::TYPE_FIXED32,  0}},
+        { pb::DATE,         {FieldDescriptorProto::TYPE_FIXED32,  0}},
+        { pb::TIME,         {FieldDescriptorProto::TYPE_SFIXED32, 0}},
+        { pb::HLL,          {FieldDescriptorProto::TYPE_BYTES,    0}},
+        { pb::BOOL,         {FieldDescriptorProto::TYPE_BOOL,     0}},
+        { pb::BITMAP,       {FieldDescriptorProto::TYPE_BYTES,    0}},
+        { pb::TDIGEST,      {FieldDescriptorProto::TYPE_BYTES,    0}},
+        { pb::NULL_TYPE,    {FieldDescriptorProto::TYPE_BOOL,     0}}
     };
     if (_mysql_pb_type_mapping.count(type) == 0) {
         DB_WARNING("mysql_type %d not supported.", type);

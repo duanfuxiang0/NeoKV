@@ -16,12 +16,18 @@
 #include "redis_service.h"
 #include "store.h"
 #include "region.h"
-#include "schema_factory.h"
 #include "common.h"
-#include "key_encoder.h"
 #include <algorithm>
 #include <cctype>
 #include <unordered_map>
+#include <arpa/inet.h>
+
+namespace {
+// Simple big-endian conversion for slot encoding
+inline uint16_t to_endian_u16(uint16_t val) {
+    return ntohs(val);
+}
+} // anonymous namespace
 
 namespace baikaldb {
 
@@ -90,7 +96,7 @@ bool region_covers_slot(const pb::RegionInfo& region_info, uint16_t slot) {
     if (!start_key.empty() && start_key.size() >= 2) {
         uint16_t slot_be;
         memcpy(&slot_be, start_key.data(), sizeof(slot_be));
-        start_slot = KeyEncoder::to_endian_u16(slot_be);
+        start_slot = to_endian_u16(slot_be);
     }
 
     // Empty end_key means extend to slot 16383
@@ -98,7 +104,7 @@ bool region_covers_slot(const pb::RegionInfo& region_info, uint16_t slot) {
     if (!end_key.empty() && end_key.size() >= 2) {
         uint16_t slot_be;
         memcpy(&slot_be, end_key.data(), sizeof(slot_be));
-        end_slot = KeyEncoder::to_endian_u16(slot_be);
+        end_slot = to_endian_u16(slot_be);
     }
 
     return slot >= start_slot && slot < end_slot;
@@ -111,47 +117,15 @@ int RedisRouter::init(const std::string& db_name, const std::string& table_name)
         return 0;
     }
 
-    SchemaFactory* factory = SchemaFactory::get_instance();
-    if (factory == nullptr) {
-        DB_WARNING("SchemaFactory not initialized");
-        return -1;
-    }
-
-    // Try to find the Redis table
-    std::string full_name = db_name + "." + table_name;
-    int64_t table_id = 0;
-    int ret = factory->get_table_id(full_name, table_id);
-    if (ret != 0 || table_id <= 0) {
-        // Table doesn't exist yet - this is OK during bootstrap
-        // We'll use a default approach: treat all regions as covering all slots
-        DB_WARNING("Redis table %s not found, using bootstrap mode", full_name.c_str());
-        _initialized = true;
-        return 0;
-    }
-
-    _redis_table_id = table_id;
-
-    // Get the primary index ID
-    auto table_info = factory->get_table_info_ptr(table_id);
-    if (table_info == nullptr) {
-        DB_WARNING("Failed to get table info for %s", full_name.c_str());
-        return -1;
-    }
-
-    // Find primary index
-    for (auto index_id : table_info->indices) {
-        auto index_info = factory->get_index_info_ptr(index_id);
-        if (index_info != nullptr && index_info->type == pb::I_PRIMARY) {
-            _redis_index_id = index_id;
-            break;
-        }
-    }
-
-    if (_redis_index_id == 0) {
-        DB_WARNING("Primary index not found for table %s", full_name.c_str());
-        return -1;
-    }
-
+    // For neo-redis, we use a simple approach:
+    // - Use a fixed table_id and index_id for Redis data
+    // - Route based on slot -> region mapping
+    // - No dependency on SchemaFactory
+    
+    // Default IDs - these should match what's registered in Store
+    _redis_table_id = 1;   // Fixed table ID for Redis
+    _redis_index_id = 1;   // Fixed index ID for Redis
+    
     DB_NOTICE("Redis router initialized: table_id=%ld, index_id=%ld",
               _redis_table_id, _redis_index_id);
     _initialized = true;

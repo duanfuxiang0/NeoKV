@@ -44,21 +44,9 @@ int MetaServerInteract::init_internal(const std::string& meta_bns) {
 }
 
 int MetaServerInteract::init_other_meta(const int64_t meta_id) {
-    std::string meta_bns;
-    if (SchemaFactory::get_instance()->get_meta_name(meta_id, meta_bns) != 0) {
-        DB_FATAL("get_meta_name fail. bns:%ld", meta_id);
-        return -1;
-    }
-    std::shared_ptr<MetaInteractInfo> p_meta_interact_info = std::make_shared<MetaInteractInfo>();
-    if (init_meta_interact(meta_bns, *p_meta_interact_info) != 0) {
-        DB_WARNING("init_meta_interact fail. meta_id: %ld, meta_bns: %s", meta_id, meta_bns.c_str());
-        return -1;
-    }
-    std::lock_guard<std::mutex> lock(_meta_map_mutex);
-    if (_meta_interact_info_map.find(meta_id) == _meta_interact_info_map.end()) {
-        _meta_interact_info_map[meta_id] = p_meta_interact_info;
-    }
-    return 0;
+    // Neo-redis: multi-meta not supported, always fail
+    DB_WARNING("init_other_meta not supported in neo-redis, meta_id: %ld", meta_id);
+    return -1;
 }
 
 int MetaServerInteract::init_meta_interact(const std::string& meta_bns, MetaInteractInfo& meta_interact_info) {
