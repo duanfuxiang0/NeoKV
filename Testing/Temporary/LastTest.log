@@ -1,0 +1,246 @@
+Start testing: Dec 18 16:29 CST
+----------------------------------------------------------
+1/4 Testing: test_redis_slot
+1/4 Test: test_redis_slot
+Command: "/home/ubuntu/BaikalDB/output/bin/test_redis_slot"
+Directory: /home/ubuntu/BaikalDB
+"test_redis_slot" start time: Dec 18 16:29 CST
+Output:
+----------------------------------------------------------
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RedisSlotTest
+[ RUN      ] RedisSlotTest.CrcMatchesRedis
+[       OK ] RedisSlotTest.CrcMatchesRedis (0 ms)
+[ RUN      ] RedisSlotTest.HashTagRule
+[       OK ] RedisSlotTest.HashTagRule (0 ms)
+[----------] 2 tests from RedisSlotTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"test_redis_slot" end time: Dec 18 16:29 CST
+"test_redis_slot" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/4 Testing: test_redis_codec
+2/4 Test: test_redis_codec
+Command: "/home/ubuntu/BaikalDB/output/bin/test_redis_codec"
+Directory: /home/ubuntu/BaikalDB
+"test_redis_codec" start time: Dec 18 16:29 CST
+Output:
+----------------------------------------------------------
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from RedisCodecTest
+[ RUN      ] RedisCodecTest.EncodeDecodeKey
+[       OK ] RedisCodecTest.EncodeDecodeKey (0 ms)
+[ RUN      ] RedisCodecTest.EncodeDecodeValue
+[       OK ] RedisCodecTest.EncodeDecodeValue (0 ms)
+[ RUN      ] RedisCodecTest.ValueNoExpire
+[       OK ] RedisCodecTest.ValueNoExpire (0 ms)
+[ RUN      ] RedisCodecTest.IsExpired
+[       OK ] RedisCodecTest.IsExpired (0 ms)
+[ RUN      ] RedisCodecTest.ComputeTtlSeconds
+[       OK ] RedisCodecTest.ComputeTtlSeconds (0 ms)
+[ RUN      ] RedisCodecTest.BuildPrefix
+[       OK ] RedisCodecTest.BuildPrefix (0 ms)
+[----------] 6 tests from RedisCodecTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 6 tests.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test_redis_codec" end time: Dec 18 16:29 CST
+"test_redis_codec" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/4 Testing: test_redis_raft
+3/4 Test: test_redis_raft
+Command: "/home/ubuntu/BaikalDB/output/bin/test_redis_raft"
+Directory: /home/ubuntu/BaikalDB
+"test_redis_raft" start time: Dec 18 16:29 CST
+Output:
+----------------------------------------------------------
+[==========] Running 28 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from RedisProtoTest
+[ RUN      ] RedisProtoTest.OpTypeExists
+[       OK ] RedisProtoTest.OpTypeExists (0 ms)
+[ RUN      ] RedisProtoTest.RedisCmdEnum
+[       OK ] RedisProtoTest.RedisCmdEnum (0 ms)
+[ RUN      ] RedisProtoTest.RedisKvMessage
+[       OK ] RedisProtoTest.RedisKvMessage (0 ms)
+[ RUN      ] RedisProtoTest.RedisWriteRequestMessage
+[       OK ] RedisProtoTest.RedisWriteRequestMessage (0 ms)
+[ RUN      ] RedisProtoTest.StoreReqWithRedisReq
+[       OK ] RedisProtoTest.StoreReqWithRedisReq (0 ms)
+[ RUN      ] RedisProtoTest.SerializeDeserialize
+[       OK ] RedisProtoTest.SerializeDeserialize (0 ms)
+[----------] 6 tests from RedisProtoTest (0 ms total)
+
+[----------] 8 tests from RedisCodecExtendedTest
+[ RUN      ] RedisCodecExtendedTest.KeyOrderPreservation
+[       OK ] RedisCodecExtendedTest.KeyOrderPreservation (0 ms)
+[ RUN      ] RedisCodecExtendedTest.EmptyKey
+[       OK ] RedisCodecExtendedTest.EmptyKey (0 ms)
+[ RUN      ] RedisCodecExtendedTest.BinaryKey
+[       OK ] RedisCodecExtendedTest.BinaryKey (0 ms)
+[ RUN      ] RedisCodecExtendedTest.LargeValue
+[       OK ] RedisCodecExtendedTest.LargeValue (0 ms)
+[ RUN      ] RedisCodecExtendedTest.EmptyValue
+[       OK ] RedisCodecExtendedTest.EmptyValue (0 ms)
+[ RUN      ] RedisCodecExtendedTest.AllSlotValues
+[       OK ] RedisCodecExtendedTest.AllSlotValues (0 ms)
+[ RUN      ] RedisCodecExtendedTest.ExpireTimeBoundaries
+[       OK ] RedisCodecExtendedTest.ExpireTimeBoundaries (0 ms)
+[ RUN      ] RedisCodecExtendedTest.TtlCalculation
+[       OK ] RedisCodecExtendedTest.TtlCalculation (0 ms)
+[----------] 8 tests from RedisCodecExtendedTest (0 ms total)
+
+[----------] 6 tests from RedisSlotExtendedTest
+[ RUN      ] RedisSlotExtendedTest.SlotRange
+[       OK ] RedisSlotExtendedTest.SlotRange (0 ms)
+[ RUN      ] RedisSlotExtendedTest.HashTagExtraction
+[       OK ] RedisSlotExtendedTest.HashTagExtraction (0 ms)
+[ RUN      ] RedisSlotExtendedTest.EmptyHashTag
+[       OK ] RedisSlotExtendedTest.EmptyHashTag (0 ms)
+[ RUN      ] RedisSlotExtendedTest.NestedBraces
+[       OK ] RedisSlotExtendedTest.NestedBraces (0 ms)
+[ RUN      ] RedisSlotExtendedTest.NoBraces
+[       OK ] RedisSlotExtendedTest.NoBraces (0 ms)
+[ RUN      ] RedisSlotExtendedTest.CrossslotDetection
+[       OK ] RedisSlotExtendedTest.CrossslotDetection (0 ms)
+[----------] 6 tests from RedisSlotExtendedTest (0 ms total)
+
+[----------] 3 tests from RedisStressTest
+[ RUN      ] RedisStressTest.ManyKeysEncodeDecode
+Encoded/decoded 10000 keys in 7ms
+Average: 0.7 us/key
+[       OK ] RedisStressTest.ManyKeysEncodeDecode (7 ms)
+[ RUN      ] RedisStressTest.SlotDistribution
+Slot distribution for 500000 keys:
+  Expected per slot: 30.5176
+  Min: 11, Max: 58
+  Empty slots: 0
+  Variance: 30.5273, StdDev: 5.52515
+[       OK ] RedisStressTest.SlotDistribution (102 ms)
+[ RUN      ] RedisStressTest.ProtobufSerialization
+Serialized/deserialized 10000 requests in 10ms
+[       OK ] RedisStressTest.ProtobufSerialization (10 ms)
+[----------] 3 tests from RedisStressTest (120 ms total)
+
+[----------] 5 tests from RedisEdgeCaseTest
+[ RUN      ] RedisEdgeCaseTest.MaxRegionId
+[       OK ] RedisEdgeCaseTest.MaxRegionId (0 ms)
+[ RUN      ] RedisEdgeCaseTest.MaxSlot
+[       OK ] RedisEdgeCaseTest.MaxSlot (0 ms)
+[ RUN      ] RedisEdgeCaseTest.UnicodeKey
+[       OK ] RedisEdgeCaseTest.UnicodeKey (0 ms)
+[ RUN      ] RedisEdgeCaseTest.UnicodeValue
+[       OK ] RedisEdgeCaseTest.UnicodeValue (0 ms)
+[ RUN      ] RedisEdgeCaseTest.VeryLongKey
+[       OK ] RedisEdgeCaseTest.VeryLongKey (0 ms)
+[----------] 5 tests from RedisEdgeCaseTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 28 tests from 5 test suites ran. (121 ms total)
+[  PASSED  ] 28 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"test_redis_raft" end time: Dec 18 16:29 CST
+"test_redis_raft" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/4 Testing: test_redis_read_index
+4/4 Test: test_redis_read_index
+Command: "/home/ubuntu/BaikalDB/output/bin/test_redis_read_index"
+Directory: /home/ubuntu/BaikalDB
+"test_redis_read_index" start time: Dec 18 16:29 CST
+Output:
+----------------------------------------------------------
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from RedisReadIndexIntegrationTest
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+I1218 16:29:16.922214 3218738 server.cpp:1212] Server[(anonymous namespace)::FakeStoreService] is serving on port=48229.
+I1218 16:29:16.922246 3218738 server.cpp:1215] Check out http://ubuntu:48229 in web browser.
+I1218 16:29:16.923931 3218738 log.h:176] [rocks_wrapper.cpp:157][init][0]FLAGS_rocks_transaction_lock_timeout_ms:20000 FLAGS_rocks_default_lock_timeout_ms:30000
+W1218 16:29:16.946372 3218738 log.h:199] [rocks_wrapper.cpp:386][init][0]open db:/tmp/baikaldb_test_redis_read_index_1766046556913216/rocksdb success
+W1218 16:29:16.949294 3218738 log.h:199] [rocks_wrapper.cpp:424][init][0]create column family success, column family:raft_log
+W1218 16:29:16.955122 3218738 log.h:199] [rocks_wrapper.cpp:437][init][0]create column family success, column family:data
+W1218 16:29:16.958140 3218738 log.h:199] [rocks_wrapper.cpp:449][init][0]create column family success, column family:meta_info
+W1218 16:29:16.961158 3218738 log.h:199] [rocks_wrapper.cpp:462][init][0]create column family success, column family:bin_log_new
+W1218 16:29:16.961165 3218738 log.h:199] [rocks_wrapper.cpp:484][init_cold_rocksdb][0]not init cold rocksdb
+W1218 16:29:16.961179 3218738 log.h:199] [rocks_wrapper.cpp:769][update_oldest_ts_in_binlog_cf][0]has no data in binlog cf
+W1218 16:29:16.961186 3218738 log.h:199] [rocks_wrapper.cpp:478][init][0]rocksdb init success
+I1218 16:29:16.961380 3218738 log.h:176] [schema_factory.cpp:804][update_table_internal][0]double_buffer_write pb_need_update:1, old: new:1:12; table:table_id: 1000 table_name: "kv" database: "__redis__" database_id: 1 namespace_name: "__redis__" namespace_id: 1 partition_num: 1 fields { field_name: "k" mysql_type: STRING field_id: 1 } indexs { index_name: "pk" index_type: I_PRIMARY field_ids: 1 index_id: 1000 } version: 1 
+W1218 16:29:16.961401 3218738 log.h:199] [schema_factory.cpp:878][update_table_internal][0]db_name_id_mapping: __redis__.__redis__->1
+W1218 16:29:16.961405 3218738 log.h:199] [schema_factory.cpp:906][update_table_internal][0]schema_factory_update_index: 1000
+I1218 16:29:16.961408 3218738 log.h:176] [schema_factory.cpp:984][update_index][0]double_buffer_write index_info [index_name: "pk" index_type: I_PRIMARY field_ids: 1 index_id: 1000]
+W1218 16:29:16.961530 3218738 log.h:199] [schema_factory.cpp:1188][update_index][0]index full name:__redis__.__redis__.kv.pk, 1000, 0
+I1218 16:29:16.961546 3218738 log.h:176] [schema_factory.cpp:804][update_table_internal][0]double_buffer_write pb_need_update:1, old: new:1:12; table:table_id: 1000 table_name: "kv" database: "__redis__" database_id: 1 namespace_name: "__redis__" namespace_id: 1 partition_num: 1 fields { field_name: "k" mysql_type: STRING field_id: 1 } indexs { index_name: "pk" index_type: I_PRIMARY field_ids: 1 index_id: 1000 } version: 1 
+W1218 16:29:16.961555 3218738 log.h:199] [schema_factory.cpp:878][update_table_internal][0]db_name_id_mapping: __redis__.__redis__->1
+W1218 16:29:16.961557 3218738 log.h:199] [schema_factory.cpp:906][update_table_internal][0]schema_factory_update_index: 1000
+I1218 16:29:16.961560 3218738 log.h:176] [schema_factory.cpp:984][update_index][0]double_buffer_write index_info [index_name: "pk" index_type: I_PRIMARY field_ids: 1 index_id: 1000]
+W1218 16:29:16.961562 3218738 log.h:199] [schema_factory.cpp:1188][update_index][0]index full name:__redis__.__redis__.kv.pk, 1000, 0
+I1218 16:29:16.962446 3218738 server.cpp:1212] Server[braft::RaftStatImpl+braft::FileServiceImpl+braft::RaftServiceImpl+braft::CliServiceImpl] is serving on port=38679.
+I1218 16:29:16.962451 3218738 server.cpp:1215] Check out http://ubuntu:38679 in web browser.
+W1218 16:29:16.962559 3218738 log.h:199] [region.cpp:192][init][0]region_id: 10001 write init meta info: 72
+I1218 16:29:16.962617 3218738 log.cpp:698] Use crc32c as the checksum type of appending entries
+W1218 16:29:16.962630 3218738 protobuf_file.cpp:91] open file failed, path: /tmp/baikaldb_test_redis_read_index_1766046556913216/raftlog_10001/log_meta: FILE_ERROR_NOT_FOUND
+W1218 16:29:16.962633 3218738 log.cpp:709] /tmp/baikaldb_test_redis_read_index_1766046556913216/raftlog_10001 is empty
+I1218 16:29:16.963552 3218738 log.cpp:1165] log save_meta /tmp/baikaldb_test_redis_read_index_1766046556913216/raftlog_10001/log_meta first_log_index: 1 time: 891
+I1218 16:29:16.963591 3218738 snapshot.cpp:463] Deleting /tmp/baikaldb_test_redis_read_index_1766046556913216/snapshot/region_10001/temp
+W1218 16:29:16.963621 3218738 protobuf_file.cpp:91] open file failed, path: /tmp/baikaldb_test_redis_read_index_1766046556913216/stable_10001/raft_meta: FILE_ERROR_NOT_FOUND
+I1218 16:29:16.963630 3218738 raft_meta.cpp:521] Loaded single stable meta, path /tmp/baikaldb_test_redis_read_index_1766046556913216/stable_10001 term 1 votedfor 0.0.0.0:0:0:0 time: 4
+I1218 16:29:16.963636 3218738 node.cpp:628] node redis_read_index_test_group:127.0.0.1:38679:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 127.0.0.1:38679:0:0,127.0.0.1:48229:0:0 old_conf: 
+W1218 16:29:16.963680 3218738 log.h:199] [region.cpp:429][init][0]region_id: 10001 init success, region_info:region_id: 10001 table_id: 1000 partition_id: 0 replica_num: 2 version: 1 peers: "127.0.0.1:48229" peers: "127.0.0.1:38679", time_cost:1192
+W1218 16:29:16.963810 3218738 log.h:199] [redis_service.cpp:1040][register_basic_redis_commands][0]Redis Phase 1 commands registered: GET/SET/DEL/MGET/MSET/EXPIRE/TTL
+I1218 16:29:16.964207 3218738 server.cpp:1212] Server[brpc::RedisService] is serving on port=35263.
+I1218 16:29:16.964210 3218738 server.cpp:1215] Check out http://ubuntu:35263 in web browser.
+[ RUN      ] RedisReadIndexIntegrationTest.FollowerReadReturnsMovedWhenDisabled
+[       OK ] RedisReadIndexIntegrationTest.FollowerReadReturnsMovedWhenDisabled (0 ms)
+[ RUN      ] RedisReadIndexIntegrationTest.FollowerReadReturnsValueWhenEnabled
+[       OK ] RedisReadIndexIntegrationTest.FollowerReadReturnsValueWhenEnabled (0 ms)
+[ RUN      ] RedisReadIndexIntegrationTest.FollowerReadReturnsMovedWhenReadIndexFails
+W1218 16:29:16.965905 3218773 log.h:199] [store_interact.hpp:94][send_request][4294967553]send store address fail, log_id:15698939440999883242, instance: 127.0.0.1:48229, response:errcode: NOT_LEADER errmsg: "not leader" leader: "127.0.0.1:1", request: region_id: 10001 use_read_idx: true use_raft_log_index: false
+W1218 16:29:16.965981 3218798 log.h:199] [store_interact.hpp:88][send_request][4294967553]connect with store fail. send request fail, error:[E111]Fail to connect Socket{id=8589934964 addr=127.0.0.1:1} (0x0x5ba35cf10000): Connection refused [R1][E112]Not connected to 127.0.0.1:1 yet, server_id=8589934964 [R2][E112]Not connected to 127.0.0.1:1 yet, server_id=8589934964 [R3][E112]Not connected to 127.0.0.1:1 yet, server_id=8589934964, log_id:15343103110792986983
+E1218 16:29:16.966009 3218798 log.h:207] [region.cpp:8902][ask_leader_read_index][4294967553]region_10001(follower/learner) ask 127.0.0.1:1 readidx fail, req size: 1
+W1218 16:29:16.966023 3218802 log.h:199] [region.cpp:8854][operator()][4294967553]region_id: 10001, log_id: 0 ask read index fail
+[       OK ] RedisReadIndexIntegrationTest.FollowerReadReturnsMovedWhenReadIndexFails (0 ms)
+I1218 16:29:16.966066 3218738 node.cpp:993] node redis_read_index_test_group:127.0.0.1:38679:0:0 shutdown, current_term 1 state FOLLOWER
+W1218 16:29:16.966076 3218738 log.h:199] [region.h:469][shutdown][0]raft node was shutdown, region_id: 10001
+W1218 16:29:16.966081 3218790 log.h:199] [region.cpp:4965][on_shutdown][4294968074]shut down, region_id: 10001
+W1218 16:29:16.966094 3218738 log.h:199] [region.h:479][join][0]raft node join completely, region_id: 10001
+W1218 16:29:16.966096 3218738 log.h:199] [region.h:483][join][0]_multi_thread_cond wait success, region_id: 10001
+W1218 16:29:16.966099 3218738 log.h:199] [region.h:479][join][0]raft node join completely, region_id: 10001
+W1218 16:29:16.966100 3218738 log.h:199] [region.h:483][join][0]_multi_thread_cond wait success, region_id: 10001
+I1218 16:29:16.966109 3218738 node.cpp:993] node redis_read_index_test_group:127.0.0.1:38679:0:0 shutdown, current_term 1 state SHUTDOWN
+W1218 16:29:16.966130 3218738 log.h:199] [rocksdb_file_system_adaptor.cpp:570][~RocksdbFileSystemAdaptor][0]region_id: 10001 RocksdbFileSystemAdaptor released
+I1218 16:29:16.966135 3218738 server.cpp:1272] Server[brpc::RedisService] is going to quit
+I1218 16:29:16.966189 3218738 server.cpp:1272] Server[braft::RaftStatImpl+braft::FileServiceImpl+braft::RaftServiceImpl+braft::CliServiceImpl] is going to quit
+I1218 16:29:16.966240 3218738 server.cpp:1272] Server[(anonymous namespace)::FakeStoreService] is going to quit
+[----------] 3 tests from RedisReadIndexIntegrationTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (53 ms total)
+[  PASSED  ] 3 tests.
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"test_redis_read_index" end time: Dec 18 16:29 CST
+"test_redis_read_index" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Dec 18 16:29 CST

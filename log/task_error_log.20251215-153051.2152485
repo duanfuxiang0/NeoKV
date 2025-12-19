@@ -1,0 +1,5 @@
+Log file created at: 2025/12/15 15:30:51
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E1215 15:30:51.207193 2152485 log.h:207] [store.cpp:205][init_before_listen][0]send heart beat request to meta server fail
+E1215 15:30:51.207284 2152485 log.h:207] [main.cpp:237][main][0]Store instance init_before_listen fail

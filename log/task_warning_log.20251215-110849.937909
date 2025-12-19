@@ -1,0 +1,13 @@
+Log file created at: 2025/12/15 11:08:49
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1215 11:08:49.749372 937909 log.h:199] [my_raft_log.cpp:39][register_once_or_die][0]Registered myraft extension
+W1215 11:08:49.759918 937909 log.h:199] [main.cpp:195][main][0]add raft to baidu-rpc server success
+W1215 11:08:49.760025 937909 log.h:199] [qos.h:139][reset_rate][0]statistics_threshold: 6000
+W1215 11:08:49.760200 937955 log.h:199] [qos.cpp:277][wheather_need_reject][4294968578]count: 0, window_count: 3000, need_reject: 0, match_reject_condition: 0, time: 102
+W1215 11:08:49.760357 937961 log.h:199] [qos.h:476][analyze_qps][4294968577]sign sqlqos map is empty
+W1215 11:08:49.760447 937961 log.h:199] [qos.cpp:323][token_bucket_modify][4294968577]max_token: 100000, global_extended_token: 100000, total_consume_token: 0, compression_ratio: 1.000000
+W1215 11:08:49.760521 937961 log.h:199] [qos.cpp:347][token_bucket_modify][4294968577]globle extended bucket rate: 100000
+W1215 11:08:49.760594 937961 log.h:199] [qos.h:139][reset_rate][4294968577]statistics_threshold: 6000
+W1215 11:08:49.762033 937909 log.h:199] [main.cpp:222][main][0]start redis server success, listen port: 16379
+W1215 11:08:49.762888 937909 log.h:199] [meta_server_interact.cpp:84][init_meta_interact][0]meta server bns pool init fail. bns_name:bns://group.opera-qa-baikalMeta-000-yz.FENGCHAO.all

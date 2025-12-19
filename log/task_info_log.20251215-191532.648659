@@ -1,0 +1,23 @@
+Log file created at: 2025/12/15 19:15:32
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1215 19:15:32.674477 648693 variable.cpp:792] Write all bvar to ./monitor/bvar.baikalStore.data every 10 seconds.
+I1215 19:15:32.677999 648659 log.h:176] [arrow_io_excutor.cpp:258][init][0]set cpu thread pool capacity: 32 -> 10
+I1215 19:15:32.682229 648659 log.h:176] [memory_profile.cpp:115][init][0]root_limit_size :-1 _query_bytes_limit:-1
+I1215 19:15:32.683861 648659 server.cpp:1212] Server[brpc::RedisService] is serving on port=16379.
+I1215 19:15:32.683874 648659 server.cpp:1215] Check out http://ubuntu:16379 in web browser.
+I1215 19:15:32.684046 648659 naming_service_thread.cpp:203] brpc::policy::ListNamingService("127.0.1.1:8010"): added 1
+I1215 19:15:32.685516 648659 log.h:176] [rocks_wrapper.cpp:157][init][0]FLAGS_rocks_transaction_lock_timeout_ms:20000 FLAGS_rocks_default_lock_timeout_ms:30000
+I1215 19:15:32.755337 648659 server.cpp:1212] Server[braft::RaftStatImpl+braft::FileServiceImpl+braft::RaftServiceImpl+braft::CliServiceImpl+baikaldb::Store+baikaldb::CompactionServer] is serving on port=8110.
+I1215 19:15:32.755345 648659 server.cpp:1215] Check out http://ubuntu:8110 in web browser.
+I1215 19:15:32.755482 648765 log.h:176] [store.cpp:3308][print_heartbeat_info][4294978569]heart beat request(instance_info):address: "127.0.1.1:8110" capacity: 982240026624 used_size: 786199740416 resource_tag: "" physical_room: "default" dml_latency: 0 dml_qps: 0 raft_total_latency: 0 raft_total_qps: 0 select_latency: 0 select_qps: 0 network_segment: "" container_id: "" rocks_hang_check_cost: 0, need_leader_balance: 0, need_peer_balance: 0
+I1215 19:15:32.755498 648765 log.h:176] [store.cpp:3316][print_heartbeat_info][4294978569]heart beat request(schema_infos):
+I1215 19:15:32.755502 648730 log.h:176] [store.cpp:2810][whether_split_thread][4294978570]upate used size count:1
+I1215 19:15:32.755746 648704 log.h:176] [meta_server_interact.hpp:114][send_request_internal][4294978569]meta_req[instance_info { address: "127.0.1.1:8110" capacity: 982240026624 used_size: 786199740416 resource_tag: "" physical_room: "default" dml_latency: 0 dml_qps: 0 raft_total_latency: 0 raft_total_qps: 0 select_latency: 0 select_qps: 0 network_segment: "" container_id: "" rocks_hang_check_cost: 0 } need_leader_balance: false], meta_resp[errcode: SUCCESS errmsg: "success"]
+I1215 19:15:42.826208 648754 log.h:176] [store.cpp:2810][whether_split_thread][4294978570]upate used size count:2
+I1215 19:15:52.891374 648776 log.h:176] [store.cpp:2810][whether_split_thread][4294978570]upate used size count:3
+I1215 19:16:02.951508 648754 log.h:176] [store.cpp:2810][whether_split_thread][4294978570]upate used size count:4
+I1215 19:16:02.951527 648731 log.h:176] [store.cpp:3308][print_heartbeat_info][4294978569]heart beat request(instance_info):address: "127.0.1.1:8110" capacity: 982240026624 used_size: 786348675072 resource_tag: "" physical_room: "default" dml_latency: 0 dml_qps: 0 raft_total_latency: 0 raft_total_qps: 0 select_latency: 0 select_qps: 0 network_segment: "" container_id: "" rocks_hang_check_cost: 0, need_leader_balance: 0, need_peer_balance: 0
+I1215 19:16:02.951531 648731 log.h:176] [store.cpp:3316][print_heartbeat_info][4294978569]heart beat request(schema_infos):
+I1215 19:16:02.951776 648749 log.h:176] [meta_server_interact.hpp:114][send_request_internal][4294978569]meta_req[instance_info { address: "127.0.1.1:8110" capacity: 982240026624 used_size: 786348675072 resource_tag: "" physical_room: "default" dml_latency: 0 dml_qps: 0 raft_total_latency: 0 raft_total_qps: 0 select_latency: 0 select_qps: 0 network_segment: "" container_id: "" rocks_hang_check_cost: 0 } need_leader_balance: false], meta_resp[errcode: SUCCESS errmsg: "success"]
+I1215 19:16:13.007993 648753 log.h:176] [store.cpp:2810][whether_split_thread][4294978570]upate used size count:5

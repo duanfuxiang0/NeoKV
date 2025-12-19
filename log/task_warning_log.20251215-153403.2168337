@@ -1,0 +1,547 @@
+Log file created at: 2025/12/15 15:34:03
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1215 15:34:03.112577 2168337 log.h:199] [main.cpp:53][main][0]log file load success
+W1215 15:34:03.112805 2168337 log.h:199] [my_raft_log.cpp:39][register_once_or_die][0]Registered myraft extension
+W1215 15:34:03.115547 2168337 log.h:199] [main.cpp:68][main][0]add raft to baidu-rpc server success
+W1215 15:34:03.115571 2168337 log.h:199] [main.cpp:104][main][0]raft_peer:127.0.1.1:8010
+W1215 15:34:03.117467 2168337 log.h:199] [main.cpp:121][main][0]baidu-rpc server start
+W1215 15:34:03.132402 2168337 log.h:199] [rocks_wrapper.cpp:386][init][0]open db:./meta_data/rocks_db success
+W1215 15:34:03.135340 2168337 log.h:199] [rocks_wrapper.cpp:424][init][0]create column family success, column family:raft_log
+W1215 15:34:03.141140 2168337 log.h:199] [rocks_wrapper.cpp:437][init][0]create column family success, column family:data
+W1215 15:34:03.144403 2168337 log.h:199] [rocks_wrapper.cpp:449][init][0]create column family success, column family:meta_info
+W1215 15:34:03.147651 2168337 log.h:199] [rocks_wrapper.cpp:462][init][0]create column family success, column family:bin_log_new
+W1215 15:34:03.147662 2168337 log.h:199] [rocks_wrapper.cpp:484][init_cold_rocksdb][0]not init cold rocksdb
+W1215 15:34:03.147680 2168337 log.h:199] [rocks_wrapper.cpp:769][update_oldest_ts_in_binlog_cf][0]has no data in binlog cf
+W1215 15:34:03.147688 2168337 log.h:199] [rocks_wrapper.cpp:478][init][0]rocksdb init success
+W1215 15:34:03.147693 2168337 log.h:199] [meta_rocksdb.cpp:32][init][0]rocksdb init success, db_path:./meta_data/rocks_db
+W1215 15:34:03.147751 2168337 log.h:199] [my_raft_log_storage.cpp:38][parse_my_raft_log_uri][0]uri:my_raft_log?id=0, id:0, is_binlog:0
+W1215 15:34:03.147755 2168337 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 0, index:0
+W1215 15:34:03.147838 2168337 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 0, index:1
+W1215 15:34:03.147841 2168337 log.h:199] [my_raft_log_storage.cpp:237][init][0]region_id: 0, first_log_index:1, last_log_index:0, time_cost: 80
+W1215 15:34:03.147845 2168337 log.h:199] [my_raft_log_storage.cpp:349][get_term][0]index is greater than last_log_index or less than first_log_index, index:0, first_log_index:1, last_log_index:0, region_id: 0
+W1215 15:34:03.147931 2168337 protobuf_file.cpp:91] open file failed, path: ./raft_data/stable/meta_server/raft_meta: FILE_ERROR_NOT_FOUND
+W1215 15:34:03.149017 2168337 log.h:199] [common_state_machine.cpp:150][init][0]raft init success, meat state machine init success
+W1215 15:34:03.149024 2168337 log.h:199] [meta_server.cpp:94][init][0]meta state machine init success
+W1215 15:34:03.149034 2168337 log.h:199] [my_raft_log_storage.cpp:38][parse_my_raft_log_uri][0]uri:my_raft_log?id=1, id:1, is_binlog:0
+W1215 15:34:03.149037 2168337 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 1, index:0
+W1215 15:34:03.149076 2168337 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 1, index:1
+W1215 15:34:03.149080 2168337 log.h:199] [my_raft_log_storage.cpp:237][init][0]region_id: 1, first_log_index:1, last_log_index:0, time_cost: 36
+W1215 15:34:03.149082 2168337 log.h:199] [my_raft_log_storage.cpp:349][get_term][0]index is greater than last_log_index or less than first_log_index, index:0, first_log_index:1, last_log_index:0, region_id: 1
+W1215 15:34:03.149106 2168358 log.h:199] [common_state_machine.cpp:234][on_configuration_committed][4294971137]new conf committed, new peer:127.0.1.1:8010:0:0,
+W1215 15:34:03.149123 2168358 log.h:199] [common_state_machine.cpp:206][on_leader_start][4294971137]leader start at term:2
+W1215 15:34:03.149127 2168358 log.h:199] [meta_state_machine.cpp:682][on_leader_start][4294971137]leader start at new term
+W1215 15:34:03.149132 2168337 protobuf_file.cpp:91] open file failed, path: ./raft_data/stable/auto_incr/raft_meta: FILE_ERROR_NOT_FOUND
+W1215 15:34:03.149263 2168363 log.h:199] [meta_state_machine.cpp:701][healthy_check_function][8589959939]start healthy check function
+W1215 15:34:03.150063 2168337 log.h:199] [common_state_machine.cpp:150][init][0]raft init success, meat state machine init success
+W1215 15:34:03.150066 2168337 log.h:199] [meta_server.cpp:106][init][0]auot_incr_state_machine init success
+W1215 15:34:03.150079 2168337 log.h:199] [my_raft_log_storage.cpp:38][parse_my_raft_log_uri][0]uri:my_raft_log?id=2, id:2, is_binlog:0
+W1215 15:34:03.150081 2168337 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 2, index:0
+W1215 15:34:03.150100 2168337 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 2, index:1
+W1215 15:34:03.150103 2168337 log.h:199] [my_raft_log_storage.cpp:237][init][0]region_id: 2, first_log_index:1, last_log_index:0, time_cost: 19
+W1215 15:34:03.150106 2168337 log.h:199] [my_raft_log_storage.cpp:349][get_term][0]index is greater than last_log_index or less than first_log_index, index:0, first_log_index:1, last_log_index:0, region_id: 2
+W1215 15:34:03.150146 2168337 protobuf_file.cpp:91] open file failed, path: ./raft_data/stable/tso/raft_meta: FILE_ERROR_NOT_FOUND
+W1215 15:34:03.150218 2168365 log.h:199] [common_state_machine.cpp:234][on_configuration_committed][4294972929]new conf committed, new peer:127.0.1.1:8010:0:0,
+W1215 15:34:03.150252 2168365 log.h:199] [common_state_machine.cpp:206][on_leader_start][4294972929]leader start at term:2
+W1215 15:34:03.151053 2168337 log.h:199] [tso_state_machine.cpp:78][init][0]raft init success, meat state machine init success
+W1215 15:34:03.151057 2168337 log.h:199] [meta_server.cpp:118][init][0]_tso_state_machine init success
+W1215 15:34:03.151108 2168372 log.h:199] [common_state_machine.cpp:234][on_configuration_committed][4294974721]new conf committed, new peer:127.0.1.1:8010:0:0,
+W1215 15:34:03.151114 2168372 log.h:199] [common_state_machine.cpp:206][on_leader_start][4294974721]leader start at term:2
+W1215 15:34:03.151116 2168372 log.h:199] [tso_state_machine.cpp:377][on_leader_start][4294974721]tso leader start
+W1215 15:34:03.151142 2168383 log.h:199] [tso_state_machine.cpp:389][operator()][8589959941]leader_start current(phy:187976043151,log:0) save:187976046151
+W1215 15:34:03.151154 2168337 log.h:199] [main.cpp:151][main][0]meta server init success
+W1215 15:34:03.151279 2168383 log.h:199] [tso_state_machine.cpp:395][operator()][8589959941]sync timestamp ok
+W1215 15:34:13.149192 2168433 log.h:199] [table_manager.cpp:145][run][4294993352]dblink_mysql_schemas size: 0
+W1215 15:34:23.149291 2168363 log.h:199] [table_manager.cpp:145][run][4294993555]dblink_mysql_schemas size: 0
+W1215 15:34:29.227900 2168361 log.h:199] [region_manager.cpp:1088][leader_load_balance][42949699275]instance:  can not find idc
+W1215 15:34:29.233131 2168432 log.h:199] [region_manager.cpp:1088][leader_load_balance][12884928021]instance: 127.0.1.1:8110 can not find idc
+W1215 15:34:29.233171 2168414 log.h:199] [cluster_manager.cpp:1422][auto_network_segments_division][30064797377]finish auto network segment division for resource tag: , prefix: 32
+W1215 15:34:33.149398 2168391 log.h:199] [table_manager.cpp:145][run][4294993759]dblink_mysql_schemas size: 0
+W1215 15:34:34.943903 2168432 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 0
+W1215 15:34:43.149497 2168368 log.h:199] [table_manager.cpp:145][run][4294993962]dblink_mysql_schemas size: 0
+W1215 15:34:53.149580 2168432 log.h:199] [table_manager.cpp:145][run][4294994166]dblink_mysql_schemas size: 0
+W1215 15:35:02.010327 2168376 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][8589961630]start on snapshot save
+W1215 15:35:02.010375 2168376 log.h:199] [tso_state_machine.cpp:434][save_snapshot][8589961642]save physical string:187976103297 when snapshot
+W1215 15:35:03.149618 2168391 log.h:199] [table_manager.cpp:145][run][4294994370]dblink_mysql_schemas size: 0
+W1215 15:35:06.688908 2168414 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 1
+W1215 15:35:13.149717 2168367 log.h:199] [table_manager.cpp:145][run][4294994574]dblink_mysql_schemas size: 0
+W1215 15:35:23.149809 2168416 log.h:199] [table_manager.cpp:145][run][4294994777]dblink_mysql_schemas size: 0
+W1215 15:35:33.149902 2168372 log.h:199] [table_manager.cpp:145][run][4294994981]dblink_mysql_schemas size: 0
+W1215 15:35:38.482012 2168390 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 2
+W1215 15:35:43.150002 2168363 log.h:199] [table_manager.cpp:145][run][4294995184]dblink_mysql_schemas size: 0
+W1215 15:35:53.150094 2168416 log.h:199] [table_manager.cpp:145][run][4294995388]dblink_mysql_schemas size: 0
+W1215 15:36:02.010484 2168408 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][17179897447]start on snapshot save
+W1215 15:36:02.010529 2168408 log.h:199] [tso_state_machine.cpp:434][save_snapshot][8589962864]save physical string:187976163456 when snapshot
+W1215 15:36:02.013348 2168408 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][42949701174]Truncating region_id: 2 to first index kept:1177 from first log index:1
+W1215 15:36:02.013377 2168408 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][42949701174]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:1177 from first log index:1177
+W1215 15:36:02.013397 2168408 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][42949701174]tuncate log entry success, region_id: 2, truncate to first index kept:1177 from first log index:1177
+W1215 15:36:03.150194 2168415 log.h:199] [table_manager.cpp:145][run][4294995592]dblink_mysql_schemas size: 0
+W1215 15:36:10.217687 2168358 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 3
+W1215 15:36:13.150312 2168363 log.h:199] [table_manager.cpp:145][run][4294995796]dblink_mysql_schemas size: 0
+W1215 15:36:17.501850 2168395 log.h:199] [region_manager.cpp:1088][leader_load_balance][21474865007]instance:  can not find idc
+W1215 15:36:23.150411 2168415 log.h:199] [table_manager.cpp:145][run][4294995999]dblink_mysql_schemas size: 0
+W1215 15:36:33.150499 2168372 log.h:199] [table_manager.cpp:145][run][4294996203]dblink_mysql_schemas size: 0
+W1215 15:36:41.968616 2168358 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 4
+W1215 15:36:43.150590 2168418 log.h:199] [table_manager.cpp:145][run][4294996406]dblink_mysql_schemas size: 0
+W1215 15:36:53.150684 2168368 log.h:199] [table_manager.cpp:145][run][4294996610]dblink_mysql_schemas size: 0
+W1215 15:37:02.010692 2168414 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][25769833213]start on snapshot save
+W1215 15:37:02.010776 2168414 log.h:199] [tso_state_machine.cpp:434][save_snapshot][8589964085]save physical string:187976223608 when snapshot
+W1215 15:37:02.013439 2168414 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][8589964057]Truncating region_id: 2 to first index kept:2374 from first log index:1177
+W1215 15:37:02.013464 2168414 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][8589964057]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:2374 from first log index:2374
+W1215 15:37:02.013484 2168414 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][8589964057]tuncate log entry success, region_id: 2, truncate to first index kept:2374 from first log index:2374
+W1215 15:37:03.150781 2168414 log.h:199] [table_manager.cpp:145][run][4294996814]dblink_mysql_schemas size: 0
+W1215 15:37:13.150876 2168395 log.h:199] [table_manager.cpp:145][run][4294997018]dblink_mysql_schemas size: 0
+W1215 15:37:13.716679 2168363 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 5
+W1215 15:37:23.150974 2168358 log.h:199] [table_manager.cpp:145][run][4294997221]dblink_mysql_schemas size: 0
+W1215 15:37:33.151073 2168365 log.h:199] [table_manager.cpp:145][run][4294997425]dblink_mysql_schemas size: 0
+W1215 15:37:43.151165 2168353 log.h:199] [table_manager.cpp:145][run][4294997628]dblink_mysql_schemas size: 0
+W1215 15:37:45.424729 2168372 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 6
+W1215 15:37:53.151252 2168365 log.h:199] [table_manager.cpp:145][run][4294997832]dblink_mysql_schemas size: 0
+W1215 15:38:02.010871 2168365 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][8589965292]start on snapshot save
+W1215 15:38:02.010921 2168365 log.h:199] [tso_state_machine.cpp:434][save_snapshot][8589965308]save physical string:187976283747 when snapshot
+W1215 15:38:02.013644 2168365 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][8589965290]Truncating region_id: 2 to first index kept:3570 from first log index:2374
+W1215 15:38:02.013703 2168365 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][8589965290]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:3570 from first log index:3570
+W1215 15:38:02.013725 2168365 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][8589965290]tuncate log entry success, region_id: 2, truncate to first index kept:3570 from first log index:3570
+W1215 15:38:03.151345 2168361 log.h:199] [table_manager.cpp:145][run][4294998036]dblink_mysql_schemas size: 0
+W1215 15:38:13.151438 2168440 log.h:199] [table_manager.cpp:145][run][4294998240]dblink_mysql_schemas size: 0
+W1215 15:38:17.142921 2168420 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 7
+W1215 15:38:23.151527 2168372 log.h:199] [table_manager.cpp:145][run][4294998443]dblink_mysql_schemas size: 0
+W1215 15:38:33.151607 2168391 log.h:199] [table_manager.cpp:145][run][4294998647]dblink_mysql_schemas size: 0
+W1215 15:38:43.151710 2168391 log.h:199] [table_manager.cpp:145][run][17179898418]dblink_mysql_schemas size: 0
+W1215 15:38:48.855294 2168442 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 8
+W1215 15:38:53.151767 2168390 log.h:199] [table_manager.cpp:145][run][4294998799]dblink_mysql_schemas size: 0
+W1215 15:39:02.011081 2168353 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][17179900764]start on snapshot save
+W1215 15:39:02.011144 2168353 log.h:199] [tso_state_machine.cpp:434][save_snapshot][21474866529]save physical string:187976343887 when snapshot
+W1215 15:39:02.012125 2168353 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][17179900761]Truncating region_id: 2 to first index kept:4768 from first log index:3570
+W1215 15:39:02.012151 2168353 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][17179900761]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:4768 from first log index:4768
+W1215 15:39:02.012174 2168353 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][17179900761]tuncate log entry success, region_id: 2, truncate to first index kept:4768 from first log index:4768
+W1215 15:39:03.151823 2168358 log.h:199] [table_manager.cpp:145][run][51539636329]dblink_mysql_schemas size: 0
+W1215 15:39:13.151880 2168390 log.h:199] [table_manager.cpp:145][run][25769834440]dblink_mysql_schemas size: 0
+W1215 15:39:20.586848 2168361 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 9
+W1215 15:39:23.151953 2168414 log.h:199] [table_manager.cpp:145][run][30064801495]dblink_mysql_schemas size: 0
+W1215 15:39:33.152015 2168353 log.h:199] [table_manager.cpp:145][run][34359765117]dblink_mysql_schemas size: 0
+W1215 15:39:43.152083 2168383 log.h:199] [table_manager.cpp:145][run][17179897252]dblink_mysql_schemas size: 0
+W1215 15:39:52.320000 2168352 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 10
+W1215 15:39:53.152153 2168395 log.h:199] [table_manager.cpp:145][run][8589964865]dblink_mysql_schemas size: 0
+W1215 15:40:02.011231 2168352 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][25769831064]start on snapshot save
+W1215 15:40:02.011296 2168418 log.h:199] [tso_state_machine.cpp:434][save_snapshot][38654736624]save physical string:187976404033 when snapshot
+W1215 15:40:02.012379 2168418 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][12884902914]Truncating region_id: 2 to first index kept:5965 from first log index:4768
+W1215 15:40:02.012426 2168418 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][12884902914]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:5965 from first log index:5965
+W1215 15:40:02.012447 2168418 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][12884902914]tuncate log entry success, region_id: 2, truncate to first index kept:5965 from first log index:5965
+W1215 15:40:03.152215 2168442 log.h:199] [table_manager.cpp:145][run][38654736943]dblink_mysql_schemas size: 0
+W1215 15:40:10.815326 2168361 log.h:199] [auto_incr_state_machine.cpp:205][on_snapshot_save][60129570611]start on snapshot save
+W1215 15:40:10.815335 2168361 log.h:199] [auto_incr_state_machine.cpp:251][save_auto_increment][60129570611]max id string:{} when snapshot
+W1215 15:40:13.152272 2168391 log.h:199] [table_manager.cpp:145][run][30064797390]dblink_mysql_schemas size: 0
+W1215 15:40:23.152333 2168433 log.h:199] [table_manager.cpp:145][run][21474863950]dblink_mysql_schemas size: 0
+W1215 15:40:24.023353 2168383 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 11
+W1215 15:40:33.152396 2168346 log.h:199] [table_manager.cpp:145][run][12884930718]dblink_mysql_schemas size: 0
+W1215 15:40:43.152462 2168408 log.h:199] [table_manager.cpp:145][run][85899376179]dblink_mysql_schemas size: 0
+W1215 15:40:53.152514 2168396 log.h:199] [table_manager.cpp:145][run][8589966090]dblink_mysql_schemas size: 0
+W1215 15:40:55.790933 2168442 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 12
+W1215 15:40:58.601027 2168395 log.h:199] [region_manager.cpp:1088][leader_load_balance][34359766915]instance:  can not find idc
+W1215 15:41:02.011394 2168352 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][34359766634]start on snapshot save
+W1215 15:41:02.011431 2168352 log.h:199] [tso_state_machine.cpp:434][save_snapshot][55834601345]save physical string:187976464172 when snapshot
+W1215 15:41:02.012923 2168352 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][25769831032]Truncating region_id: 2 to first index kept:7162 from first log index:5965
+W1215 15:41:02.012953 2168352 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][25769831032]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:7162 from first log index:7162
+W1215 15:41:02.012974 2168352 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][25769831032]tuncate log entry success, region_id: 2, truncate to first index kept:7162 from first log index:7162
+W1215 15:41:03.152571 2168368 log.h:199] [table_manager.cpp:145][run][51539636809]dblink_mysql_schemas size: 0
+W1215 15:41:08.219095 2168367 log.h:199] [meta_state_machine.cpp:536][on_snapshot_save][12884932844]start on snapshot save
+W1215 15:41:08.219105 2168367 log.h:199] [meta_state_machine.cpp:537][on_snapshot_save][12884932844]max_namespace_id: 0, max_database_id: 0, max_table_id:0, max_region_id:0 when on snapshot save
+W1215 15:41:08.219144 2168367 log.h:199] [meta_state_machine.cpp:569][save_snapshot][30064801780]snapshot path:./meta_data/raft_data/snapshot/meta_server/temp
+W1215 15:41:13.152616 2168363 log.h:199] [table_manager.cpp:145][run][25769830855]dblink_mysql_schemas size: 0
+W1215 15:41:23.152678 2168376 log.h:199] [table_manager.cpp:145][run][8589963150]dblink_mysql_schemas size: 0
+W1215 15:41:27.503675 2168442 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 13
+W1215 15:41:33.152740 2168395 log.h:199] [table_manager.cpp:145][run][8589964945]dblink_mysql_schemas size: 0
+W1215 15:41:43.152798 2168395 log.h:199] [table_manager.cpp:145][run][8589965853]dblink_mysql_schemas size: 0
+W1215 15:41:53.152853 2168395 log.h:199] [table_manager.cpp:145][run][34359764493]dblink_mysql_schemas size: 0
+W1215 15:41:59.217733 2168442 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 14
+W1215 15:42:02.011551 2168395 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][60129571122]start on snapshot save
+W1215 15:42:02.011588 2168395 log.h:199] [tso_state_machine.cpp:434][save_snapshot][17179897572]save physical string:187976524313 when snapshot
+W1215 15:42:02.013082 2168395 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][21474865898]Truncating region_id: 2 to first index kept:8359 from first log index:7162
+W1215 15:42:02.013108 2168395 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][21474865898]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:8359 from first log index:8359
+W1215 15:42:02.013126 2168395 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][21474865898]tuncate log entry success, region_id: 2, truncate to first index kept:8359 from first log index:8359
+W1215 15:42:03.152915 2168390 log.h:199] [table_manager.cpp:145][run][30064798982]dblink_mysql_schemas size: 0
+W1215 15:42:13.152972 2168442 log.h:199] [table_manager.cpp:145][run][8589963155]dblink_mysql_schemas size: 0
+W1215 15:42:23.153036 2168433 log.h:199] [table_manager.cpp:145][run][25769833812]dblink_mysql_schemas size: 0
+W1215 15:42:30.910666 2168433 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 15
+W1215 15:42:30.910694 2168433 log.h:199] [cluster_manager.cpp:1279][store_healthy_check_function][8589959939]instance:127.0.1.1:8110 is faulty FAULTY, resource_tag: 
+W1215 15:42:33.153092 2168431 log.h:199] [table_manager.cpp:145][run][51539633519]dblink_mysql_schemas size: 0
+W1215 15:42:43.153136 2168363 log.h:199] [table_manager.cpp:145][run][12884927847]dblink_mysql_schemas size: 0
+W1215 15:42:53.153196 2168365 log.h:199] [table_manager.cpp:145][run][8589962038]dblink_mysql_schemas size: 0
+W1215 15:43:02.011713 2168367 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][30064796937]start on snapshot save
+W1215 15:43:02.011765 2168367 log.h:199] [tso_state_machine.cpp:434][save_snapshot][17179898710]save physical string:187976584456 when snapshot
+W1215 15:43:02.012843 2168367 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][12884928554]Truncating region_id: 2 to first index kept:9556 from first log index:8359
+W1215 15:43:02.012869 2168367 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][12884928554]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:9556 from first log index:9556
+W1215 15:43:02.012888 2168367 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][12884928554]tuncate log entry success, region_id: 2, truncate to first index kept:9556 from first log index:9556
+W1215 15:43:02.578014 2168440 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 16
+W1215 15:43:02.578044 2168440 log.h:199] [cluster_manager.cpp:1279][store_healthy_check_function][8589959939]instance:127.0.1.1:8110 is faulty FAULTY, resource_tag: 
+W1215 15:43:03.153256 2168416 log.h:199] [table_manager.cpp:145][run][8589963288]dblink_mysql_schemas size: 0
+W1215 15:43:13.153321 2168376 log.h:199] [table_manager.cpp:145][run][25769834433]dblink_mysql_schemas size: 0
+W1215 15:43:23.153380 2168358 log.h:199] [table_manager.cpp:145][run][38654736528]dblink_mysql_schemas size: 0
+W1215 15:43:33.153451 2168440 log.h:199] [table_manager.cpp:145][run][8589961010]dblink_mysql_schemas size: 0
+W1215 15:43:34.317320 2168391 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 17
+W1215 15:43:34.317368 2168391 log.h:199] [cluster_manager.cpp:1279][store_healthy_check_function][8589959939]instance:127.0.1.1:8110 is faulty FAULTY, resource_tag: 
+W1215 15:43:43.153506 2168361 log.h:199] [table_manager.cpp:145][run][12884929287]dblink_mysql_schemas size: 0
+W1215 15:43:53.153564 2168358 log.h:199] [table_manager.cpp:145][run][60129570864]dblink_mysql_schemas size: 0
+W1215 15:44:02.011831 2168361 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][42949699908]start on snapshot save
+W1215 15:44:02.011869 2168361 log.h:199] [tso_state_machine.cpp:434][save_snapshot][42949703907]save physical string:187976644603 when snapshot
+W1215 15:44:02.013991 2168361 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][38654732130]Truncating region_id: 2 to first index kept:10754 from first log index:9556
+W1215 15:44:02.014029 2168361 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][38654732130]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:10754 from first log index:10754
+W1215 15:44:02.014047 2168361 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][38654732130]tuncate log entry success, region_id: 2, truncate to first index kept:10754 from first log index:10754
+W1215 15:44:03.153633 2168415 log.h:199] [table_manager.cpp:145][run][38654736169]dblink_mysql_schemas size: 0
+W1215 15:44:06.025794 2168390 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 18
+W1215 15:44:06.025827 2168390 log.h:199] [cluster_manager.cpp:1279][store_healthy_check_function][8589959939]instance:127.0.1.1:8110 is faulty FAULTY, resource_tag: 
+W1215 15:44:06.437049 2168468 log.h:199] [my_listener.h:31][OnFlushCompleted][0]OnFlushCompleted, cf:meta_info file_number:19
+W1215 15:44:06.441241 2168467 log.h:199] [my_listener.h:31][OnFlushCompleted][0]OnFlushCompleted, cf:raft_log file_number:20
+W1215 15:44:13.153683 2168363 log.h:199] [table_manager.cpp:145][run][55834601141]dblink_mysql_schemas size: 0
+W1215 15:44:23.153743 2168365 log.h:199] [table_manager.cpp:145][run][42949704489]dblink_mysql_schemas size: 0
+W1215 15:44:33.153796 2168442 log.h:199] [table_manager.cpp:145][run][98784278006]dblink_mysql_schemas size: 0
+W1215 15:44:35.570957 2168391 log.h:199] [region_manager.cpp:1088][leader_load_balance][51539633922]instance:  can not find idc
+W1215 15:44:35.577876 2168346 log.h:199] [cluster_manager.cpp:2135][update_instance_info][81604404732]instance:127.0.1.1:8110 status return NORMAL, resource_tag: 
+W1215 15:44:37.737847 2168414 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 19
+W1215 15:44:43.153854 2168368 log.h:199] [table_manager.cpp:145][run][21474865996]dblink_mysql_schemas size: 0
+W1215 15:44:53.153914 2168420 log.h:199] [table_manager.cpp:145][run][115964147968]dblink_mysql_schemas size: 0
+W1215 15:45:02.011993 2168367 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][42949700969]start on snapshot save
+W1215 15:45:02.012043 2168367 log.h:199] [tso_state_machine.cpp:434][save_snapshot][64424539778]save physical string:187976704748 when snapshot
+W1215 15:45:02.013795 2168367 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][47244671518]Truncating region_id: 2 to first index kept:11951 from first log index:10754
+W1215 15:45:02.013820 2168367 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][47244671518]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:11951 from first log index:11951
+W1215 15:45:02.013839 2168367 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][47244671518]tuncate log entry success, region_id: 2, truncate to first index kept:11951 from first log index:11951
+W1215 15:45:03.153973 2168408 log.h:199] [table_manager.cpp:145][run][21474865553]dblink_mysql_schemas size: 0
+W1215 15:45:09.475272 2168372 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 20
+W1215 15:45:13.154032 2168383 log.h:199] [table_manager.cpp:145][run][25769831095]dblink_mysql_schemas size: 0
+W1215 15:45:23.154093 2168442 log.h:199] [table_manager.cpp:145][run][60129569586]dblink_mysql_schemas size: 0
+W1215 15:45:33.154153 2168372 log.h:199] [table_manager.cpp:145][run][51539634216]dblink_mysql_schemas size: 0
+W1215 15:45:41.200973 2168365 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 21
+W1215 15:45:43.154237 2168416 log.h:199] [table_manager.cpp:145][run][34359764888]dblink_mysql_schemas size: 0
+W1215 15:45:53.154330 2168367 log.h:199] [table_manager.cpp:145][run][38654736509]dblink_mysql_schemas size: 0
+W1215 15:46:02.012161 2168346 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][60129548546]start on snapshot save
+W1215 15:46:02.012199 2168346 log.h:199] [tso_state_machine.cpp:434][save_snapshot][73014473356]save physical string:187976764886 when snapshot
+W1215 15:46:02.016435 2168346 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][17179896630]Truncating region_id: 2 to first index kept:13148 from first log index:11951
+W1215 15:46:02.016474 2168346 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][17179896630]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:13148 from first log index:13148
+W1215 15:46:02.016494 2168346 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][17179896630]tuncate log entry success, region_id: 2, truncate to first index kept:13148 from first log index:13148
+W1215 15:46:03.154412 2168390 log.h:199] [table_manager.cpp:145][run][38654733747]dblink_mysql_schemas size: 0
+W1215 15:46:12.940601 2168367 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 22
+W1215 15:46:13.154517 2168346 log.h:199] [table_manager.cpp:145][run][21474867524]dblink_mysql_schemas size: 0
+W1215 15:46:23.154598 2168365 log.h:199] [table_manager.cpp:145][run][17179899035]dblink_mysql_schemas size: 0
+W1215 15:46:33.154698 2168395 log.h:199] [table_manager.cpp:145][run][64424536375]dblink_mysql_schemas size: 0
+W1215 15:46:43.154794 2168368 log.h:199] [table_manager.cpp:145][run][124554078705]dblink_mysql_schemas size: 0
+W1215 15:46:44.683604 2168432 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 23
+W1215 15:46:53.154884 2168416 log.h:199] [table_manager.cpp:145][run][42949704431]dblink_mysql_schemas size: 0
+W1215 15:47:02.012344 2168353 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][115964145166]start on snapshot save
+W1215 15:47:02.012384 2168353 log.h:199] [tso_state_machine.cpp:434][save_snapshot][34359768167]save physical string:187976822018 when snapshot
+W1215 15:47:02.013365 2168353 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][81604405224]Truncating region_id: 2 to first index kept:14345 from first log index:13148
+W1215 15:47:02.013411 2168353 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][81604405224]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:14345 from first log index:14345
+W1215 15:47:02.013437 2168353 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][81604405224]tuncate log entry success, region_id: 2, truncate to first index kept:14345 from first log index:14345
+W1215 15:47:03.154969 2168432 log.h:199] [table_manager.cpp:145][run][30064801044]dblink_mysql_schemas size: 0
+W1215 15:47:13.155073 2168414 log.h:199] [table_manager.cpp:145][run][34359769732]dblink_mysql_schemas size: 0
+W1215 15:47:16.402858 2168367 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 24
+W1215 15:47:23.155177 2168383 log.h:199] [table_manager.cpp:145][run][25769835020]dblink_mysql_schemas size: 0
+W1215 15:47:33.155273 2168415 log.h:199] [table_manager.cpp:145][run][150323886221]dblink_mysql_schemas size: 0
+W1215 15:47:43.155383 2168414 log.h:199] [table_manager.cpp:145][run][42949702748]dblink_mysql_schemas size: 0
+W1215 15:47:48.158946 2168390 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 25
+W1215 15:47:53.155474 2168408 log.h:199] [table_manager.cpp:145][run][17179899822]dblink_mysql_schemas size: 0
+W1215 15:48:02.012526 2168346 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][111669176000]start on snapshot save
+W1215 15:48:02.012573 2168346 log.h:199] [tso_state_machine.cpp:434][save_snapshot][38654733940]save physical string:187976882157 when snapshot
+W1215 15:48:02.016960 2168346 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][98784278875]Truncating region_id: 2 to first index kept:15542 from first log index:14345
+W1215 15:48:02.016989 2168346 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][98784278875]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:15542 from first log index:15542
+W1215 15:48:02.017007 2168346 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][98784278875]tuncate log entry success, region_id: 2, truncate to first index kept:15542 from first log index:15542
+W1215 15:48:03.155568 2168440 log.h:199] [table_manager.cpp:145][run][34359764887]dblink_mysql_schemas size: 0
+W1215 15:48:13.155678 2168358 log.h:199] [table_manager.cpp:145][run][47244670986]dblink_mysql_schemas size: 0
+W1215 15:48:19.875525 2168440 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 26
+W1215 15:48:23.155773 2168372 log.h:199] [table_manager.cpp:145][run][77309440445]dblink_mysql_schemas size: 0
+W1215 15:48:33.155872 2168353 log.h:199] [table_manager.cpp:145][run][17179900256]dblink_mysql_schemas size: 0
+W1215 15:48:43.155964 2168416 log.h:199] [table_manager.cpp:145][run][12884927898]dblink_mysql_schemas size: 0
+W1215 15:48:51.564481 2168346 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 27
+W1215 15:48:53.156057 2168418 log.h:199] [table_manager.cpp:145][run][38654733610]dblink_mysql_schemas size: 0
+W1215 15:49:02.012701 2168396 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][90194342054]start on snapshot save
+W1215 15:49:02.012735 2168396 log.h:199] [tso_state_machine.cpp:434][save_snapshot][34359765508]save physical string:187976942295 when snapshot
+W1215 15:49:02.016980 2168396 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][60129573725]Truncating region_id: 2 to first index kept:16739 from first log index:15542
+W1215 15:49:02.017028 2168396 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][60129573725]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:16739 from first log index:16739
+W1215 15:49:02.017050 2168396 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][60129573725]tuncate log entry success, region_id: 2, truncate to first index kept:16739 from first log index:16739
+W1215 15:49:03.156148 2168415 log.h:199] [table_manager.cpp:145][run][47244668090]dblink_mysql_schemas size: 0
+W1215 15:49:13.156246 2168361 log.h:199] [table_manager.cpp:145][run][103079241226]dblink_mysql_schemas size: 0
+W1215 15:49:23.156350 2168353 log.h:199] [table_manager.cpp:145][run][21474867045]dblink_mysql_schemas size: 0
+W1215 15:49:23.272372 2168415 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 28
+W1215 15:49:33.156440 2168442 log.h:199] [table_manager.cpp:145][run][73014471432]dblink_mysql_schemas size: 0
+W1215 15:49:43.156527 2168414 log.h:199] [table_manager.cpp:145][run][34359768942]dblink_mysql_schemas size: 0
+W1215 15:49:53.156584 2168352 log.h:199] [table_manager.cpp:145][run][30064790786]dblink_mysql_schemas size: 0
+W1215 15:49:54.938737 2168363 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 29
+W1215 15:50:02.012869 2168363 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][55834604094]start on snapshot save
+W1215 15:50:02.012904 2168363 log.h:199] [tso_state_machine.cpp:434][save_snapshot][77309437388]save physical string:187977002426 when snapshot
+W1215 15:50:02.013954 2168363 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][55834606213]Truncating region_id: 2 to first index kept:17937 from first log index:16739
+W1215 15:50:02.014009 2168363 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][55834606213]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:17937 from first log index:17937
+W1215 15:50:02.014029 2168363 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][55834606213]tuncate log entry success, region_id: 2, truncate to first index kept:17937 from first log index:17937
+W1215 15:50:03.156678 2168372 log.h:199] [table_manager.cpp:145][run][21474864700]dblink_mysql_schemas size: 0
+W1215 15:50:10.815421 2168363 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][90194341353]Truncating region_id: 1 to first index kept:2 from first log index:1
+W1215 15:50:10.815465 2168363 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][90194341353]tuncate log entry success to write log_meta, region_id: 1, truncate to first index kept:2 from first log index:2
+W1215 15:50:10.815486 2168363 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][90194341353]tuncate log entry success, region_id: 1, truncate to first index kept:2 from first log index:2
+W1215 15:50:13.156790 2168415 log.h:199] [table_manager.cpp:145][run][81604406541]dblink_mysql_schemas size: 0
+W1215 15:50:23.156884 2168390 log.h:199] [table_manager.cpp:145][run][47244670005]dblink_mysql_schemas size: 0
+W1215 15:50:26.608564 2168363 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 30
+W1215 15:50:33.156992 2168361 log.h:199] [table_manager.cpp:145][run][94489306490]dblink_mysql_schemas size: 0
+W1215 15:50:43.157114 2168440 log.h:199] [table_manager.cpp:145][run][120259110672]dblink_mysql_schemas size: 0
+W1215 15:50:53.157212 2168367 log.h:199] [table_manager.cpp:145][run][77309440585]dblink_mysql_schemas size: 0
+W1215 15:50:58.310250 2168346 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 31
+W1215 15:51:02.013034 2168420 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][85899375826]start on snapshot save
+W1215 15:51:02.013084 2168420 log.h:199] [tso_state_machine.cpp:434][save_snapshot][77309438135]save physical string:187977062561 when snapshot
+W1215 15:51:02.017411 2168420 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][73014475559]Truncating region_id: 2 to first index kept:19134 from first log index:17937
+W1215 15:51:02.017444 2168420 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][73014475559]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:19134 from first log index:19134
+W1215 15:51:02.017464 2168420 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][73014475559]tuncate log entry success, region_id: 2, truncate to first index kept:19134 from first log index:19134
+W1215 15:51:03.157300 2168372 log.h:199] [table_manager.cpp:145][run][60129573650]dblink_mysql_schemas size: 0
+W1215 15:51:08.219192 2168390 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][141733946659]Truncating region_id: 0 to first index kept:3 from first log index:1
+W1215 15:51:08.219242 2168390 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][141733946659]tuncate log entry success to write log_meta, region_id: 0, truncate to first index kept:3 from first log index:3
+W1215 15:51:08.219265 2168390 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][141733946659]tuncate log entry success, region_id: 0, truncate to first index kept:3 from first log index:3
+W1215 15:51:13.157389 2168420 log.h:199] [table_manager.cpp:145][run][111669180225]dblink_mysql_schemas size: 0
+W1215 15:51:23.157474 2168442 log.h:199] [table_manager.cpp:145][run][64424536656]dblink_mysql_schemas size: 0
+W1215 15:51:30.000175 2168368 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 32
+W1215 15:51:33.157565 2168414 log.h:199] [table_manager.cpp:145][run][64424537347]dblink_mysql_schemas size: 0
+W1215 15:51:43.157617 2168414 log.h:199] [table_manager.cpp:145][run][55834603843]dblink_mysql_schemas size: 0
+W1215 15:51:53.157707 2168414 log.h:199] [table_manager.cpp:145][run][47244668419]dblink_mysql_schemas size: 0
+W1215 15:52:01.741672 2168415 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 33
+W1215 15:52:02.013190 2168433 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][158913820792]start on snapshot save
+W1215 15:52:02.013222 2168433 log.h:199] [tso_state_machine.cpp:434][save_snapshot][141733951092]save physical string:187977122699 when snapshot
+W1215 15:52:02.017403 2168433 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][47244668699]Truncating region_id: 2 to first index kept:20331 from first log index:19134
+W1215 15:52:02.017431 2168433 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][47244668699]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:20331 from first log index:20331
+W1215 15:52:02.017452 2168433 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][47244668699]tuncate log entry success, region_id: 2, truncate to first index kept:20331 from first log index:20331
+W1215 15:52:03.157799 2168363 log.h:199] [table_manager.cpp:145][run][68719504598]dblink_mysql_schemas size: 0
+W1215 15:52:13.157883 2168353 log.h:199] [table_manager.cpp:145][run][47244666299]dblink_mysql_schemas size: 0
+W1215 15:52:23.157976 2168408 log.h:199] [table_manager.cpp:145][run][51539637823]dblink_mysql_schemas size: 0
+W1215 15:52:33.158077 2168391 log.h:199] [table_manager.cpp:145][run][146028919317]dblink_mysql_schemas size: 0
+W1215 15:52:33.449541 2168396 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 34
+W1215 15:52:43.158183 2168440 log.h:199] [table_manager.cpp:145][run][34359739393]dblink_mysql_schemas size: 0
+W1215 15:52:53.158259 2168416 log.h:199] [table_manager.cpp:145][run][34359764721]dblink_mysql_schemas size: 0
+W1215 15:53:02.013414 2168420 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][64424537651]start on snapshot save
+W1215 15:53:02.013479 2168420 log.h:199] [tso_state_machine.cpp:434][save_snapshot][85899373818]save physical string:187977182842 when snapshot
+W1215 15:53:02.017721 2168420 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][158913819111]Truncating region_id: 2 to first index kept:21529 from first log index:20331
+W1215 15:53:02.017756 2168420 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][158913819111]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:21529 from first log index:21529
+W1215 15:53:02.017776 2168420 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][158913819111]tuncate log entry success, region_id: 2, truncate to first index kept:21529 from first log index:21529
+W1215 15:53:03.158327 2168396 log.h:199] [table_manager.cpp:145][run][77309438118]dblink_mysql_schemas size: 0
+W1215 15:53:05.244897 2168368 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 35
+W1215 15:53:13.158421 2168391 log.h:199] [table_manager.cpp:145][run][64424539967]dblink_mysql_schemas size: 0
+W1215 15:53:23.158514 2168418 log.h:199] [table_manager.cpp:145][run][111669180614]dblink_mysql_schemas size: 0
+W1215 15:53:33.158630 2168395 log.h:199] [table_manager.cpp:145][run][25769830914]dblink_mysql_schemas size: 0
+W1215 15:53:36.999136 2168408 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 36
+W1215 15:53:43.158728 2168365 log.h:199] [table_manager.cpp:145][run][98784274588]dblink_mysql_schemas size: 0
+W1215 15:53:53.158842 2168395 log.h:199] [table_manager.cpp:145][run][98784277605]dblink_mysql_schemas size: 0
+W1215 15:54:02.013577 2168352 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][42949700921]start on snapshot save
+W1215 15:54:02.013633 2168352 log.h:199] [tso_state_machine.cpp:434][save_snapshot][51539635428]save physical string:187977242985 when snapshot
+W1215 15:54:02.017838 2168352 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][115964143271]Truncating region_id: 2 to first index kept:22726 from first log index:21529
+W1215 15:54:02.017866 2168352 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][115964143271]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:22726 from first log index:22726
+W1215 15:54:02.017887 2168352 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][115964143271]tuncate log entry success, region_id: 2, truncate to first index kept:22726 from first log index:22726
+W1215 15:54:03.158946 2168346 log.h:199] [table_manager.cpp:145][run][81604409692]dblink_mysql_schemas size: 0
+W1215 15:54:08.769244 2168376 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 37
+W1215 15:54:09.721019 2168468 log.h:199] [my_listener.h:31][OnFlushCompleted][0]OnFlushCompleted, cf:raft_log file_number:22
+W1215 15:54:13.159032 2168395 log.h:199] [table_manager.cpp:145][run][90194342395]dblink_mysql_schemas size: 0
+W1215 15:54:23.159116 2168358 log.h:199] [table_manager.cpp:145][run][85899373967]dblink_mysql_schemas size: 0
+W1215 15:54:33.159214 2168346 log.h:199] [table_manager.cpp:145][run][42949702461]dblink_mysql_schemas size: 0
+W1215 15:54:40.481596 2168408 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 38
+W1215 15:54:43.159304 2168390 log.h:199] [table_manager.cpp:145][run][77309441317]dblink_mysql_schemas size: 0
+W1215 15:54:53.159394 2168365 log.h:199] [table_manager.cpp:145][run][73014471395]dblink_mysql_schemas size: 0
+W1215 15:55:02.013731 2168372 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][90194339602]start on snapshot save
+W1215 15:55:02.013773 2168372 log.h:199] [tso_state_machine.cpp:434][save_snapshot][94489306928]save physical string:187977303120 when snapshot
+W1215 15:55:02.018024 2168372 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][60129568010]Truncating region_id: 2 to first index kept:23923 from first log index:22726
+W1215 15:55:02.018055 2168372 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][60129568010]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:23923 from first log index:23923
+W1215 15:55:02.018078 2168372 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][60129568010]tuncate log entry success, region_id: 2, truncate to first index kept:23923 from first log index:23923
+W1215 15:55:03.159482 2168367 log.h:199] [table_manager.cpp:145][run][30064802124]dblink_mysql_schemas size: 0
+W1215 15:55:12.149252 2168391 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 39
+W1215 15:55:13.159577 2168372 log.h:199] [table_manager.cpp:145][run][107374212658]dblink_mysql_schemas size: 0
+W1215 15:55:23.159672 2168383 log.h:199] [table_manager.cpp:145][run][81604408274]dblink_mysql_schemas size: 0
+W1215 15:55:33.159773 2168372 log.h:199] [table_manager.cpp:145][run][68719507209]dblink_mysql_schemas size: 0
+W1215 15:55:43.159883 2168396 log.h:199] [table_manager.cpp:145][run][73014474740]dblink_mysql_schemas size: 0
+W1215 15:55:43.864739 2168420 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 40
+W1215 15:55:53.159979 2168433 log.h:199] [table_manager.cpp:145][run][42949702291]dblink_mysql_schemas size: 0
+W1215 15:56:02.013882 2168442 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][128849046175]start on snapshot save
+W1215 15:56:02.013916 2168442 log.h:199] [tso_state_machine.cpp:434][save_snapshot][128849044865]save physical string:187977363257 when snapshot
+W1215 15:56:02.018185 2168442 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][60129569001]Truncating region_id: 2 to first index kept:25120 from first log index:23923
+W1215 15:56:02.018206 2168442 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][60129569001]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:25120 from first log index:25120
+W1215 15:56:02.018225 2168442 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][60129569001]tuncate log entry success, region_id: 2, truncate to first index kept:25120 from first log index:25120
+W1215 15:56:03.160089 2168358 log.h:199] [table_manager.cpp:145][run][73014472456]dblink_mysql_schemas size: 0
+W1215 15:56:13.160188 2168415 log.h:199] [table_manager.cpp:145][run][51539637626]dblink_mysql_schemas size: 0
+W1215 15:56:15.578214 2168396 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 41
+W1215 15:56:23.160300 2168418 log.h:199] [table_manager.cpp:145][run][171798723128]dblink_mysql_schemas size: 0
+W1215 15:56:33.160411 2168352 log.h:199] [table_manager.cpp:145][run][146028917462]dblink_mysql_schemas size: 0
+W1215 15:56:43.160494 2168395 log.h:199] [table_manager.cpp:145][run][85899375409]dblink_mysql_schemas size: 0
+W1215 15:56:47.271631 2168414 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 42
+W1215 15:56:53.160589 2168372 log.h:199] [table_manager.cpp:145][run][73014474735]dblink_mysql_schemas size: 0
+W1215 15:57:02.014067 2168432 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][94489311784]start on snapshot save
+W1215 15:57:02.014117 2168432 log.h:199] [tso_state_machine.cpp:434][save_snapshot][90194342398]save physical string:187977423397 when snapshot
+W1215 15:57:02.018396 2168432 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][107374209499]Truncating region_id: 2 to first index kept:26318 from first log index:25120
+W1215 15:57:02.018428 2168432 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][107374209499]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:26318 from first log index:26318
+W1215 15:57:02.018450 2168432 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][107374209499]tuncate log entry success, region_id: 2, truncate to first index kept:26318 from first log index:26318
+W1215 15:57:03.160691 2168346 log.h:199] [table_manager.cpp:145][run][103079244088]dblink_mysql_schemas size: 0
+W1215 15:57:13.160790 2168414 log.h:199] [table_manager.cpp:145][run][214748395494]dblink_mysql_schemas size: 0
+W1215 15:57:18.987447 2168346 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 43
+W1215 15:57:23.160892 2168391 log.h:199] [table_manager.cpp:145][run][111669176348]dblink_mysql_schemas size: 0
+W1215 15:57:33.160979 2168415 log.h:199] [table_manager.cpp:145][run][25769835262]dblink_mysql_schemas size: 0
+W1215 15:57:43.161068 2168431 log.h:199] [table_manager.cpp:145][run][51539638393]dblink_mysql_schemas size: 0
+W1215 15:57:50.695214 2168358 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 44
+W1215 15:57:51.157595 2168383 log.h:199] [region_manager.cpp:1088][leader_load_balance][176093686857]instance:  can not find idc
+W1215 15:57:53.161162 2168415 log.h:199] [table_manager.cpp:145][run][111669178789]dblink_mysql_schemas size: 0
+W1215 15:58:02.014225 2168372 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][120259111382]start on snapshot save
+W1215 15:58:02.014261 2168372 log.h:199] [tso_state_machine.cpp:434][save_snapshot][94489309893]save physical string:187977483529 when snapshot
+W1215 15:58:02.018388 2168372 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][128849044969]Truncating region_id: 2 to first index kept:27515 from first log index:26318
+W1215 15:58:02.018414 2168372 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][128849044969]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:27515 from first log index:27515
+W1215 15:58:02.018435 2168372 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][128849044969]tuncate log entry success, region_id: 2, truncate to first index kept:27515 from first log index:27515
+W1215 15:58:03.161267 2168352 log.h:199] [table_manager.cpp:145][run][133144015683]dblink_mysql_schemas size: 0
+W1215 15:58:13.161362 2168418 log.h:199] [table_manager.cpp:145][run][68719503030]dblink_mysql_schemas size: 0
+W1215 15:58:22.387058 2168368 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 45
+W1215 15:58:23.161454 2168408 log.h:199] [table_manager.cpp:145][run][55834601536]dblink_mysql_schemas size: 0
+W1215 15:58:33.161563 2168442 log.h:199] [table_manager.cpp:145][run][90194341956]dblink_mysql_schemas size: 0
+W1215 15:58:43.161618 2168433 log.h:199] [table_manager.cpp:145][run][146028918833]dblink_mysql_schemas size: 0
+W1215 15:58:53.161710 2168433 log.h:199] [table_manager.cpp:145][run][266287998820]dblink_mysql_schemas size: 0
+W1215 15:58:54.079413 2168363 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 46
+W1215 15:59:02.014417 2168383 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][68719506168]start on snapshot save
+W1215 15:59:02.014453 2168383 log.h:199] [tso_state_machine.cpp:434][save_snapshot][47244669255]save physical string:187977543673 when snapshot
+W1215 15:59:02.015453 2168383 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][133144017425]Truncating region_id: 2 to first index kept:28712 from first log index:27515
+W1215 15:59:02.015508 2168383 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][133144017425]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:28712 from first log index:28712
+W1215 15:59:02.015529 2168383 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][133144017425]tuncate log entry success, region_id: 2, truncate to first index kept:28712 from first log index:28712
+W1215 15:59:03.161799 2168372 log.h:199] [table_manager.cpp:145][run][163208784626]dblink_mysql_schemas size: 0
+W1215 15:59:13.161845 2168420 log.h:199] [table_manager.cpp:145][run][120259115721]dblink_mysql_schemas size: 0
+W1215 15:59:23.161939 2168415 log.h:199] [table_manager.cpp:145][run][103079244586]dblink_mysql_schemas size: 0
+W1215 15:59:25.752933 2168432 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 47
+W1215 15:59:33.162036 2168358 log.h:199] [table_manager.cpp:145][run][146028915560]dblink_mysql_schemas size: 0
+W1215 15:59:43.162139 2168353 log.h:199] [table_manager.cpp:145][run][184683620784]dblink_mysql_schemas size: 0
+W1215 15:59:53.162236 2168418 log.h:199] [table_manager.cpp:145][run][111669180803]dblink_mysql_schemas size: 0
+W1215 15:59:57.486352 2168346 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 48
+W1215 16:00:02.014575 2168432 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][120259115296]start on snapshot save
+W1215 16:00:02.014622 2168432 log.h:199] [tso_state_machine.cpp:434][save_snapshot][107374210180]save physical string:187977603809 when snapshot
+W1215 16:00:02.018954 2168432 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][115964143458]Truncating region_id: 2 to first index kept:29909 from first log index:28712
+W1215 16:00:02.018976 2168432 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][115964143458]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:29909 from first log index:29909
+W1215 16:00:02.018996 2168432 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][115964143458]tuncate log entry success, region_id: 2, truncate to first index kept:29909 from first log index:29909
+W1215 16:00:03.162329 2168408 log.h:199] [table_manager.cpp:145][run][90194339532]dblink_mysql_schemas size: 0
+W1215 16:00:13.162420 2168372 log.h:199] [table_manager.cpp:145][run][60129570402]dblink_mysql_schemas size: 0
+W1215 16:00:23.162506 2168367 log.h:199] [table_manager.cpp:145][run][206158460195]dblink_mysql_schemas size: 0
+W1215 16:00:29.195555 2168376 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 49
+W1215 16:00:33.162596 2168372 log.h:199] [table_manager.cpp:145][run][81604406957]dblink_mysql_schemas size: 0
+W1215 16:00:43.162689 2168440 log.h:199] [table_manager.cpp:145][run][73014472055]dblink_mysql_schemas size: 0
+W1215 16:00:53.162779 2168353 log.h:199] [table_manager.cpp:145][run][98784278516]dblink_mysql_schemas size: 0
+W1215 16:01:00.919085 2168363 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 50
+W1215 16:01:02.014735 2168365 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][163208788763]start on snapshot save
+W1215 16:01:02.014772 2168365 log.h:199] [tso_state_machine.cpp:434][save_snapshot][184683620933]save physical string:187977663943 when snapshot
+W1215 16:01:02.019093 2168365 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][197568524523]Truncating region_id: 2 to first index kept:31107 from first log index:29909
+W1215 16:01:02.019129 2168365 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][197568524523]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:31107 from first log index:31107
+W1215 16:01:02.019151 2168365 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][197568524523]tuncate log entry success, region_id: 2, truncate to first index kept:31107 from first log index:31107
+W1215 16:01:03.162886 2168368 log.h:199] [table_manager.cpp:145][run][111669179901]dblink_mysql_schemas size: 0
+W1215 16:01:13.163008 2168365 log.h:199] [table_manager.cpp:145][run][64424539355]dblink_mysql_schemas size: 0
+W1215 16:01:23.163115 2168383 log.h:199] [table_manager.cpp:145][run][176093685139]dblink_mysql_schemas size: 0
+W1215 16:01:32.639727 2168363 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 51
+W1215 16:01:33.163216 2168418 log.h:199] [table_manager.cpp:145][run][197568523860]dblink_mysql_schemas size: 0
+W1215 16:01:43.163308 2168440 log.h:199] [table_manager.cpp:145][run][313532639208]dblink_mysql_schemas size: 0
+W1215 16:01:53.163398 2168383 log.h:199] [table_manager.cpp:145][run][219043363000]dblink_mysql_schemas size: 0
+W1215 16:02:02.014901 2168390 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][219043363070]start on snapshot save
+W1215 16:02:02.014935 2168390 log.h:199] [tso_state_machine.cpp:434][save_snapshot][107374207749]save physical string:187977724082 when snapshot
+W1215 16:02:02.015941 2168390 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][167503751016]Truncating region_id: 2 to first index kept:32304 from first log index:31107
+W1215 16:02:02.015974 2168390 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][167503751016]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:32304 from first log index:32304
+W1215 16:02:02.015995 2168390 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][167503751016]tuncate log entry success, region_id: 2, truncate to first index kept:32304 from first log index:32304
+W1215 16:02:03.163503 2168367 log.h:199] [table_manager.cpp:145][run][111669175833]dblink_mysql_schemas size: 0
+W1215 16:02:04.373000 2168367 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 52
+W1215 16:02:13.163594 2168442 log.h:199] [table_manager.cpp:145][run][141733947704]dblink_mysql_schemas size: 0
+W1215 16:02:23.163692 2168367 log.h:199] [table_manager.cpp:145][run][85899375973]dblink_mysql_schemas size: 0
+W1215 16:02:33.163810 2168365 log.h:199] [table_manager.cpp:145][run][107374208595]dblink_mysql_schemas size: 0
+W1215 16:02:36.113016 2168396 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 53
+W1215 16:02:43.163915 2168416 log.h:199] [table_manager.cpp:145][run][124554078694]dblink_mysql_schemas size: 0
+W1215 16:02:53.164026 2168372 log.h:199] [table_manager.cpp:145][run][55834604278]dblink_mysql_schemas size: 0
+W1215 16:03:02.015090 2168376 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][219043362893]start on snapshot save
+W1215 16:03:02.015143 2168376 log.h:199] [tso_state_machine.cpp:434][save_snapshot][141733946993]save physical string:187977784218 when snapshot
+W1215 16:03:02.022006 2168376 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][128849050268]Truncating region_id: 2 to first index kept:33501 from first log index:32304
+W1215 16:03:02.022050 2168376 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][128849050268]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:33501 from first log index:33501
+W1215 16:03:02.022079 2168376 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][128849050268]tuncate log entry success, region_id: 2, truncate to first index kept:33501 from first log index:33501
+W1215 16:03:03.164122 2168416 log.h:199] [table_manager.cpp:145][run][90194342710]dblink_mysql_schemas size: 0
+W1215 16:03:07.799028 2168390 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 54
+W1215 16:03:13.164209 2168346 log.h:199] [table_manager.cpp:145][run][171798719616]dblink_mysql_schemas size: 0
+W1215 16:03:23.164310 2168372 log.h:199] [table_manager.cpp:145][run][115964144554]dblink_mysql_schemas size: 0
+W1215 16:03:33.164417 2168408 log.h:199] [table_manager.cpp:145][run][90194343267]dblink_mysql_schemas size: 0
+W1215 16:03:39.546847 2168361 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 55
+W1215 16:03:43.164538 2168408 log.h:199] [table_manager.cpp:145][run][107374210334]dblink_mysql_schemas size: 0
+W1215 16:03:53.164618 2168352 log.h:199] [table_manager.cpp:145][run][176093687616]dblink_mysql_schemas size: 0
+W1215 16:04:02.015273 2168433 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][111669178330]start on snapshot save
+W1215 16:04:02.015308 2168433 log.h:199] [tso_state_machine.cpp:434][save_snapshot][137438983287]save physical string:187977844362 when snapshot
+W1215 16:04:02.019768 2168433 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][73014472318]Truncating region_id: 2 to first index kept:34698 from first log index:33501
+W1215 16:04:02.019827 2168433 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][73014472318]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:34698 from first log index:34698
+W1215 16:04:02.019850 2168433 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][73014472318]tuncate log entry success, region_id: 2, truncate to first index kept:34698 from first log index:34698
+W1215 16:04:03.164738 2168415 log.h:199] [table_manager.cpp:145][run][85899376148]dblink_mysql_schemas size: 0
+W1215 16:04:11.293381 2168361 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 56
+W1215 16:04:12.979763 2168467 log.h:199] [my_listener.h:31][OnFlushCompleted][0]OnFlushCompleted, cf:raft_log file_number:24
+W1215 16:04:13.164844 2168442 log.h:199] [table_manager.cpp:145][run][107374208265]dblink_mysql_schemas size: 0
+W1215 16:04:23.164927 2168376 log.h:199] [table_manager.cpp:145][run][231928264031]dblink_mysql_schemas size: 0
+W1215 16:04:33.165016 2168440 log.h:199] [table_manager.cpp:145][run][231928261752]dblink_mysql_schemas size: 0
+W1215 16:04:43.008586 2168414 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 57
+W1215 16:04:43.165119 2168395 log.h:199] [table_manager.cpp:145][run][171798719441]dblink_mysql_schemas size: 0
+W1215 16:04:53.165206 2168418 log.h:199] [table_manager.cpp:145][run][94489307053]dblink_mysql_schemas size: 0
+W1215 16:05:02.015429 2168431 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][60129569553]start on snapshot save
+W1215 16:05:02.015465 2168431 log.h:199] [tso_state_machine.cpp:434][save_snapshot][120259111872]save physical string:187977904498 when snapshot
+W1215 16:05:02.019819 2168431 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][68719507905]Truncating region_id: 2 to first index kept:35896 from first log index:34698
+W1215 16:05:02.019841 2168431 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][68719507905]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:35896 from first log index:35896
+W1215 16:05:02.019862 2168431 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][68719507905]tuncate log entry success, region_id: 2, truncate to first index kept:35896 from first log index:35896
+W1215 16:05:03.165303 2168358 log.h:199] [table_manager.cpp:145][run][30064796928]dblink_mysql_schemas size: 0
+W1215 16:05:13.165395 2168415 log.h:199] [table_manager.cpp:145][run][85899375796]dblink_mysql_schemas size: 0
+W1215 16:05:14.717890 2168383 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 58
+W1215 16:05:23.165482 2168367 log.h:199] [table_manager.cpp:145][run][184683622903]dblink_mysql_schemas size: 0
+W1215 16:05:33.165556 2168352 log.h:199] [table_manager.cpp:145][run][94489308802]dblink_mysql_schemas size: 0
+W1215 16:05:43.165627 2168383 log.h:199] [table_manager.cpp:145][run][279172905526]dblink_mysql_schemas size: 0
+W1215 16:05:46.474285 2168431 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 59
+W1215 16:05:53.165737 2168433 log.h:199] [table_manager.cpp:145][run][236223232082]dblink_mysql_schemas size: 0
+W1215 16:06:02.015591 2168440 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][133144015820]start on snapshot save
+W1215 16:06:02.015628 2168440 log.h:199] [tso_state_machine.cpp:434][save_snapshot][154618848526]save physical string:187977964646 when snapshot
+W1215 16:06:02.019994 2168440 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][236223229782]Truncating region_id: 2 to first index kept:37093 from first log index:35896
+W1215 16:06:02.020021 2168440 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][236223229782]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:37093 from first log index:37093
+W1215 16:06:02.020041 2168440 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][236223229782]tuncate log entry success, region_id: 2, truncate to first index kept:37093 from first log index:37093
+W1215 16:06:03.165788 2168390 log.h:199] [table_manager.cpp:145][run][90194342950]dblink_mysql_schemas size: 0
+W1215 16:06:13.165895 2168414 log.h:199] [table_manager.cpp:145][run][124554078034]dblink_mysql_schemas size: 0
+W1215 16:06:18.205015 2168368 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 60
+W1215 16:06:23.165995 2168358 log.h:199] [table_manager.cpp:145][run][90194344467]dblink_mysql_schemas size: 0
+W1215 16:06:33.166087 2168391 log.h:199] [table_manager.cpp:145][run][171798720895]dblink_mysql_schemas size: 0
+W1215 16:06:43.166175 2168346 log.h:199] [table_manager.cpp:145][run][103079241961]dblink_mysql_schemas size: 0
+W1215 16:06:49.909255 2168414 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 61
+W1215 16:06:53.166244 2168365 log.h:199] [table_manager.cpp:145][run][163208787779]dblink_mysql_schemas size: 0
+W1215 16:07:02.015790 2168416 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][98784276280]start on snapshot save
+W1215 16:07:02.015846 2168416 log.h:199] [tso_state_machine.cpp:434][save_snapshot][120259113967]save physical string:187978024783 when snapshot
+W1215 16:07:02.020357 2168416 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][146028918032]Truncating region_id: 2 to first index kept:38290 from first log index:37093
+W1215 16:07:02.020401 2168416 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][146028918032]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:38290 from first log index:38290
+W1215 16:07:02.020429 2168416 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][146028918032]tuncate log entry success, region_id: 2, truncate to first index kept:38290 from first log index:38290
+W1215 16:07:03.166334 2168395 log.h:199] [table_manager.cpp:145][run][287762835243]dblink_mysql_schemas size: 0
+W1215 16:07:13.166433 2168390 log.h:199] [table_manager.cpp:145][run][94489308596]dblink_mysql_schemas size: 0
+W1215 16:07:21.640331 2168416 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 62
+W1215 16:07:23.166518 2168396 log.h:199] [table_manager.cpp:145][run][150323881470]dblink_mysql_schemas size: 0
+W1215 16:07:33.166602 2168391 log.h:199] [table_manager.cpp:145][run][120259115345]dblink_mysql_schemas size: 0
+W1215 16:07:43.166683 2168416 log.h:199] [table_manager.cpp:145][run][42949701589]dblink_mysql_schemas size: 0
+W1215 16:07:53.166777 2168352 log.h:199] [table_manager.cpp:145][run][111669178108]dblink_mysql_schemas size: 0
+W1215 16:07:53.353231 2168361 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 63
+W1215 16:08:02.015949 2168408 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][184683621573]start on snapshot save
+W1215 16:08:02.015982 2168408 log.h:199] [tso_state_machine.cpp:434][save_snapshot][193273557305]save physical string:187978084923 when snapshot
+W1215 16:08:02.020255 2168408 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][81604407465]Truncating region_id: 2 to first index kept:39487 from first log index:38290
+W1215 16:08:02.020282 2168408 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][81604407465]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:39487 from first log index:39487
+W1215 16:08:02.020299 2168408 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][81604407465]tuncate log entry success, region_id: 2, truncate to first index kept:39487 from first log index:39487
+W1215 16:08:03.166869 2168408 log.h:199] [table_manager.cpp:145][run][73014471354]dblink_mysql_schemas size: 0
+W1215 16:08:13.166960 2168414 log.h:199] [table_manager.cpp:145][run][73014474469]dblink_mysql_schemas size: 0
+W1215 16:08:23.167052 2168361 log.h:199] [table_manager.cpp:145][run][150323881234]dblink_mysql_schemas size: 0
+W1215 16:08:25.123731 2168408 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 64
+W1215 16:08:33.167148 2168414 log.h:199] [table_manager.cpp:145][run][180388653926]dblink_mysql_schemas size: 0
+W1215 16:08:43.167248 2168420 log.h:199] [table_manager.cpp:145][run][219043361235]dblink_mysql_schemas size: 0
+W1215 16:08:53.167349 2168372 log.h:199] [table_manager.cpp:145][run][167503751128]dblink_mysql_schemas size: 0
+W1215 16:08:56.848973 2168408 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 65
+W1215 16:09:02.016125 2168363 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][103079242094]start on snapshot save
+W1215 16:09:02.016223 2168432 log.h:199] [tso_state_machine.cpp:434][save_snapshot][261993035724]save physical string:187978142063 when snapshot
+W1215 16:09:02.020627 2168432 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][201863493916]Truncating region_id: 2 to first index kept:40684 from first log index:39487
+W1215 16:09:02.020655 2168432 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][201863493916]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:40684 from first log index:40684
+W1215 16:09:02.020679 2168432 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][201863493916]tuncate log entry success, region_id: 2, truncate to first index kept:40684 from first log index:40684
+W1215 16:09:03.167445 2168431 log.h:199] [table_manager.cpp:145][run][120259110993]dblink_mysql_schemas size: 0
+W1215 16:09:13.167533 2168368 log.h:199] [table_manager.cpp:145][run][150323885397]dblink_mysql_schemas size: 0
+W1215 16:09:23.167619 2168440 log.h:199] [table_manager.cpp:145][run][128849049843]dblink_mysql_schemas size: 0
+W1215 16:09:28.546026 2168367 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 66
+W1215 16:09:33.167712 2168363 log.h:199] [table_manager.cpp:145][run][103079245375]dblink_mysql_schemas size: 0
+W1215 16:09:43.167791 2168368 log.h:199] [table_manager.cpp:145][run][249108129759]dblink_mysql_schemas size: 0
+W1215 16:09:53.167888 2168433 log.h:199] [table_manager.cpp:145][run][81604410111]dblink_mysql_schemas size: 0
+W1215 16:10:00.271909 2168346 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 67
+W1215 16:10:02.016290 2168440 log.h:199] [tso_state_machine.cpp:410][on_snapshot_save][141733951172]start on snapshot save
+W1215 16:10:02.016332 2168440 log.h:199] [tso_state_machine.cpp:434][save_snapshot][201863492635]save physical string:187978202193 when snapshot
+W1215 16:10:02.020805 2168352 log.h:199] [my_raft_log_storage.cpp:452][truncate_prefix][163208787034]Truncating region_id: 2 to first index kept:41881 from first log index:40684
+W1215 16:10:02.020848 2168352 log.h:199] [my_raft_log_storage.cpp:486][truncate_prefix][163208787034]tuncate log entry success to write log_meta, region_id: 2, truncate to first index kept:41881 from first log index:41881
+W1215 16:10:02.020875 2168352 log.h:199] [my_raft_log_storage.cpp:508][truncate_prefix][163208787034]tuncate log entry success, region_id: 2, truncate to first index kept:41881 from first log index:41881
+W1215 16:10:03.167984 2168420 log.h:199] [table_manager.cpp:145][run][206158457397]dblink_mysql_schemas size: 0
+W1215 16:10:13.168071 2168415 log.h:199] [table_manager.cpp:145][run][184683624608]dblink_mysql_schemas size: 0
+W1215 16:10:23.168181 2168363 log.h:199] [table_manager.cpp:145][run][197568524413]dblink_mysql_schemas size: 0
+W1215 16:10:32.022982 2168390 log.h:199] [meta_state_machine.cpp:726][healthy_check_function][8589959939]start healthy check(region and store), count: 68
+W1215 16:10:33.168277 2168368 log.h:199] [table_manager.cpp:145][run][77309441071]dblink_mysql_schemas size: 0
+W1215 16:10:43.168370 2168346 log.h:199] [table_manager.cpp:145][run][137438980021]dblink_mysql_schemas size: 0
+W1215 16:10:53.168478 2168416 log.h:199] [table_manager.cpp:145][run][103079242630]dblink_mysql_schemas size: 0

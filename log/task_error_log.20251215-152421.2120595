@@ -1,0 +1,5 @@
+Log file created at: 2025/12/15 15:24:21
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E1215 15:24:21.787420 2120595 server.cpp:1105] Fail to listen 0.0.0.0:16379
+E1215 15:24:21.787969 2120595 log.h:207] [main.cpp:224][main][0]Fail to start redis server

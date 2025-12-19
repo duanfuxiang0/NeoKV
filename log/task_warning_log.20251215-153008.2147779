@@ -1,0 +1,117 @@
+Log file created at: 2025/12/15 15:30:08
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1215 15:30:08.912437 2147779 log.h:199] [main.cpp:53][main][0]log file load success
+W1215 15:30:08.912635 2147779 log.h:199] [my_raft_log.cpp:39][register_once_or_die][0]Registered myraft extension
+W1215 15:30:08.914997 2147779 log.h:199] [main.cpp:68][main][0]add raft to baidu-rpc server success
+W1215 15:30:08.915014 2147779 log.h:199] [main.cpp:104][main][0]raft_peer:127.0.0.1:8010
+W1215 15:30:08.917037 2147779 log.h:199] [main.cpp:121][main][0]baidu-rpc server start
+W1215 15:30:08.933583 2147779 log.h:199] [rocks_wrapper.cpp:386][init][0]open db:./meta_data/rocks_db success
+W1215 15:30:08.936280 2147779 log.h:199] [rocks_wrapper.cpp:424][init][0]create column family success, column family:raft_log
+W1215 15:30:08.941725 2147779 log.h:199] [rocks_wrapper.cpp:437][init][0]create column family success, column family:data
+W1215 15:30:08.944537 2147779 log.h:199] [rocks_wrapper.cpp:449][init][0]create column family success, column family:meta_info
+W1215 15:30:08.947360 2147779 log.h:199] [rocks_wrapper.cpp:462][init][0]create column family success, column family:bin_log_new
+W1215 15:30:08.947369 2147779 log.h:199] [rocks_wrapper.cpp:484][init_cold_rocksdb][0]not init cold rocksdb
+W1215 15:30:08.947386 2147779 log.h:199] [rocks_wrapper.cpp:769][update_oldest_ts_in_binlog_cf][0]has no data in binlog cf
+W1215 15:30:08.947392 2147779 log.h:199] [rocks_wrapper.cpp:478][init][0]rocksdb init success
+W1215 15:30:08.947395 2147779 log.h:199] [meta_rocksdb.cpp:32][init][0]rocksdb init success, db_path:./meta_data/rocks_db
+W1215 15:30:08.947440 2147779 log.h:199] [my_raft_log_storage.cpp:38][parse_my_raft_log_uri][0]uri:my_raft_log?id=0, id:0, is_binlog:0
+W1215 15:30:08.947445 2147779 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 0, index:0
+W1215 15:30:08.947523 2147779 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 0, index:1
+W1215 15:30:08.947526 2147779 log.h:199] [my_raft_log_storage.cpp:237][init][0]region_id: 0, first_log_index:1, last_log_index:0, time_cost: 76
+W1215 15:30:08.947530 2147779 log.h:199] [my_raft_log_storage.cpp:349][get_term][0]index is greater than last_log_index or less than first_log_index, index:0, first_log_index:1, last_log_index:0, region_id: 0
+W1215 15:30:08.947646 2147779 protobuf_file.cpp:91] open file failed, path: ./raft_data/stable/meta_server/raft_meta: FILE_ERROR_NOT_FOUND
+W1215 15:30:08.947674 2147779 log.h:199] [common_state_machine.cpp:150][init][0]raft init success, meat state machine init success
+W1215 15:30:08.947676 2147779 log.h:199] [meta_server.cpp:94][init][0]meta state machine init success
+W1215 15:30:08.947681 2147779 log.h:199] [my_raft_log_storage.cpp:38][parse_my_raft_log_uri][0]uri:my_raft_log?id=1, id:1, is_binlog:0
+W1215 15:30:08.947683 2147779 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 1, index:0
+W1215 15:30:08.947697 2147779 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 1, index:1
+W1215 15:30:08.947700 2147779 log.h:199] [my_raft_log_storage.cpp:237][init][0]region_id: 1, first_log_index:1, last_log_index:0, time_cost: 12
+W1215 15:30:08.947701 2147779 log.h:199] [my_raft_log_storage.cpp:349][get_term][0]index is greater than last_log_index or less than first_log_index, index:0, first_log_index:1, last_log_index:0, region_id: 1
+W1215 15:30:08.947741 2147779 protobuf_file.cpp:91] open file failed, path: ./raft_data/stable/auto_incr/raft_meta: FILE_ERROR_NOT_FOUND
+W1215 15:30:08.947748 2147779 log.h:199] [common_state_machine.cpp:150][init][0]raft init success, meat state machine init success
+W1215 15:30:08.947750 2147779 log.h:199] [meta_server.cpp:106][init][0]auot_incr_state_machine init success
+W1215 15:30:08.947757 2147779 log.h:199] [my_raft_log_storage.cpp:38][parse_my_raft_log_uri][0]uri:my_raft_log?id=2, id:2, is_binlog:0
+W1215 15:30:08.947762 2147779 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 2, index:0
+W1215 15:30:08.947770 2147779 log.h:199] [raft_log_compaction_filter.h:66][update_first_index_map][0]update compaction fileter, region_id: 2, index:1
+W1215 15:30:08.947772 2147779 log.h:199] [my_raft_log_storage.cpp:237][init][0]region_id: 2, first_log_index:1, last_log_index:0, time_cost: 8
+W1215 15:30:08.947774 2147779 log.h:199] [my_raft_log_storage.cpp:349][get_term][0]index is greater than last_log_index or less than first_log_index, index:0, first_log_index:1, last_log_index:0, region_id: 2
+W1215 15:30:08.947804 2147779 protobuf_file.cpp:91] open file failed, path: ./raft_data/stable/tso/raft_meta: FILE_ERROR_NOT_FOUND
+W1215 15:30:08.947815 2147779 log.h:199] [tso_state_machine.cpp:78][init][0]raft init success, meat state machine init success
+W1215 15:30:08.947818 2147779 log.h:199] [meta_server.cpp:118][init][0]_tso_state_machine init success
+W1215 15:30:08.947893 2147779 log.h:199] [main.cpp:151][main][0]meta server init success
+W1215 15:30:19.199950 2147817 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589937921]NOT LEADER, logid:10674292846501901154
+W1215 15:30:19.200569 2147840 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][4294976513]NOT LEADER, logid:10674292846501901154
+W1215 15:30:19.201129 2147847 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][4294978049]NOT LEADER, logid:10674292846501901154
+W1215 15:30:19.201210 2147847 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589945345]NOT LEADER, logid:10674292846501901154
+W1215 15:30:19.201273 2147847 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884912641]NOT LEADER, logid:10674292846501901154
+W1215 15:30:19.201308 2147847 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][17179879937]NOT LEADER, logid:10674292846501901154
+W1215 15:30:20.788906 2147808 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:22.430852 2147879 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:23.442981 2147811 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:30.022926 2147863 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589949441]NOT LEADER, logid:2913683145186769786
+W1215 15:30:30.023324 2147863 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884916737]NOT LEADER, logid:2913683145186769786
+W1215 15:30:30.023411 2147863 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][17179884033]NOT LEADER, logid:2913683145186769786
+W1215 15:30:30.023445 2147863 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][21474851329]NOT LEADER, logid:2913683145186769786
+W1215 15:30:30.023479 2147863 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][25769818625]NOT LEADER, logid:2913683145186769786
+W1215 15:30:30.023510 2147863 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][30064785921]NOT LEADER, logid:2913683145186769786
+W1215 15:30:32.596704 2147891 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589956353]NOT LEADER, logid:7364296980228243230
+W1215 15:30:32.599006 2147891 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884923649]NOT LEADER, logid:7364296980228243230
+W1215 15:30:32.599231 2147901 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][4294991617]NOT LEADER, logid:7364296980228243230
+W1215 15:30:32.600973 2147807 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][4294968321]NOT LEADER, logid:7364296980228243230
+W1215 15:30:32.601109 2147807 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589935617]NOT LEADER, logid:7364296980228243230
+W1215 15:30:32.601155 2147807 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884902913]NOT LEADER, logid:7364296980228243230
+W1215 15:30:32.755995 2147902 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:34.769102 2147879 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:35.243070 2147812 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:45.458171 2147811 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:48.218241 2147834 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:49.585188 2147812 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:30:51.205672 2147886 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589955073]NOT LEADER, logid:11625251924216953145
+W1215 15:30:51.206270 2147851 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][4294979073]NOT LEADER, logid:11625251924216953145
+W1215 15:30:51.206524 2147902 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589960451]NOT LEADER, logid:11625251924216953145
+W1215 15:30:51.206677 2147808 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589960448]NOT LEADER, logid:11625251924216953145
+W1215 15:30:51.206780 2147808 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884927744]NOT LEADER, logid:11625251924216953145
+W1215 15:30:51.206910 2147904 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][4294992385]NOT LEADER, logid:11625251924216953145
+W1215 15:30:58.437305 2147846 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:03.143360 2147879 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:04.284299 2147859 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:11.579492 2147877 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:14.626430 2147887 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:16.756479 2147807 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:25.849550 2147812 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:26.338642 2147842 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:31.509665 2147851 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:38.438681 2147904 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:39.324775 2147900 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:41.776799 2147887 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:45.736948 2147886 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884922369]NOT LEADER, logid:13844798458227824523
+W1215 15:31:45.737366 2147851 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589960466]NOT LEADER, logid:13844798458227824523
+W1215 15:31:45.737500 2147851 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884927762]NOT LEADER, logid:13844798458227824523
+W1215 15:31:45.737562 2147902 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884927747]NOT LEADER, logid:13844798458227824523
+W1215 15:31:45.737648 2147902 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][17179895043]NOT LEADER, logid:13844798458227824523
+W1215 15:31:45.737798 2147902 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][21474862339]NOT LEADER, logid:13844798458227824523
+W1215 15:31:51.370887 2147865 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:52.046918 2147839 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:31:53.032802 2147846 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:03.922892 2147842 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589960465]NOT LEADER, logid:15915721390068374848
+W1215 15:32:03.924556 2147842 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884927761]NOT LEADER, logid:15915721390068374848
+W1215 15:32:03.924700 2147842 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][17179895057]NOT LEADER, logid:15915721390068374848
+W1215 15:32:03.924836 2147811 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][8589960454]NOT LEADER, logid:15915721390068374848
+W1215 15:32:03.924911 2147811 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][12884927750]NOT LEADER, logid:15915721390068374848
+W1215 15:32:03.925062 2147811 log.h:199] [meta_state_machine.cpp:58][store_heartbeat][17179895046]NOT LEADER, logid:15915721390068374848
+W1215 15:32:04.868038 2147904 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:05.638000 2147886 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:05.938922 2147904 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:16.250046 2147900 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:19.126137 2147836 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:20.250121 2147808 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:28.714167 2147900 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:29.584259 2147860 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:33.978255 2147810 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:43.369298 2147842 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:43.439345 2147812 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:46.790366 2147812 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:55.021409 2147811 node.cpp:1627] node auto_incr_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:56.226495 2147842 node.cpp:1627] node tso_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0
+W1215 15:32:58.077498 2147841 node.cpp:1627] node meta_raft:127.0.1.1:8010:0:0 can't do pre_vote as it is not in 127.0.0.1:8010:0:0

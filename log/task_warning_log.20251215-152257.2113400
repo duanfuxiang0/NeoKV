@@ -1,0 +1,12 @@
+Log file created at: 2025/12/15 15:22:57
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1215 15:22:57.215116 2113400 log.h:199] [my_raft_log.cpp:39][register_once_or_die][0]Registered myraft extension
+W1215 15:22:57.219161 2113400 log.h:199] [main.cpp:198][main][0]add raft to baidu-rpc server success
+W1215 15:22:57.219259 2113400 log.h:199] [qos.h:139][reset_rate][0]statistics_threshold: 6000
+W1215 15:22:57.219343 2113434 log.h:199] [qos.h:476][analyze_qps][4294968065]sign sqlqos map is empty
+W1215 15:22:57.219408 2113434 log.h:199] [qos.cpp:323][token_bucket_modify][4294968065]max_token: 100000, global_extended_token: 100000, total_consume_token: 0, compression_ratio: 1.000000
+W1215 15:22:57.219466 2113434 log.h:199] [qos.cpp:347][token_bucket_modify][4294968065]globle extended bucket rate: 100000
+W1215 15:22:57.219527 2113434 log.h:199] [qos.h:139][reset_rate][4294968065]statistics_threshold: 6000
+W1215 15:22:57.219610 2113439 log.h:199] [qos.cpp:277][wheather_need_reject][4294968066]count: 0, window_count: 3000, need_reject: 0, match_reject_condition: 0, time: 285
+W1215 15:22:57.219673 2113400 log.h:199] [redis_router.cpp:127][init][0]Redis table __redis__.kv not found, using bootstrap mode

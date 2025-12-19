@@ -1,0 +1,210 @@
+syntax="proto2";
+package baikaldb.pb;
+option cc_generic_services = true;
+//option cc_enable_arenas = true;
+
+enum ErrCode {
+    SUCCESS = 0;
+    NOT_LEADER = 1;
+    PARSE_FROM_PB_FAIL = 2;
+    PARSE_TO_PB_FAIL = 3;
+    UNSUPPORT_REQ_TYPE = 4;
+    INPUT_PARAM_ERROR = 5;
+    GET_VALUE_FAIL = 6;
+    PUT_VALUE_FAIL = 7;
+    DELETE_VALUE_FAIL = 8;
+    INTERNAL_ERROR = 9;
+    VERSION_OLD = 10;
+    REGION_ERROR_STATUS = 11;
+    EXEC_FAIL = 12;
+    DISABLE_WRITE_TIMEOUT = 13;
+    SPLIT_TIMEOUT = 14;
+    REGION_ALREADY_EXIST = 15;
+    REGION_NOT_EXIST = 16;
+    HAVE_NOT_INIT = 17;
+    // TXN_FOLLOW_UP = 18;
+    CANNOT_ADD_PEER = 19;
+    PEER_NOT_EQUAL  = 20;
+    CONNECT_FAIL    = 21;
+    CANCELLED = 22;
+    DDL_UNIQUE_KEY_FAIL = 23;
+    TXN_IS_EXISTING     = 24;
+    TXN_IS_ROLLBACK     = 25;
+    BACKUP_SAME_LOG_INDEX = 26;
+    BACKUP_ERROR = 27;
+    RETRY_LATER  = 28;
+    LESS_THAN_OLDEST_TS  = 29;
+    IN_PROCESS   = 30;
+    STORE_BUSY   = 31;
+    LEARNER_NOT_READY = 32;
+    STORE_ROCKS_HANG  = 33;
+    COMPACTION_FILE_SYSTEM_ERROR = 34;
+    REMOTE_COMPACTION_ERROR = 35;
+    COMPACTION_FILE_NOT_EXIST = 36;
+};
+
+enum PrimitiveType {
+    INVALID_TYPE = 0;
+    NULL_TYPE = 1;
+    BOOL = 2;
+    INT8 = 3;
+    INT16 = 4;
+    INT32 = 5;
+    INT64 = 6;
+    UINT8 = 7;
+    UINT16 = 8;
+    UINT32 = 9;
+    UINT64 = 10;
+    FLOAT = 11;
+    DOUBLE = 12;
+    STRING = 13;
+    DATETIME = 14;
+    TIMESTAMP = 15;
+    DATE = 16;
+    HLL = 17;
+    TIME = 18;
+    PLACE_HOLDER = 19;
+    HEX = 20;
+    BITMAP = 21;
+    TDIGEST = 22;
+    JSON = 23;
+    MAXVALUE_TYPE = 24; //用做分区表less than MAXVALUE，后续增加类型不要改变这个tag
+};
+
+enum SchemaType {
+    DYNAMIC = 1;
+    STATIC = 2;
+};
+
+enum Charset {
+    UTF8 = 0;
+    GBK = 1;
+    CS_UNKNOWN = 2;
+};
+
+enum BackupTable {
+    BT_NONE    = 0;
+    BT_AUTO    = 1;
+    BT_READ    = 2;
+    BT_WRITE   = 3;
+    BT_LEARNER = 4;
+};
+
+enum StreamState {
+    SS_INIT = 0;
+    SS_PROCESSING = 1;
+    SS_SUCCESS = 2;
+    SS_FAIL = 3;
+};
+
+message SchemaConf {
+    optional bool need_merge                = 1;
+    optional bool storage_compute_separate  = 2; 
+    optional bool select_index_by_cost      = 3;
+    optional int64 op_version               = 4;
+    optional string op_desc                 = 5;
+    optional float filter_ratio             = 6;
+    optional BackupTable backup_table       = 7;
+    optional int32 pk_prefix_balance        = 8;
+    optional bool in_fast_import            = 9;  // 快速导入中，不调度，不分裂
+    optional string sign_blacklist          = 10;
+    optional string sign_forcelearner       = 11;
+    optional string sign_forceindex         = 12;
+    optional int32 tail_split_num           = 13; // 尾分裂新region数
+    optional int32 tail_split_step          = 14;
+    optional int64 auto_inc_rand_max        = 15; //meta挂掉后降级到随机id
+    optional int32 binlog_backup_days       = 16; //binlog备份天数
+    optional string sign_rolling            = 17; //轮询
+    optional string sign_exec_type          = 18;
+    optional string snapshot_blacklist      = 19; // 用于watt报表数据修复
+    optional string del_snapshot_blacklist  = 20; // 用于手动删除snapshot
+    // for column storage
+    optional bool use_column_storage        = 21; // 是否使用列存，读取时使用
+    optional bool enable_column_engine      = 22; // 是否开启列式存储，store使用
+    optional int32 olap_pre_split_cnt       = 23; // OLAP预分裂的个数
+    optional bool cold_use_column_only      = 24; // 是否冷数据只使用列存
+    optional bool force_column_storage      = 25; // 是否强制使用列存
+};
+
+enum Engine {
+    ROCKSDB = 1;
+    REDIS = 2;
+    ROCKSDB_CSTORE = 3;
+    BINLOG = 4;
+    INFORMATION_SCHEMA = 5;
+    DBLINK = 6;
+};
+
+message SlotDescriptor {
+    required int32 slot_id = 1;  //从1开始
+    required PrimitiveType slot_type = 2;
+    required int32 tuple_id = 3;
+    optional int64 table_id = 4; //从表中获取才填
+    optional int32 field_id = 5; //从表中获取才填
+    optional int32 ref_cnt  = 6; //引用这个slot的数量，用来给FULLTEXT做索引覆盖查询及无效列裁剪
+};
+
+//tuple可以与table对应，也可以是中间表达式和聚合结果
+message TupleDescriptor {
+    required int32 tuple_id = 1; //从0开始
+    optional int64 table_id = 2; //与表映射才填
+    repeated SlotDescriptor slots = 3;
+    repeated int32 slot_idxes = 4; // 用于获取slot在slots的位置
+};
+message ExprValue {
+    required PrimitiveType type       = 1;
+    optional bool          bool_val   = 2;
+    optional int32         int32_val  = 3;
+    optional uint32        uint32_val = 4;
+    optional int64         int64_val  = 5;
+    optional uint64        uint64_val = 6;
+    optional float         float_val  = 7;
+    optional double        double_val = 8;
+    optional bytes         string_val = 9;
+};
+
+message FieldSlot {
+    required string          field_name = 1;
+    required int32           slot_id    = 2;
+};
+
+// dualscannode 内层的slot_id映射到外层的column id
+message SlotColumn {
+    required int32          slot_id     = 1;
+    required int32          column_id   = 2;
+};
+
+message RefSlotMapping {
+    required int64          tuple_id    = 1;
+    repeated FieldSlot      field_slot  = 2;
+
+};
+
+message QueryContext {
+    // index_selector判断是否是covering index
+    repeated RefSlotMapping     ref_slot_id_mapping     = 1;   
+
+};
+
+message RuntimeState {
+    repeated TupleDescriptor    tuples          = 1;   
+    optional QueryContext       query_context   = 2;   
+    optional uint64             log_id          = 3;
+    optional uint64             sign            = 4;    
+    optional uint64             sign_exec_type  = 5;
+};
+
+message CompactionFileInfo {
+    required string file_path = 1;
+    optional uint64 file_size = 2;
+    optional uint64 file_mtime = 3;
+};
+
+message MysqlInfo {
+    optional bytes addr = 1;
+    optional bytes username = 2;
+    optional bytes password = 3;
+    optional bytes database_name = 4;
+    optional bytes table_name = 5;
+    optional bytes charset = 6; // 连接字符串
+};

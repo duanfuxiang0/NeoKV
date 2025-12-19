@@ -1,0 +1,35 @@
+baikal_store_kernel_version : "Linux ubuntu 6.8.0-51-generic #52-Ubuntu SMP PREEMPT_DYNAMIC Thu Dec  5 13:09:44 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+"
+baikal_store_process_cmdline : "./output/bin/baikalStore
+--flagfile=conf/baikalStore/gflags.conf
+--db_path=/home/ubuntu/BaikalDB/store_data/rocks_db
+--snapshot_uri=local:///home/ubuntu/BaikalDB/store_data/raft_data/snapshot
+--redis_port=16379
+"
+baikal_store_process_context_switches_involuntary_second : 4
+baikal_store_process_context_switches_voluntary_second : 2501
+baikal_store_process_cpu_usage : 0.016
+baikal_store_process_cpu_usage_system : 0.007
+baikal_store_process_cpu_usage_user : 0.009
+baikal_store_process_disk_read_bytes_second : 0
+baikal_store_process_disk_write_bytes_second : 7782
+baikal_store_process_faults_major : 0
+baikal_store_process_faults_minor_second : 0
+baikal_store_process_fd_count : 29
+baikal_store_process_inblocks_second : 0
+baikal_store_process_io_read_bytes_second : 898
+baikal_store_process_io_read_second : 6
+baikal_store_process_io_write_bytes_second : 5695
+baikal_store_process_io_write_second : 2
+baikal_store_process_memory_data_and_stack : 5978042368
+baikal_store_process_memory_resident : 111083520
+baikal_store_process_memory_shared : 43515904
+baikal_store_process_memory_text : 47001600
+baikal_store_process_memory_virtual : 6061694976
+baikal_store_process_nice : 0
+baikal_store_process_outblocks_second : 15
+baikal_store_process_priority : 20
+baikal_store_process_thread_count : 163
+baikal_store_process_uptime : 9761.349331
+baikal_store_process_username : "ubuntu"
+baikal_store_process_work_dir : "/home/ubuntu/BaikalDB"

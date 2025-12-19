@@ -1,0 +1,500 @@
+syntax="proto2";
+package baikaldb.pb;
+import "common.proto";
+import "raft.proto";
+import "plan.proto";
+import "optype.proto";
+import "statistics.proto";
+import "meta.interface.proto";
+import "binlog.proto";
+import "column.proto";
+option cc_generic_services = true;
+//option cc_enable_arenas = true;
+
+message KvOp {
+    required OpType    op_type = 1;
+    optional bytes     key     = 2;
+    optional bytes     value   = 3;
+    optional int64     ttl_timestamp_us = 4;
+    optional bool      is_primary_key   = 5;
+};
+
+// Redis command types for OP_REDIS_WRITE
+enum RedisCmd {
+    REDIS_SET       = 0;
+    REDIS_DEL       = 1;
+    REDIS_EXPIRE    = 2;
+    REDIS_EXPIREAT  = 3;
+    REDIS_MSET      = 4;
+};
+
+// A single Redis write operation
+message RedisKv {
+    optional bytes  key         = 1;  // user key (without region/index prefix)
+    optional bytes  value       = 2;  // payload for SET/MSET
+    optional int64  expire_ms   = 3;  // absolute expiration timestamp in ms (0=no expire)
+};
+
+// Redis write request payload (used with OP_REDIS_WRITE)
+message RedisWriteRequest {
+    optional RedisCmd   cmd     = 1;
+    repeated RedisKv    kvs     = 2;  // key-value pairs for this command
+    optional uint32     slot    = 3;  // computed slot (for verification)
+};
+
+// CachePlan is used in three place:
+// 1) In-txn cmd cache in BaikalDB and region sides
+// 2) Write ahead log entry in BaikalDB side for prepared-transaction recovery
+// 3) replay transaction action for Region split and load_snapshot
+message CachePlan {
+    required OpType op_type = 1;
+    required int32  seq_id  = 2;
+    required Plan   plan    = 3;  //cached query plan
+    repeated TupleDescriptor tuples  = 4;
+
+    //store to which regions commit will be sent, used for BaikalDB txn recovery
+    repeated RegionInfo regions = 5;
+    repeated KvOp       kv_ops  = 6;
+};
+
+enum  TxnState {
+    TXN_UNKEOWN           = 0;
+    TXN_BEGINED           = 1;
+    TXN_PREPARED          = 2;
+    TXN_COMMITTED         = 3;
+    TXN_ROLLBACKED        = 4;
+};
+
+message TransactionInfo {
+    required uint64 txn_id           = 1;
+    required int32  seq_id           = 2;
+    optional int32  start_seq_id     = 3;  // the start_seq_id of the command in this request (include cached)
+    optional bool   optimize_1pc     = 4;
+    repeated int32  need_rollback_seq = 5; //因为在某些region上执行失败，需要全局回滚seq_id 
+    repeated CachePlan cache_plans   = 6;  //缓存的query的执行计划
+    optional int64   num_rows        = 7;  //事务增加的行数，用于事务恢复使用(split)
+    optional bool    autocommit      = 8;
+    optional int64   primary_region_id = 9;
+    optional TxnState txn_state        = 10;
+    optional int64   live_time         = 11;
+    optional int64   start_ts     = 12;
+    optional int64   commit_ts    = 13;  //事务commit的tso，用于恢复超时的prewrite binlog
+    optional bool    open_binlog  = 14;
+    optional bool    from_store        = 15;
+    optional int64  txn_timeout    = 16;
+    optional bool need_update_primary_timestamp = 17;
+};
+
+enum StatisticType {
+    ST_HISTOGRAM     = 0;
+    ST_CMSKETCH      = 1;
+    ST_HYPERLOGLOG   = 2;
+    ST_CLEAR         = 3;
+}
+
+message AnalyzeInfo {
+    optional int32     depth   = 1;
+    optional int32     width   = 2;
+    optional int32     sample_rows = 3;
+    optional int64     table_rows  = 4;
+    repeated StatisticType statistics_types = 5;
+};
+
+//prewrite binlog需要填写binlog_ts、txn_id、primary_region_id
+//commit/rollback binlog 只填binlog_ts、txn_id、start_ts
+//read binlog只填binlog_ts、read_binlog_cnt
+message BinlogDesc {
+    required int64     binlog_ts         = 1;
+    optional int64     txn_id            = 2;
+    optional int64     start_ts          = 3;
+    optional int64     primary_region_id = 4;
+    optional int64     read_binlog_cnt   = 6; // 读binlog使用capture填写，需要读多少条
+    optional int64     binlog_row_cnt    = 7; // 写binlog使用write binlog使用，写了多少条
+    // 8 - 13 SQL闪回功能；其中8-11为binlog元数据表中记录
+    optional bytes     user_name         = 8;
+    optional bytes     user_ip           = 9;
+    repeated bytes     db_tables         = 10; 
+    repeated uint64    signs             = 11; 
+    repeated int64     txn_ids           = 12; // capture请求binlog时使用
+    optional bool      flash_back_read   = 13; // capture请求binlog时使用
+    optional bool      read_offline_binlog = 14; // capture请求binlog时使用
+};
+
+message BatchStoreReq {
+    required int64      region_id        = 1;
+    repeated int64      request_lens     = 2;  // 保存每个storeReq的长度，数据放在了request_attachment里
+    optional int64      resend_start_pos = 3;  // not leader重发起始pos
+};
+
+message BatchStoreRes {
+    required ErrCode   errcode              = 1;
+    optional bytes     errmsg               = 2;
+    optional string    leader               = 3;
+    optional int64     success_cnt          = 4;
+    optional int64     applied_index        = 5;
+    optional int64     braft_applied_index  = 6;
+    optional int64     dml_latency          = 7;
+};
+
+message RegionIndexs {
+    optional int64     region_id                      = 1;
+    optional int64     version                        = 2;
+    optional int64     apply_index                    = 3;
+    optional string    status                         = 4;
+    optional string    resource_tag                   = 5;
+    optional int64     table_id                       = 6;
+    optional OlapRegionStat olap_state                = 7;
+    repeated string    external_full_path             = 8;
+    optional bool      path_diff                      = 9;
+    optional int64     region_size                    = 10;
+    optional string    column_info                    = 11;
+    repeated OlapRegionIndexInfo olap_index_info_list = 12;
+};
+
+enum ExecuteType {
+    EXEC_ROW = 0;
+    EXEC_ARROW_ACERO = 1;
+    EXEC_ARROW_ACERO_PREFER_RETURN_ARROW_DATA = 2;
+};
+
+message ColumnRegionInfo {
+    optional RegionColumnFiles column_files = 1;
+};
+
+message UseridCount {
+    optional int64     userid       = 1;
+    optional int64     count        = 2;
+};
+
+message ExtraReq {
+    optional bool                    use_read_idx = 1;
+    optional int64                   sign_latency = 2;
+    optional OlapRegionInfo          olap_info = 3;
+    optional RegionOfflineBinlogInfo offline_binlog_info = 4;
+    optional uint64 watt_stats_version = 5;
+    optional ColumnRegionInfo        column_info = 6;
+};
+
+message ExtraRes {
+    repeated RegionIndexs infos = 1; 
+    optional RegionOfflineBinlogInfo offline_binlog_info = 2;
+    optional bytes vectorized_rows = 3;   // 列存格式数据返回
+    optional bytes vectorized_schema = 4; // 列存格式schema
+    optional int64 wait_cost = 5;         // 限制并发等待时间
+    repeated bytes afs_full_names = 6;    // afs full path
+    optional bool  get_afs_path_succ = 7; // get afs path succ
+    optional bool  query_keypoint_succ = 8; // get keypoint succ
+    repeated UseridCount userid_count = 9;
+};
+
+// 增加新字段时，考虑是否对该字段增删meta标识，对应dblink表场景!!!
+message StoreReq {
+    required OpType op_type         = 1;  //对表的操作类型
+    repeated TupleDescriptor tuples = 2;
+    required int64 region_id        = 3;
+    required int64 region_version   = 4;
+    optional Plan plan              = 5;
+    repeated TransactionInfo txn_infos = 6; //只有OP_VALIDATE_AND_ADD_VERSION时会用到多个TransactionInfo，用于更新old_region上prepared事务的行数
+    optional fixed64 log_id         = 7; // for print log
+    //optional bytes split_key      = 8; //split操作时填写
+    optional bytes start_key        = 9;
+    optional bytes end_key          = 10;
+    optional int64 split_term       = 11;
+    optional int64 split_end_index  = 12;
+    optional int64 reduce_num_lines = 13; //split需要删除的行数
+    optional bool force             = 14;
+    optional bool not_check_region  = 15; //为true则不判断数据与region的匹配性
+    optional RegionInfo new_region_info = 16;
+    optional bool select_without_leader = 17;   //为true则select不判断是否leader,增加读性能
+    optional fixed64 db_conn_id     = 18; //baikaldb connection id
+    optional DdlWorkInfo ddlwork_info = 19; //更新ddl work
+    optional int64   num_increase_rows = 20;
+    repeated KvOp          kv_ops   = 21; //kv op
+    optional bool  is_trace         = 22;
+    optional AnalyzeInfo   analyze_info = 23;
+    repeated uint64    rollback_txn_ids = 24;
+    repeated uint64    commit_txn_ids   = 25;
+    optional BinlogDesc binlog_desc     = 26;
+    optional Binlog      binlog         = 27;
+    optional uint64      sql_sign       = 28; // sql 签名
+    repeated RegionInfo multi_new_region_infos = 29;
+    optional ExtraReq   extra_req       = 30; // 非关键路径上的额外信息可以放在这里，避免该message过度膨胀
+    optional ExecuteType execute_type   = 31;
+    optional bool       is_rollup_base  = 32;
+    optional int64    sql_exec_timeout  = 33;
+    optional RedisWriteRequest redis_req = 34; // Redis write request payload
+};
+
+message RowValue {
+    repeated bytes tuple_values = 1;
+};
+
+message RegionLeader {
+    required int64  region_id            = 1;
+    required string leader               = 2;        
+};
+message IndexRecords {
+    required int64  index_id        = 1;
+    repeated bytes  records         = 2;
+    repeated bytes  old_records     = 3;
+    optional bool   local_index_binlog = 4;
+};
+
+message RegionRaftStat {
+    optional int64  applied_index       = 1;
+    optional uint64 snapshot_data_size  = 2;
+    optional uint64 snapshot_meta_size  = 3;
+    optional int64  snapshot_index      = 4;
+    optional int64  dml_latency         = 5;
+};
+
+message RocksStatisticReq {
+    repeated bytes keys                 = 1;
+};
+
+message RocksStatisticRes {
+    required ErrCode errcode              = 1;
+    optional uint64 level0_sst_num        = 2;
+    optional uint64 compaction_data_size  = 3;
+    repeated bytes  key                   = 4;
+    repeated bytes  value                 = 5;
+}
+
+message BinlogQueryInfo {
+    optional int64 region_id = 1;
+    optional int64 oldest_ts = 2;
+    optional int64 check_point_ts = 3;
+    optional int64 region_oldest_ts = 4;
+    optional int64 binlog_cf_oldest_ts = 5;
+    optional int64 data_cf_oldest_ts = 6;
+    optional string region_ip = 7;
+}
+
+// 增加新字段时，考虑是否对该字段增删meta标识，对应dblink表场景!!!
+message StoreRes {
+    required ErrCode errcode        = 1;
+    optional bytes errmsg           = 2;
+    optional string leader          = 3;
+    //目前返回所有tuple
+    repeated int32 tuple_ids        = 4;
+    repeated RowValue row_values    = 5;
+    optional int64 affected_rows    = 6;
+    repeated RegionInfo regions     = 7; //分裂更新两个region
+    optional int64 applied_index    = 8;
+    optional int32 last_seq_id      = 9; //store端当前事务已执行的最后一个cmd的seq_id, 未开始则为0
+    repeated TransactionInfo txn_infos = 10; // 用于OP_ADD_VERSION_FOR_SPLIT_REGION时返回Prepared事务行数
+    optional int32 mysql_errcode   = 11;
+    optional int64  region_count   = 12;
+    repeated RegionLeader region_leaders = 13;
+    optional bool  is_merge        = 14;//fetch node use it when error code is VERSION_OLD
+    repeated IndexRecords  records  = 15;
+    optional int64  scan_rows     = 16;
+    optional CMsketch cmsketch    = 17;
+    optional int64  filter_rows   = 18;
+    repeated bytes binlogs       = 19; //直接存储binlog序列化结果，由capture反序列化
+    repeated int64 commit_ts     = 20; //与上面的binlog一一对应
+    optional PeerStatus region_status = 21;
+    optional int64 last_insert_id = 22;
+    optional RegionRaftStat region_raft_stat = 23;
+    repeated int64 ttl_timestamp = 24;
+    optional ExtraRes extra_res  = 25;          // 非关键路径上的额外信息可以放在这里，避免该message过度膨胀
+    optional BinlogQueryInfo binlog_info = 26;  //存放binlog信息
+    optional ExecuteType execute_type = 27; 
+    optional int64  read_disk_size =  28;
+    optional int64 orig_region_id  = 29; // 请求的region信息
+    optional HyperLogLog hll       = 30;
+};
+
+message BatchRegionStoreReq {
+    repeated StoreReq store_req                     = 1;
+    required int64 limit_single_store_concurrency   = 2;
+    repeated Plan plan                              = 3;
+}
+
+message BatchRegionStoreRes {
+    repeated StoreRes store_res = 1;  
+}
+
+message InitRegion {
+    required RegionInfo region_info     = 1;
+    optional SchemaInfo schema_info     = 2;
+    optional bool       is_split        = 3;
+    optional int32      snapshot_times  = 4; //初始化时需要做snapshot的次数
+    optional bool       is_learner      = 5;
+};
+
+message GetAppliedIndex {
+    required int64 region_id    = 1;
+    optional bool  use_read_idx = 2;
+    optional bool  use_raft_log_index = 3;
+};
+
+message RemoveRegion {
+    required int64  region_id       = 1;
+    optional bool   force           = 2;
+    optional bool   need_delay_drop = 3;
+};
+
+message RegionIds {
+    repeated int64  region_ids      = 1; // if size = 0, it will compact the entire db
+    optional bool compact_raft_log  = 2; // if true, compact raft log
+    optional int64  table_id        = 3; // use for restore region
+    optional int32  compact_type    = 4; // 1:data_cf 2:meta_cf 3:raft_log_cf 4:column_base 5:column_row2column 6:vector_index
+    optional bool   clear_all_txns  = 5;
+    optional int64  txn_timeout     = 6;
+    optional bool   query_apply_index  = 7;
+    repeated int64  userids            = 8;
+    optional bool   query_all_afs_file = 9;
+    optional bool   query_olap_keypoint = 10;
+};
+
+message BackUpReq {};
+
+message BackUpRes {};
+
+enum BackupOp {
+    BACKUP_DOWNLOAD = 0;
+    BACKUP_UPLOAD = 1;
+    BACKUP_QUERY_PEERS = 2;
+    BACKUP_QUERY_STREAMING = 3;
+};
+
+message BackupRequest {
+    required int64 region_id    = 1;
+    optional int64 log_index   = 2;
+    optional BackupOp backup_op = 3;
+    optional bool ingest_store_latest_sst = 4;
+    optional int64 data_sst_to_process_size = 5;
+    optional int64 row_size = 6;
+    optional uint64 streaming_id = 7;
+};
+
+message BackupResponse {
+    optional int64 log_index             = 1;
+    optional ErrCode errcode             = 2;
+    optional string leader               = 3;
+    repeated string peers                = 4;
+    repeated string unstable_followers   = 5;
+    optional uint64 streaming_id         = 6;
+    optional StreamState streaming_state = 7;
+};
+
+message HealthCheck {
+};
+
+enum OlapRegionStat {
+    OLAP_ACTIVE             = 0;
+    OLAP_IMMUTABLE          = 1; // region不可写
+    OLAP_FLUSHED            = 2;   // sst写入外部存储系统成功
+    OLAP_TRUNCATED          = 3; // hot ROCKSDB 已经truncate 
+
+};
+
+message OlapRegionIndexInfo {
+    required int64  index_id      = 1;
+    repeated string external_path = 2;
+    optional OlapRegionStat state = 3;
+};
+
+message OlapRegionInfo {
+    required OlapRegionStat state                           = 1 [default=OLAP_ACTIVE];
+    optional uint64         state_time                      = 2;
+    repeated string         external_full_path              = 3; // state为OLAP_FLUSHED时，记录外部关联路径
+    repeated OlapRegionIndexInfo olap_index_info_list       = 4; 
+    optional OlapRegionIndexInfo new_olap_index_info        = 5; // 新增索引的index_id, 路径, 和状态
+};
+
+message RegionOfflineBinlogInfo {
+    required int64 oldest_ts = 1;
+    required int64 newest_ts = 2;
+    optional int64 task_start_ts = 3;
+    optional int64 task_end_ts = 4;
+    repeated string external_full_path = 5;
+};
+
+enum CompactionOpType {
+    OP_READ             = 1;
+    OP_WRITE            = 2;
+    OP_DELETE_PATH      = 3;
+    OP_READ_DIR         = 4;
+    OP_PATH_EXISTS      = 5;
+    OP_CREATE_DIR       = 6;
+    OP_GET_FILE_INFO_LIST    = 7;
+};
+
+message CompactionFileRequest {
+    required CompactionOpType op_type   = 1;
+    required string           remote_compaction_id = 2;
+    optional string           file_name = 3; // 文件名
+    optional uint64           offset    = 4; // 文件的偏移量
+    optional uint32           count     = 5; // 需要读/写的字节数
+    optional bytes            data      = 6;
+    optional bool             recursive = 7;
+};
+
+message CompactionFileResponse {
+    required ErrCode errcode = 1; // 错误信息
+    optional bytes data = 2;
+    repeated CompactionFileInfo file_info = 3;
+};
+
+service StoreService {
+    //1、创建table时master调用，region及raft同步创建成功后才返回给metaServer,
+    //   创建表时raft node地址初始化为一个节点
+    //2、实例迁移的add_peer过程间接通过心跳包的响应包调用，
+    //   raft node地址初始化为空
+    //   leader调用完成这个之后主动调用一次raft的add_peer接口完成这个迁移过程
+    //3、分裂时调用
+    rpc init_region(InitRegion) returns (StoreRes);
+    
+    //raft控制接口，可以手工操作使用
+    rpc region_raft_control(RaftControlRequest) returns (RaftControlResponse); 
+    
+    rpc health_check(HealthCheck) returns (StoreRes);
+
+    //快速应用raft日志,分裂使用
+    rpc async_apply_log_entry(BatchStoreReq) returns (BatchStoreRes);
+
+    //增删改查功能，需要走raft状态机的都通过此接口
+    rpc query(StoreReq) returns (StoreRes);
+
+    // batch region 查询
+    rpc query_batch(BatchRegionStoreReq) returns (BatchRegionStoreRes);
+
+    //binlog相关操作
+    rpc query_binlog(StoreReq) returns (StoreRes);
+    
+    //删除region，包括数据
+    rpc remove_region(RemoveRegion) returns (StoreRes);
+    
+    //leader收到的AddPeer请求，分两步执行
+    //1、给新增的region所在的store发送init region请求
+    //2、leader执行raft的add_peer操作
+    rpc add_peer(AddPeer) returns (StoreRes);
+
+    //get region的applied_index, 用来分裂完成后优化选择transfer leader的对象
+    //复用，获取snapshot数据大小，用作校验
+    rpc get_applied_index(GetAppliedIndex) returns (StoreRes);
+
+    rpc compact_region(RegionIds) returns (StoreRes);
+
+    rpc snapshot_region(RegionIds) returns(StoreRes);
+
+    rpc restore_region(RegionIds) returns(StoreRes);
+
+    rpc manual_split_region(RegionIds) returns(StoreRes);
+
+    rpc query_region(RegionIds) returns (StoreRes);
+    
+    rpc query_illegal_region(RegionIds) returns (StoreRes);
+
+    rpc backup_region(BackUpReq) returns (BackUpRes);
+
+    rpc backup(BackupRequest) returns (BackupResponse);
+
+    rpc get_rocks_statistic(RocksStatisticReq) returns (RocksStatisticRes);
+
+    rpc manual_link_external_sst(RegionIds) returns(StoreRes);
+
+    rpc query_file_system(CompactionFileRequest) returns (CompactionFileResponse);
+};

@@ -1,0 +1,24 @@
+Log file created at: 2025/12/15 15:33:22
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1215 15:33:22.529026 2165097 variable.cpp:792] Write all bvar to ./monitor/bvar.baikalMeta.data every 10 seconds.
+I1215 15:33:22.532006 2165095 server.cpp:1212] Server[braft::RaftStatImpl+braft::FileServiceImpl+braft::RaftServiceImpl+braft::CliServiceImpl+baikaldb::MetaServer] is serving on port=8010.
+I1215 15:33:22.532021 2165095 server.cpp:1215] Check out http://ubuntu:8010 in web browser.
+I1215 15:33:22.533309 2165095 log.h:176] [rocks_wrapper.cpp:157][init][0]FLAGS_rocks_transaction_lock_timeout_ms:20000 FLAGS_rocks_default_lock_timeout_ms:30000
+I1215 15:33:22.562722 2165095 snapshot.cpp:463] Deleting ./meta_data/raft_data/snapshot/meta_server/temp
+I1215 15:33:22.562752 2165095 raft_meta.cpp:521] Loaded single stable meta, path ./raft_data/stable/meta_server term 1 votedfor 0.0.0.0:0:0:0 time: 10
+I1215 15:33:22.562757 2165095 node.cpp:628] node meta_raft:127.0.1.1:8010:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 192.168.31.211:8010:0:0 old_conf: 
+I1215 15:33:22.562815 2165095 snapshot.cpp:463] Deleting ./meta_data/raft_data/snapshot/auto_incr/temp
+I1215 15:33:22.562827 2165095 raft_meta.cpp:521] Loaded single stable meta, path ./raft_data/stable/auto_incr term 1 votedfor 0.0.0.0:0:0:0 time: 2
+I1215 15:33:22.562829 2165095 node.cpp:628] node auto_incr_raft:127.0.1.1:8010:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 192.168.31.211:8010:0:0 old_conf: 
+I1215 15:33:22.562884 2165095 raft_meta.cpp:521] Loaded single stable meta, path ./raft_data/stable/tso term 1 votedfor 0.0.0.0:0:0:0 time: 2
+I1215 15:33:22.562886 2165095 node.cpp:628] node tso_raft:127.0.1.1:8010:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 192.168.31.211:8010:0:0 old_conf: 
+I1215 15:33:22.562954 2165095 naming_service_thread.cpp:203] brpc::policy::ListNamingService("192.168.31.211:8010"): added 1
+I1215 15:33:22.562997 2165109 log.h:176] [ddl_manager.cpp:696][work][4294992900]sleep, wait ddl manager init.
+I1215 15:33:22.562999 2165106 log.h:176] [ddl_manager.cpp:342][operator()][4294992901]sleep, wait collect db info.
+I1215 15:33:33.602991 2165122 node.cpp:1617] node tso_raft:127.0.1.1:8010:0:0 term 1 start pre_vote
+I1215 15:33:35.113852 2165156 node.cpp:1617] node meta_raft:127.0.1.1:8010:0:0 term 1 start pre_vote
+I1215 15:33:36.307925 2165120 node.cpp:1617] node auto_incr_raft:127.0.1.1:8010:0:0 term 1 start pre_vote
+I1215 15:33:45.919165 2165199 node.cpp:1617] node tso_raft:127.0.1.1:8010:0:0 term 1 start pre_vote
+I1215 15:33:48.039032 2165134 node.cpp:1617] node meta_raft:127.0.1.1:8010:0:0 term 1 start pre_vote
+I1215 15:33:50.915076 2165118 node.cpp:1617] node auto_incr_raft:127.0.1.1:8010:0:0 term 1 start pre_vote

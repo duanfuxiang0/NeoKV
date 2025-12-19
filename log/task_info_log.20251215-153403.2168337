@@ -1,0 +1,653 @@
+Log file created at: 2025/12/15 15:34:03
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1215 15:34:03.112619 2168339 variable.cpp:792] Write all bvar to ./monitor/bvar.baikalMeta.data every 10 seconds.
+I1215 15:34:03.117375 2168337 server.cpp:1212] Server[braft::RaftStatImpl+braft::FileServiceImpl+braft::RaftServiceImpl+braft::CliServiceImpl+baikaldb::MetaServer] is serving on port=8010.
+I1215 15:34:03.117391 2168337 server.cpp:1215] Check out http://ubuntu:8010 in web browser.
+I1215 15:34:03.118986 2168337 log.h:176] [rocks_wrapper.cpp:157][init][0]FLAGS_rocks_transaction_lock_timeout_ms:20000 FLAGS_rocks_default_lock_timeout_ms:30000
+I1215 15:34:03.147904 2168337 snapshot.cpp:463] Deleting ./meta_data/raft_data/snapshot/meta_server/temp
+I1215 15:34:03.147938 2168337 raft_meta.cpp:521] Loaded single stable meta, path ./raft_data/stable/meta_server term 1 votedfor 0.0.0.0:0:0:0 time: 12
+I1215 15:34:03.147943 2168337 node.cpp:628] node meta_raft:127.0.1.1:8010:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 127.0.1.1:8010:0:0 old_conf: 
+I1215 15:34:03.147959 2168337 node.cpp:1683] node meta_raft:127.0.1.1:8010:0:0 term 1 start vote and grant vote self
+I1215 15:34:03.148880 2168337 raft_meta.cpp:546] Saved single stable meta, path ./raft_data/stable/meta_server term 2 votedfor 127.0.1.1:8010:0:0 time: 910
+I1215 15:34:03.148887 2168337 node.cpp:1937] node meta_raft:127.0.1.1:8010:0:0 term 2 become leader of group 127.0.1.1:8010:0:0 
+I1215 15:34:03.149116 2168337 snapshot.cpp:463] Deleting ./meta_data/raft_data/snapshot/auto_incr/temp
+I1215 15:34:03.149116 2168358 node.cpp:3335] node meta_raft:127.0.1.1:8010:0:0 reset ConfigurationCtx, new_peers: 127.0.1.1:8010:0:0, old_peers: 127.0.1.1:8010:0:0
+I1215 15:34:03.149138 2168337 raft_meta.cpp:521] Loaded single stable meta, path ./raft_data/stable/auto_incr term 1 votedfor 0.0.0.0:0:0:0 time: 8
+I1215 15:34:03.149142 2168337 node.cpp:628] node auto_incr_raft:127.0.1.1:8010:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 127.0.1.1:8010:0:0 old_conf: 
+I1215 15:34:03.149148 2168337 node.cpp:1683] node auto_incr_raft:127.0.1.1:8010:0:0 term 1 start vote and grant vote self
+I1215 15:34:03.150046 2168337 raft_meta.cpp:546] Saved single stable meta, path ./raft_data/stable/auto_incr term 2 votedfor 127.0.1.1:8010:0:0 time: 892
+I1215 15:34:03.150053 2168337 node.cpp:1937] node auto_incr_raft:127.0.1.1:8010:0:0 term 2 become leader of group 127.0.1.1:8010:0:0 
+I1215 15:34:03.150133 2168337 snapshot.cpp:463] Deleting ./meta_data/raft_data/snapshot/tso/temp
+I1215 15:34:03.150149 2168337 raft_meta.cpp:521] Loaded single stable meta, path ./raft_data/stable/tso term 1 votedfor 0.0.0.0:0:0:0 time: 3
+I1215 15:34:03.150152 2168337 node.cpp:628] node tso_raft:127.0.1.1:8010:0:0 init, term: 1 last_log_id: (index=0,term=0) conf: 127.0.1.1:8010:0:0 old_conf: 
+I1215 15:34:03.150158 2168337 node.cpp:1683] node tso_raft:127.0.1.1:8010:0:0 term 1 start vote and grant vote self
+I1215 15:34:03.150239 2168365 node.cpp:3335] node auto_incr_raft:127.0.1.1:8010:0:0 reset ConfigurationCtx, new_peers: 127.0.1.1:8010:0:0, old_peers: 127.0.1.1:8010:0:0
+I1215 15:34:03.151037 2168337 raft_meta.cpp:546] Saved single stable meta, path ./raft_data/stable/tso term 2 votedfor 127.0.1.1:8010:0:0 time: 875
+I1215 15:34:03.151044 2168337 node.cpp:1937] node tso_raft:127.0.1.1:8010:0:0 term 2 become leader of group 127.0.1.1:8010:0:0 
+I1215 15:34:03.151110 2168372 node.cpp:3335] node tso_raft:127.0.1.1:8010:0:0 reset ConfigurationCtx, new_peers: 127.0.1.1:8010:0:0, old_peers: 127.0.1.1:8010:0:0
+I1215 15:34:03.151132 2168337 naming_service_thread.cpp:203] brpc::policy::ListNamingService("127.0.1.1:8010"): added 1
+I1215 15:34:03.151163 2168391 log.h:176] [ddl_manager.cpp:696][work][4294992647]sleep, wait ddl manager init.
+I1215 15:34:03.151196 2168408 log.h:176] [ddl_manager.cpp:342][operator()][4294992648]sleep, wait collect db info.
+I1215 15:34:29.227859 2168361 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][42949699275]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 2, log_id: 5194653606223166945
+I1215 15:34:29.227905 2168361 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][42949699275]store:  process leader heartbeat, update_status_time: 2, leader_region_time: 9 leader_balance_time: 10, log_id: 5194653606223166945
+I1215 15:34:29.227910 2168361 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][42949699275]store: heart beat, time_cost: 72, instance_time: 1, peer_balance_time: 2, schema_time: 8, peer_time: 33, leader_time: 24, log_id: 5194653606223166945
+I1215 15:34:29.233109 2168432 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][12884928021]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 7428557628521167859
+I1215 15:34:29.233136 2168432 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][12884928021]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 5 leader_balance_time: 8, log_id: 7428557628521167859
+I1215 15:34:29.233141 2168414 log.h:176] [meta_state_machine.cpp:264][on_apply][30064797377]on apply, term:2, index:2, request op_type:OP_ADD_INSTANCE
+I1215 15:34:29.233143 2168432 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][12884928021]store:127.0.1.1:8110 heart beat, time_cost: 73, instance_time: 31, peer_balance_time: 1, schema_time: 5, peer_time: 16, leader_time: 16, log_id: 7428557628521167859
+I1215 15:34:29.233183 2168414 log.h:176] [cluster_manager.cpp:408][add_instance][30064797377]add instance success, request:op_type: OP_ADD_INSTANCE instance { address: "127.0.1.1:8110" capacity: 982240026624 used_size: 784692314112 resource_tag: "" physical_room: "default" logical_room: "default" dml_latency: 0 dml_qps: 0 raft_total_latency: 0 raft_total_qps: 0 select_latency: 0 select_qps: 0 network_segment: "" container_id: "" rocks_hang_check_cost: 0 }
+I1215 15:34:59.422215 2168363 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][25769830123]process peer hearbeat, table_exist_time: 1, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 15075823695725749858
+I1215 15:34:59.422273 2168363 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][25769830123]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 11 leader_balance_time: 11, log_id: 15075823695725749858
+I1215 15:34:59.422286 2168363 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][25769830123]store:127.0.1.1:8110 heart beat, time_cost: 89, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 45, leader_time: 32, log_id: 15075823695725749858
+I1215 15:35:02.010221 2168376 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:35:02.013106 2168376 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000001176
+I1215 15:35:02.013115 2168376 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000001176
+I1215 15:35:02.013129 2168376 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=1176 last_included_term=2
+I1215 15:35:29.597980 2168432 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][8589961588]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 10833026282328877007
+I1215 15:35:29.598022 2168432 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][8589961588]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 10833026282328877007
+I1215 15:35:29.598028 2168432 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][8589961588]store:127.0.1.1:8110 heart beat, time_cost: 62, instance_time: 4, peer_balance_time: 1, schema_time: 1, peer_time: 35, leader_time: 19, log_id: 10833026282328877007
+I1215 15:35:59.766366 2168367 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][25769831354]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 3302434313730816620
+I1215 15:35:59.766417 2168367 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][25769831354]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 8 leader_balance_time: 6, log_id: 3302434313730816620
+I1215 15:35:59.766424 2168367 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][25769831354]store:127.0.1.1:8110 heart beat, time_cost: 76, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 44, leader_time: 20, log_id: 3302434313730816620
+I1215 15:36:02.010380 2168408 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:36:02.013244 2168408 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000002373
+I1215 15:36:02.013252 2168408 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000002373
+I1215 15:36:02.013259 2168408 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000001176
+I1215 15:36:02.013334 2168408 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=2373 last_included_term=2
+I1215 15:36:03.151268 2168396 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:36:17.501812 2168395 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][21474865007]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 4408426573323462446
+I1215 15:36:17.501878 2168395 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][21474865007]store:  process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 31, log_id: 4408426573323462446
+I1215 15:36:17.501883 2168395 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][21474865007]store: heart beat, time_cost: 86, instance_time: 2, peer_balance_time: 1, schema_time: 6, peer_time: 28, leader_time: 45, log_id: 4408426573323462446
+I1215 15:36:17.509855 2168361 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][12884930219]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 6385433724337921854
+I1215 15:36:17.509951 2168361 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][12884930219]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 20 leader_balance_time: 5, log_id: 6385433724337921854
+I1215 15:36:17.510013 2168361 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][12884930219]store:127.0.1.1:8110 heart beat, time_cost: 167, instance_time: 2, peer_balance_time: 1, schema_time: 1, peer_time: 73, leader_time: 86, log_id: 6385433724337921854
+I1215 15:36:23.269845 2168383 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:36:43.378865 2168353 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:36:47.685696 2168408 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][25769832338]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 7470571683383434546
+I1215 15:36:47.685752 2168408 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][25769832338]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 11 leader_balance_time: 10, log_id: 7470571683383434546
+I1215 15:36:47.685765 2168408 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][25769832338]store:127.0.1.1:8110 heart beat, time_cost: 85, instance_time: 4, peer_balance_time: 3, schema_time: 2, peer_time: 40, leader_time: 31, log_id: 7470571683383434546
+I1215 15:37:02.010540 2168414 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:37:02.013338 2168414 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000003569
+I1215 15:37:02.013348 2168414 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000003569
+I1215 15:37:02.013356 2168414 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000002373
+I1215 15:37:02.013427 2168414 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=3569 last_included_term=2
+I1215 15:37:03.151228 2168353 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:37:03.488785 2168363 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:37:17.863445 2168442 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][42949702075]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 12786129217164115794
+I1215 15:37:17.863481 2168442 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][42949702075]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 6, log_id: 12786129217164115794
+I1215 15:37:17.863492 2168442 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][42949702075]store:127.0.1.1:8110 heart beat, time_cost: 62, instance_time: 3, peer_balance_time: 2, schema_time: 4, peer_time: 26, leader_time: 20, log_id: 12786129217164115794
+I1215 15:37:23.263206 2168396 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:37:23.597589 2168352 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:37:43.373008 2168352 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:37:43.708851 2168433 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:37:48.053341 2168368 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][34359768174]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 7475545110169399321
+I1215 15:37:48.053390 2168368 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][34359768174]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 10 leader_balance_time: 8, log_id: 7475545110169399321
+I1215 15:37:48.053400 2168368 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][34359768174]store:127.0.1.1:8110 heart beat, time_cost: 77, instance_time: 5, peer_balance_time: 2, schema_time: 2, peer_time: 36, leader_time: 28, log_id: 7475545110169399321
+I1215 15:38:02.010746 2168365 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:38:02.013530 2168365 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000004767
+I1215 15:38:02.013537 2168365 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000004767
+I1215 15:38:02.013547 2168365 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000003569
+I1215 15:38:02.013626 2168365 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=4767 last_included_term=2
+I1215 15:38:03.481732 2168391 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:38:03.819891 2168367 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:38:18.232024 2168416 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][8589965023]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 11581304803931354935
+I1215 15:38:18.232061 2168416 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][8589965023]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 0, leader_region_time: 10 leader_balance_time: 5, log_id: 11581304803931354935
+I1215 15:38:18.232067 2168416 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][8589965023]store:127.0.1.1:8110 heart beat, time_cost: 55, instance_time: 2, peer_balance_time: 2, schema_time: 1, peer_time: 27, leader_time: 20, log_id: 11581304803931354935
+I1215 15:38:23.591128 2168431 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:38:23.931528 2168433 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:38:43.698674 2168408 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:38:44.039785 2168365 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:38:48.409600 2168358 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][8589965633]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 10096469706632712115
+I1215 15:38:48.409675 2168358 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][8589965633]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 14 leader_balance_time: 10, log_id: 10096469706632712115
+I1215 15:38:48.409689 2168358 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][8589965633]store:127.0.1.1:8110 heart beat, time_cost: 102, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 51, leader_time: 41, log_id: 10096469706632712115
+I1215 15:39:02.010926 2168353 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:39:02.012022 2168353 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000005964
+I1215 15:39:02.012030 2168353 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000005964
+I1215 15:39:02.012039 2168353 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000004767
+I1215 15:39:02.012111 2168353 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=5964 last_included_term=2
+I1215 15:39:03.806213 2168390 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:39:04.148010 2168420 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:39:18.583971 2168415 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][42949701295]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 12111677874547194336
+I1215 15:39:18.584024 2168415 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][42949701295]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 10 leader_balance_time: 7, log_id: 12111677874547194336
+I1215 15:39:18.584034 2168415 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][42949701295]store:127.0.1.1:8110 heart beat, time_cost: 79, instance_time: 4, peer_balance_time: 2, schema_time: 2, peer_time: 40, leader_time: 27, log_id: 12111677874547194336
+I1215 15:39:23.915524 2168420 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:39:24.257300 2168352 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:39:44.023506 2168442 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:39:44.365248 2168416 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:39:48.760185 2168363 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][34359767824]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 2749664881586257126
+I1215 15:39:48.760239 2168363 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][34359767824]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 7, log_id: 2749664881586257126
+I1215 15:39:48.760248 2168363 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][34359767824]store:127.0.1.1:8110 heart beat, time_cost: 78, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 44, leader_time: 25, log_id: 2749664881586257126
+I1215 15:40:02.011134 2168352 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:40:02.012264 2168418 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000007161
+I1215 15:40:02.012274 2168418 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000007161
+I1215 15:40:02.012282 2168418 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000005964
+I1215 15:40:02.012363 2168418 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=7161 last_included_term=2
+I1215 15:40:04.132731 2168432 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:40:04.474582 2168352 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:40:10.815208 2168361 node.cpp:975] node auto_incr_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:40:10.819479 2168361 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/auto_incr/snapshot_00000000000000000001
+I1215 15:40:10.819489 2168361 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/auto_incr/temp to ./meta_data/raft_data/snapshot/auto_incr/snapshot_00000000000000000001
+I1215 15:40:10.819501 2168361 snapshot_executor.cpp:234] node auto_incr_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=1 last_included_term=2
+I1215 15:40:18.941018 2168414 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][60129568238]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 3906228747815301692
+I1215 15:40:18.941064 2168414 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][60129568238]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 7, log_id: 3906228747815301692
+I1215 15:40:18.941079 2168414 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][60129568238]store:127.0.1.1:8110 heart beat, time_cost: 74, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 36, leader_time: 22, log_id: 3906228747815301692
+I1215 15:40:24.240301 2168390 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:40:24.582201 2168433 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:40:44.351518 2168391 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:40:44.693431 2168363 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:40:58.600998 2168395 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][34359766915]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 5971852396359252008
+I1215 15:40:58.601034 2168395 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][34359766915]store:  process leader heartbeat, update_status_time: 2, leader_region_time: 6 leader_balance_time: 9, log_id: 5971852396359252008
+I1215 15:40:58.601038 2168395 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][34359766915]store: heart beat, time_cost: 54, instance_time: 2, peer_balance_time: 2, schema_time: 1, peer_time: 26, leader_time: 20, log_id: 5971852396359252008
+I1215 15:40:58.606120 2168431 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][30064800789]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 13310020438908789900
+I1215 15:40:58.606153 2168431 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][30064800789]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 0, leader_region_time: 7 leader_balance_time: 5, log_id: 13310020438908789900
+I1215 15:40:58.606159 2168431 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][30064800789]store:127.0.1.1:8110 heart beat, time_cost: 52, instance_time: 2, peer_balance_time: 2, schema_time: 5, peer_time: 21, leader_time: 19, log_id: 13310020438908789900
+I1215 15:41:02.011287 2168352 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:41:02.012816 2168352 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000008358
+I1215 15:41:02.012825 2168352 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000008358
+I1215 15:41:02.012832 2168352 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000007161
+I1215 15:41:02.012910 2168352 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=8358 last_included_term=2
+I1215 15:41:04.461513 2168440 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:41:04.803293 2168365 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:41:08.218993 2168367 node.cpp:975] node meta_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:41:08.224325 2168367 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/meta_server/snapshot_00000000000000000002
+I1215 15:41:08.224335 2168367 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/meta_server/temp to ./meta_data/raft_data/snapshot/meta_server/snapshot_00000000000000000002
+I1215 15:41:08.224349 2168367 snapshot_executor.cpp:234] node meta_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=2 last_included_term=2
+I1215 15:41:24.568848 2168391 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:41:24.910620 2168442 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:41:44.677358 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:41:45.019271 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:42:02.011447 2168395 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:42:02.012980 2168395 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000009555
+I1215 15:42:02.012989 2168395 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000009555
+I1215 15:42:02.012996 2168395 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000008358
+I1215 15:42:02.013069 2168395 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=9555 last_included_term=2
+I1215 15:42:04.784377 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:42:05.126183 2168365 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:42:24.896566 2168352 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:42:25.235052 2168346 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:42:45.005956 2168433 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:42:45.342003 2168396 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:43:02.011610 2168367 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:43:02.012738 2168367 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000010753
+I1215 15:43:02.012746 2168367 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000010753
+I1215 15:43:02.012755 2168367 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000009555
+I1215 15:43:02.012830 2168367 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=10753 last_included_term=2
+I1215 15:43:05.114619 2168346 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:43:05.449071 2168433 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:43:25.225471 2168361 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:43:25.559145 2168363 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:43:45.337787 2168414 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:43:45.669580 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:44:02.011742 2168361 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:44:02.013891 2168361 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000011950
+I1215 15:44:02.013906 2168361 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000011950
+I1215 15:44:02.013914 2168361 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000010753
+I1215 15:44:02.013978 2168361 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=11950 last_included_term=2
+I1215 15:44:05.444909 2168352 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:44:05.776674 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:44:25.554514 2168431 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:44:25.886353 2168395 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:44:35.570851 2168391 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][51539633922]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 484559732684683751
+I1215 15:44:35.571026 2168391 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][51539633922]store:  process leader heartbeat, update_status_time: 2, leader_region_time: 15 leader_balance_time: 74, log_id: 484559732684683751
+I1215 15:44:35.571092 2168391 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][51539633922]store: heart beat, time_cost: 255, instance_time: 2, peer_balance_time: 3, schema_time: 1, peer_time: 90, leader_time: 152, log_id: 484559732684683751
+I1215 15:44:35.577901 2168346 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][81604404732]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 591421951894163831
+I1215 15:44:35.577922 2168346 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][81604404732]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 5, log_id: 591421951894163831
+I1215 15:44:35.577929 2168346 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][81604404732]store:127.0.1.1:8110 heart beat, time_cost: 57, instance_time: 25, peer_balance_time: 1, schema_time: 1, peer_time: 7, leader_time: 20, log_id: 591421951894163831
+I1215 15:44:45.663269 2168420 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:44:45.995131 2168365 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:45:02.011886 2168367 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:45:02.013696 2168367 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000013147
+I1215 15:45:02.013705 2168367 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000013147
+I1215 15:45:02.013712 2168367 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000011950
+I1215 15:45:02.013783 2168367 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=13147 last_included_term=2
+I1215 15:45:05.762678 2168346 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][51539638532]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 18022147011206860194
+I1215 15:45:05.762727 2168346 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][51539638532]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 5, log_id: 18022147011206860194
+I1215 15:45:05.762732 2168346 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][51539638532]store:127.0.1.1:8110 heart beat, time_cost: 67, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 42, leader_time: 16, log_id: 18022147011206860194
+I1215 15:45:05.773015 2168431 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:45:06.104836 2168365 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:45:25.881906 2168414 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:45:26.213733 2168363 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:45:35.946943 2168433 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][141733952021]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 11042653409796826970
+I1215 15:45:35.947002 2168433 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][141733952021]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 9 leader_balance_time: 8, log_id: 11042653409796826970
+I1215 15:45:35.947012 2168433 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][141733952021]store:127.0.1.1:8110 heart beat, time_cost: 85, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 48, leader_time: 27, log_id: 11042653409796826970
+I1215 15:45:45.990520 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:45:46.322182 2168383 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:46:02.012049 2168346 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:46:02.016325 2168346 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000014344
+I1215 15:46:02.016335 2168346 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000014344
+I1215 15:46:02.016343 2168346 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000013147
+I1215 15:46:02.016417 2168346 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=14344 last_included_term=2
+I1215 15:46:06.100438 2168358 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:46:06.131208 2168395 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][81604408567]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 769688560532168810
+I1215 15:46:06.131242 2168395 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][81604408567]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 4, log_id: 769688560532168810
+I1215 15:46:06.131248 2168395 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][81604408567]store:127.0.1.1:8110 heart beat, time_cost: 55, instance_time: 3, peer_balance_time: 3, schema_time: 1, peer_time: 29, leader_time: 17, log_id: 769688560532168810
+I1215 15:46:06.432251 2168414 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:46:26.209136 2168372 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:46:26.540903 2168440 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:46:36.317574 2168433 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][51539634785]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 6058147447843218353
+I1215 15:46:36.317628 2168433 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][51539634785]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 6 leader_balance_time: 6, log_id: 6058147447843218353
+I1215 15:46:36.317633 2168433 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][51539634785]store:127.0.1.1:8110 heart beat, time_cost: 72, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 45, leader_time: 19, log_id: 6058147447843218353
+I1215 15:46:46.318120 2168442 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:46:46.649899 2168440 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:47:02.012214 2168353 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:47:02.013239 2168353 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000015541
+I1215 15:47:02.013247 2168353 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000015541
+I1215 15:47:02.013258 2168353 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000014344
+I1215 15:47:02.013346 2168353 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=15541 last_included_term=2
+I1215 15:47:06.426692 2168363 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:47:06.500131 2168414 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][141733951629]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 6913297817267476527
+I1215 15:47:06.500159 2168414 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][141733951629]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 0, leader_region_time: 7 leader_balance_time: 5, log_id: 6913297817267476527
+I1215 15:47:06.500164 2168414 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][141733951629]store:127.0.1.1:8110 heart beat, time_cost: 44, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 19, leader_time: 17, log_id: 6913297817267476527
+I1215 15:47:06.758561 2168367 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:47:26.535033 2168372 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:47:26.866842 2168391 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:47:36.689181 2168352 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][17179895436]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 18022147011206860194
+I1215 15:47:36.689227 2168352 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][17179895436]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 14 leader_balance_time: 6, log_id: 18022147011206860194
+I1215 15:47:36.689234 2168352 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][17179895436]store:127.0.1.1:8110 heart beat, time_cost: 66, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 30, leader_time: 26, log_id: 18022147011206860194
+I1215 15:47:46.644616 2168391 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:47:46.976419 2168376 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:48:02.012395 2168346 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:48:02.016850 2168346 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000016738
+I1215 15:48:02.016861 2168346 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000016738
+I1215 15:48:02.016870 2168346 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000015541
+I1215 15:48:02.016947 2168346 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=16738 last_included_term=2
+I1215 15:48:06.751459 2168395 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:48:06.875326 2168358 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][47244669801]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 3165823856898992460
+I1215 15:48:06.875362 2168358 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][47244669801]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 5, log_id: 3165823856898992460
+I1215 15:48:06.875368 2168358 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][47244669801]store:127.0.1.1:8110 heart beat, time_cost: 55, instance_time: 3, peer_balance_time: 1, schema_time: 2, peer_time: 28, leader_time: 17, log_id: 3165823856898992460
+I1215 15:48:07.083302 2168440 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:48:26.859506 2168390 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:48:27.191205 2168414 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:48:37.055032 2168433 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][38654733788]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 16077033876452341618
+I1215 15:48:37.055068 2168433 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][38654733788]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 6, log_id: 16077033876452341618
+I1215 15:48:37.055075 2168433 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][38654733788]store:127.0.1.1:8110 heart beat, time_cost: 56, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 28, leader_time: 19, log_id: 16077033876452341618
+I1215 15:48:46.967129 2168431 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:48:47.298897 2168367 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:49:02.012583 2168396 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:49:02.016851 2168396 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000017936
+I1215 15:49:02.016863 2168396 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000017936
+I1215 15:49:02.016878 2168396 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000016738
+I1215 15:49:02.016966 2168396 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=17936 last_included_term=2
+I1215 15:49:07.075580 2168415 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:49:07.236507 2168376 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][73014473264]process peer hearbeat, table_exist_time: 1, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 16728732319046622507
+I1215 15:49:07.236567 2168376 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][73014473264]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 11 leader_balance_time: 8, log_id: 16728732319046622507
+I1215 15:49:07.236577 2168376 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][73014473264]store:127.0.1.1:8110 heart beat, time_cost: 87, instance_time: 4, peer_balance_time: 3, schema_time: 1, peer_time: 46, leader_time: 28, log_id: 16728732319046622507
+I1215 15:49:07.407408 2168420 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:49:27.184842 2168390 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:49:27.515228 2168414 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:49:37.438338 2168346 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][42949704432]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 17748381144784011675
+I1215 15:49:37.438377 2168346 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][42949704432]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 6, log_id: 17748381144784011675
+I1215 15:49:37.438382 2168346 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][42949704432]store:127.0.1.1:8110 heart beat, time_cost: 56, instance_time: 3, peer_balance_time: 1, schema_time: 1, peer_time: 33, leader_time: 17, log_id: 17748381144784011675
+I1215 15:49:47.293982 2168414 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:49:47.622618 2168395 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:50:02.012756 2168363 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:50:02.013849 2168363 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000019133
+I1215 15:50:02.013855 2168363 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000019133
+I1215 15:50:02.013863 2168363 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000017936
+I1215 15:50:02.013938 2168363 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=19133 last_included_term=2
+I1215 15:50:07.404186 2168440 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:50:07.642596 2168368 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][30064797544]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 18022147011206860194
+I1215 15:50:07.642638 2168368 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][30064797544]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 5, log_id: 18022147011206860194
+I1215 15:50:07.642643 2168368 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][30064797544]store:127.0.1.1:8110 heart beat, time_cost: 59, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 35, leader_time: 16, log_id: 18022147011206860194
+I1215 15:50:07.729781 2168353 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:50:10.815380 2168431 node.cpp:975] node auto_incr_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:50:10.815413 2168431 snapshot_executor.cpp:154] node auto_incr_raft:127.0.1.1:8010:0:0 the gap between fsm applied index 1 and last_snapshot_index 1 is less than 1, will clear bufferred logs and return success
+I1215 15:50:27.512404 2168395 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:50:27.836421 2168353 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:50:37.834729 2168396 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][98784276925]process peer hearbeat, table_exist_time: 1, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 541099148858603755
+I1215 15:50:37.834790 2168396 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][98784276925]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 10 leader_balance_time: 7, log_id: 541099148858603755
+I1215 15:50:37.834802 2168396 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][98784276925]store:127.0.1.1:8110 heart beat, time_cost: 90, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 51, leader_time: 27, log_id: 541099148858603755
+I1215 15:50:47.620905 2168433 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:50:47.943914 2168431 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:51:02.012923 2168420 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:51:02.017284 2168420 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000020330
+I1215 15:51:02.017302 2168420 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000020330
+I1215 15:51:02.017313 2168420 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000019133
+I1215 15:51:02.017396 2168420 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=20330 last_included_term=2
+I1215 15:51:07.729905 2168414 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:51:08.016260 2168432 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][47244667127]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 6663347842796010339
+I1215 15:51:08.016302 2168432 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][47244667127]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 6663347842796010339
+I1215 15:51:08.016309 2168432 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][47244667127]store:127.0.1.1:8110 heart beat, time_cost: 64, instance_time: 3, peer_balance_time: 3, schema_time: 1, peer_time: 36, leader_time: 19, log_id: 6663347842796010339
+I1215 15:51:08.051673 2168414 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:51:08.219151 2168367 node.cpp:975] node meta_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:51:08.219183 2168367 snapshot_executor.cpp:154] node meta_raft:127.0.1.1:8010:0:0 the gap between fsm applied index 2 and last_snapshot_index 2 is less than 1, will clear bufferred logs and return success
+I1215 15:51:27.835844 2168358 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:51:28.157618 2168353 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:51:38.187814 2168361 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][120259113266]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 8598433497550476238
+I1215 15:51:38.187858 2168361 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][120259113266]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 12 leader_balance_time: 6, log_id: 8598433497550476238
+I1215 15:51:38.187866 2168361 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][120259113266]store:127.0.1.1:8110 heart beat, time_cost: 65, instance_time: 3, peer_balance_time: 3, schema_time: 1, peer_time: 31, leader_time: 25, log_id: 8598433497550476238
+I1215 15:51:47.944983 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:51:48.266673 2168358 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:52:02.013088 2168433 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:52:02.017302 2168433 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000021528
+I1215 15:52:02.017310 2168433 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000021528
+I1215 15:52:02.017318 2168433 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000020330
+I1215 15:52:02.017390 2168433 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=21528 last_included_term=2
+I1215 15:52:08.054351 2168416 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:52:08.371040 2168408 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][103079245330]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 11060383660831190086
+I1215 15:52:08.371086 2168408 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][103079245330]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 11060383660831190086
+I1215 15:52:08.371093 2168408 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][103079245330]store:127.0.1.1:8110 heart beat, time_cost: 67, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 38, leader_time: 18, log_id: 11060383660831190086
+I1215 15:52:08.376133 2168414 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:52:28.161089 2168376 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:52:28.482790 2168383 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:52:38.558475 2168346 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][98784274785]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 13844442026973953697
+I1215 15:52:38.558542 2168346 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][98784274785]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 10 leader_balance_time: 8, log_id: 13844442026973953697
+I1215 15:52:38.558553 2168346 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][98784274785]store:127.0.1.1:8110 heart beat, time_cost: 96, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 54, leader_time: 30, log_id: 13844442026973953697
+I1215 15:52:48.275619 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:52:48.592311 2168372 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:53:02.013260 2168420 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:53:02.017609 2168420 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000022725
+I1215 15:53:02.017627 2168420 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000022725
+I1215 15:53:02.017635 2168420 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000021528
+I1215 15:53:02.017706 2168420 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=22725 last_included_term=2
+I1215 15:53:08.392189 2168367 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:53:08.706341 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:53:08.764634 2168353 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][64424536018]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 12384291877125975208
+I1215 15:53:08.764672 2168353 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][64424536018]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 10, log_id: 12384291877125975208
+I1215 15:53:08.764678 2168353 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][64424536018]store:127.0.1.1:8110 heart beat, time_cost: 55, instance_time: 4, peer_balance_time: 1, schema_time: 2, peer_time: 23, leader_time: 23, log_id: 12384291877125975208
+I1215 15:53:28.502938 2168416 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:53:28.815821 2168391 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:53:38.970619 2168442 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][81604407716]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 9616576646383932472
+I1215 15:53:38.970665 2168442 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][81604407716]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 6, log_id: 9616576646383932472
+I1215 15:53:38.970679 2168442 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][81604407716]store:127.0.1.1:8110 heart beat, time_cost: 81, instance_time: 3, peer_balance_time: 7, schema_time: 2, peer_time: 39, leader_time: 27, log_id: 9616576646383932472
+I1215 15:53:48.617568 2168408 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:53:48.929196 2168431 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:54:02.013465 2168352 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:54:02.017735 2168352 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000023922
+I1215 15:54:02.017745 2168352 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000023922
+I1215 15:54:02.017752 2168352 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000022725
+I1215 15:54:02.017824 2168352 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=23922 last_included_term=2
+I1215 15:54:08.726964 2168361 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:54:09.038539 2168395 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:54:09.165572 2168418 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][51539636172]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 3715696992508504192
+I1215 15:54:09.165608 2168418 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][51539636172]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 8, log_id: 3715696992508504192
+I1215 15:54:09.165622 2168418 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][51539636172]store:127.0.1.1:8110 heart beat, time_cost: 62, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 24, leader_time: 21, log_id: 3715696992508504192
+I1215 15:54:28.834373 2168372 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:54:29.146126 2168346 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:54:39.355281 2168353 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][107374212811]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 16731428885182473594
+I1215 15:54:39.355343 2168353 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][107374212811]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 12 leader_balance_time: 7, log_id: 16731428885182473594
+I1215 15:54:39.355352 2168353 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][107374212811]store:127.0.1.1:8110 heart beat, time_cost: 94, instance_time: 4, peer_balance_time: 3, schema_time: 2, peer_time: 54, leader_time: 27, log_id: 16731428885182473594
+I1215 15:54:48.941846 2168368 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:54:49.253568 2168361 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:55:02.013615 2168372 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:55:02.017920 2168372 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000025119
+I1215 15:55:02.017927 2168372 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000025119
+I1215 15:55:02.017935 2168372 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000023922
+I1215 15:55:02.018006 2168372 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=25119 last_included_term=2
+I1215 15:55:09.048616 2168433 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:55:09.360345 2168396 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:55:09.562625 2168363 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][47244666375]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 3151109584572256060
+I1215 15:55:09.562659 2168363 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][47244666375]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 5, log_id: 3151109584572256060
+I1215 15:55:09.562664 2168363 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][47244666375]store:127.0.1.1:8110 heart beat, time_cost: 72, instance_time: 4, peer_balance_time: 2, schema_time: 2, peer_time: 44, leader_time: 19, log_id: 3151109584572256060
+I1215 15:55:29.156966 2168391 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:55:29.468559 2168440 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:55:39.748797 2168396 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][94489309473]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 891464585463723278
+I1215 15:55:39.748836 2168396 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][94489309473]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 7 leader_balance_time: 5, log_id: 891464585463723278
+I1215 15:55:39.748843 2168396 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][94489309473]store:127.0.1.1:8110 heart beat, time_cost: 62, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 33, leader_time: 19, log_id: 891464585463723278
+I1215 15:55:49.266234 2168408 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:55:49.577900 2168395 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:56:02.013784 2168442 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:56:02.018080 2168442 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000026317
+I1215 15:56:02.018088 2168442 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000026317
+I1215 15:56:02.018097 2168442 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000025119
+I1215 15:56:02.018172 2168442 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=26317 last_included_term=2
+I1215 15:56:09.374214 2168440 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:56:09.685930 2168415 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:56:09.935361 2168353 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][55834601103]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 8662150624447144177
+I1215 15:56:09.935400 2168353 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][55834601103]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 8662150624447144177
+I1215 15:56:09.935406 2168353 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][55834601103]store:127.0.1.1:8110 heart beat, time_cost: 59, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 30, leader_time: 19, log_id: 8662150624447144177
+I1215 15:56:29.481786 2168440 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:56:29.793526 2168376 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:56:40.121023 2168431 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][107374211957]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 3861240418966539955
+I1215 15:56:40.121064 2168431 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][107374211957]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 6, log_id: 3861240418966539955
+I1215 15:56:40.121071 2168431 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][107374211957]store:127.0.1.1:8110 heart beat, time_cost: 62, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 33, leader_time: 20, log_id: 3861240418966539955
+I1215 15:56:49.590358 2168396 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:56:49.902022 2168395 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:57:02.013938 2168432 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:57:02.018286 2168432 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000027514
+I1215 15:57:02.018296 2168432 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000027514
+I1215 15:57:02.018304 2168432 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000026317
+I1215 15:57:02.018383 2168432 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=27514 last_included_term=2
+I1215 15:57:09.698411 2168353 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:57:10.010125 2168414 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:57:10.305583 2168442 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][137438981509]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 3151109584572256060
+I1215 15:57:10.305624 2168442 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][137438981509]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 14 leader_balance_time: 5, log_id: 3151109584572256060
+I1215 15:57:10.305630 2168442 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][137438981509]store:127.0.1.1:8110 heart beat, time_cost: 61, instance_time: 4, peer_balance_time: 2, schema_time: 2, peer_time: 26, leader_time: 26, log_id: 3151109584572256060
+I1215 15:57:29.806733 2168415 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:57:30.118340 2168442 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:57:40.497545 2168352 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][64424540627]process peer hearbeat, table_exist_time: 1, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 3473321985538182466
+I1215 15:57:40.497601 2168352 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][64424540627]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 9 leader_balance_time: 7, log_id: 3473321985538182466
+I1215 15:57:40.497619 2168352 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][64424540627]store:127.0.1.1:8110 heart beat, time_cost: 91, instance_time: 4, peer_balance_time: 3, schema_time: 1, peer_time: 46, leader_time: 34, log_id: 3473321985538182466
+I1215 15:57:49.914080 2168353 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:57:50.225685 2168432 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:57:51.157567 2168383 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][176093686857]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 7356948391929489218
+I1215 15:57:51.157600 2168383 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][176093686857]store:  process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 9, log_id: 7356948391929489218
+I1215 15:57:51.157610 2168383 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][176093686857]store: heart beat, time_cost: 55, instance_time: 2, peer_balance_time: 1, schema_time: 1, peer_time: 23, leader_time: 25, log_id: 7356948391929489218
+I1215 15:57:51.162251 2168361 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][111669180588]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 11245797306051109142
+I1215 15:57:51.162272 2168361 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][111669180588]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 4, log_id: 11245797306051109142
+I1215 15:57:51.162276 2168361 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][111669180588]store:127.0.1.1:8110 heart beat, time_cost: 32, instance_time: 2, peer_balance_time: 1, schema_time: 1, peer_time: 12, leader_time: 14, log_id: 11245797306051109142
+I1215 15:58:02.014120 2168372 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:58:02.018287 2168372 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000028711
+I1215 15:58:02.018294 2168372 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000028711
+I1215 15:58:02.018302 2168372 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000027514
+I1215 15:58:02.018375 2168372 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=28711 last_included_term=2
+I1215 15:58:10.022182 2168415 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:58:10.333847 2168442 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:58:21.348915 2168414 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][257698065720]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 17158132713656713084
+I1215 15:58:21.348964 2168414 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][257698065720]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 11 leader_balance_time: 7, log_id: 17158132713656713084
+I1215 15:58:21.348973 2168414 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][257698065720]store:127.0.1.1:8110 heart beat, time_cost: 73, instance_time: 4, peer_balance_time: 3, schema_time: 1, peer_time: 37, leader_time: 26, log_id: 17158132713656713084
+I1215 15:58:30.130205 2168367 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:58:30.441843 2168352 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:58:50.238922 2168432 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:58:50.550617 2168367 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:58:51.536202 2168440 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][146028916620]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 319135784174102648
+I1215 15:58:51.536259 2168440 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][146028916620]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 10 leader_balance_time: 8, log_id: 319135784174102648
+I1215 15:58:51.536269 2168440 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][146028916620]store:127.0.1.1:8110 heart beat, time_cost: 87, instance_time: 4, peer_balance_time: 3, schema_time: 2, peer_time: 45, leader_time: 29, log_id: 319135784174102648
+I1215 15:59:02.014281 2168383 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 15:59:02.015337 2168383 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000029908
+I1215 15:59:02.015347 2168383 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000029908
+I1215 15:59:02.015355 2168383 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000028711
+I1215 15:59:02.015436 2168383 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=29908 last_included_term=2
+I1215 15:59:10.346460 2168395 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:59:10.658063 2168431 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:59:21.733546 2168396 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][73014472091]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 13870979055944735540
+I1215 15:59:21.733582 2168396 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][73014472091]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 4, log_id: 13870979055944735540
+I1215 15:59:21.733587 2168396 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][73014472091]store:127.0.1.1:8110 heart beat, time_cost: 53, instance_time: 3, peer_balance_time: 1, schema_time: 2, peer_time: 30, leader_time: 16, log_id: 13870979055944735540
+I1215 15:59:30.454532 2168432 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:59:30.766256 2168420 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:59:50.563318 2168440 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 15:59:50.875038 2168367 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 15:59:51.919623 2168346 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][98784275153]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 2544354023583002463
+I1215 15:59:51.919708 2168346 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][98784275153]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 11 leader_balance_time: 7, log_id: 2544354023583002463
+I1215 15:59:51.919720 2168346 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][98784275153]store:127.0.1.1:8110 heart beat, time_cost: 109, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 68, leader_time: 33, log_id: 2544354023583002463
+I1215 16:00:02.014469 2168432 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:00:02.018857 2168432 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000031106
+I1215 16:00:02.018865 2168432 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000031106
+I1215 16:00:02.018872 2168432 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000029908
+I1215 16:00:02.018939 2168432 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=31106 last_included_term=2
+I1215 16:00:10.672200 2168346 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:00:10.815479 2168391 node.cpp:975] node auto_incr_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:00:10.815512 2168391 snapshot_executor.cpp:154] node auto_incr_raft:127.0.1.1:8010:0:0 the gap between fsm applied index 1 and last_snapshot_index 1 is less than 1, will clear bufferred logs and return success
+I1215 16:00:10.983788 2168396 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:00:22.102001 2168433 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][85899374574]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 14769649056634722329
+I1215 16:00:22.102057 2168433 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][85899374574]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 6, log_id: 14769649056634722329
+I1215 16:00:22.102062 2168433 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][85899374574]store:127.0.1.1:8110 heart beat, time_cost: 77, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 48, leader_time: 20, log_id: 14769649056634722329
+I1215 16:00:30.778550 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:00:31.090183 2168346 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:00:50.887255 2168358 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:00:51.198902 2168420 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:00:52.282753 2168391 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][180388654341]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 9242084018750836705
+I1215 16:00:52.282805 2168391 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][180388654341]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 6, log_id: 9242084018750836705
+I1215 16:00:52.282814 2168391 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][180388654341]store:127.0.1.1:8110 heart beat, time_cost: 76, instance_time: 3, peer_balance_time: 3, schema_time: 1, peer_time: 43, leader_time: 23, log_id: 9242084018750836705
+I1215 16:01:02.014617 2168365 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:01:02.018968 2168365 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000032303
+I1215 16:01:02.018985 2168365 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000032303
+I1215 16:01:02.018993 2168365 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000031106
+I1215 16:01:02.019075 2168365 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=32303 last_included_term=2
+I1215 16:01:08.219252 2168365 node.cpp:975] node meta_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:01:08.219290 2168365 snapshot_executor.cpp:154] node meta_raft:127.0.1.1:8010:0:0 the gap between fsm applied index 2 and last_snapshot_index 2 is less than 1, will clear bufferred logs and return success
+I1215 16:01:11.001083 2168396 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:01:11.307353 2168372 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:01:22.468227 2168361 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][266287998303]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 12652718583579581677
+I1215 16:01:22.468266 2168361 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][266287998303]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 12652718583579581677
+I1215 16:01:22.468271 2168361 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][266287998303]store:127.0.1.1:8110 heart beat, time_cost: 58, instance_time: 3, peer_balance_time: 3, schema_time: 1, peer_time: 30, leader_time: 18, log_id: 12652718583579581677
+I1215 16:01:31.112722 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:01:31.416617 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:01:51.222314 2168433 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:01:51.525079 2168418 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:01:52.654587 2168431 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][133144013408]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 13384760231573547454
+I1215 16:01:52.654631 2168431 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][133144013408]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 12 leader_balance_time: 6, log_id: 13384760231573547454
+I1215 16:01:52.654639 2168431 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][133144013408]store:127.0.1.1:8110 heart beat, time_cost: 67, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 32, leader_time: 24, log_id: 13384760231573547454
+I1215 16:02:02.014789 2168390 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:02:02.015836 2168390 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000033500
+I1215 16:02:02.015842 2168390 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000033500
+I1215 16:02:02.015849 2168390 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000032303
+I1215 16:02:02.015928 2168390 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=33500 last_included_term=2
+I1215 16:02:11.333247 2168365 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:02:11.634898 2168361 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:02:22.825063 2168415 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][146028918864]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 13812293935298784391
+I1215 16:02:22.825114 2168415 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][146028918864]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 7, log_id: 13812293935298784391
+I1215 16:02:22.825120 2168415 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][146028918864]store:127.0.1.1:8110 heart beat, time_cost: 71, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 41, leader_time: 21, log_id: 13812293935298784391
+I1215 16:02:31.446298 2168363 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:02:31.744009 2168353 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:02:51.556735 2168353 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:02:51.851895 2168390 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:02:53.005331 2168361 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][137438982815]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 10900523802869832290
+I1215 16:02:53.005396 2168361 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][137438982815]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 10 leader_balance_time: 7, log_id: 10900523802869832290
+I1215 16:02:53.005406 2168361 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][137438982815]store:127.0.1.1:8110 heart beat, time_cost: 95, instance_time: 4, peer_balance_time: 2, schema_time: 2, peer_time: 58, leader_time: 26, log_id: 10900523802869832290
+I1215 16:03:02.014954 2168376 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:03:02.021836 2168376 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000034697
+I1215 16:03:02.021849 2168376 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000034697
+I1215 16:03:02.021863 2168376 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000033500
+I1215 16:03:02.021987 2168376 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=34697 last_included_term=2
+I1215 16:03:11.665438 2168414 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:03:11.959146 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:03:23.181428 2168395 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][326417540964]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 8903431073674522011
+I1215 16:03:23.181475 2168395 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][326417540964]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 8903431073674522011
+I1215 16:03:23.181481 2168395 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][326417540964]store:127.0.1.1:8110 heart beat, time_cost: 68, instance_time: 3, peer_balance_time: 1, schema_time: 2, peer_time: 39, leader_time: 20, log_id: 8903431073674522011
+I1215 16:03:31.775434 2168358 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:03:32.067678 2168361 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:03:51.889068 2168395 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:03:52.178619 2168368 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:03:53.362030 2168391 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][85899377013]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 16376787614178455809
+I1215 16:03:53.362082 2168391 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][85899377013]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 9 leader_balance_time: 6, log_id: 16376787614178455809
+I1215 16:03:53.362090 2168391 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][85899377013]store:127.0.1.1:8110 heart beat, time_cost: 78, instance_time: 4, peer_balance_time: 2, schema_time: 2, peer_time: 44, leader_time: 23, log_id: 16376787614178455809
+I1215 16:04:02.015146 2168433 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:04:02.019666 2168433 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000035895
+I1215 16:04:02.019675 2168433 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000035895
+I1215 16:04:02.019685 2168433 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000034697
+I1215 16:04:02.019749 2168433 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=35895 last_included_term=2
+I1215 16:04:12.002907 2168390 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:04:12.287959 2168415 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:04:23.541976 2168408 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][81604405210]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 940961298205705925
+I1215 16:04:23.542016 2168408 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][81604405210]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 5, log_id: 940961298205705925
+I1215 16:04:23.542021 2168408 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][81604405210]store:127.0.1.1:8110 heart beat, time_cost: 59, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 33, leader_time: 17, log_id: 940961298205705925
+I1215 16:04:32.115011 2168376 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:04:32.399633 2168376 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:04:52.223520 2168418 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:04:52.512120 2168368 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:04:53.730207 2168416 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][124554082286]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 847718115387375251
+I1215 16:04:53.730244 2168416 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][124554082286]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 5, log_id: 847718115387375251
+I1215 16:04:53.730250 2168416 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][124554082286]store:127.0.1.1:8110 heart beat, time_cost: 55, instance_time: 4, peer_balance_time: 1, schema_time: 2, peer_time: 29, leader_time: 18, log_id: 847718115387375251
+I1215 16:05:02.015326 2168431 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:05:02.019716 2168431 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000037092
+I1215 16:05:02.019724 2168431 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000037092
+I1215 16:05:02.019732 2168431 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000035895
+I1215 16:05:02.019804 2168431 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=37092 last_included_term=2
+I1215 16:05:12.331451 2168367 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:05:12.621425 2168433 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:05:23.920857 2168352 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][133144017275]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 1, log_id: 10262912364177946837
+I1215 16:05:23.920894 2168352 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][133144017275]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 5, log_id: 10262912364177946837
+I1215 16:05:23.920900 2168352 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][133144017275]store:127.0.1.1:8110 heart beat, time_cost: 55, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 30, leader_time: 18, log_id: 10262912364177946837
+I1215 16:05:32.440902 2168416 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:05:32.732529 2168376 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:05:52.553736 2168376 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:05:52.845402 2168352 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:05:54.118571 2168420 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][141733950920]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 3113910111214591913
+I1215 16:05:54.118638 2168420 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][141733950920]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 10 leader_balance_time: 8, log_id: 3113910111214591913
+I1215 16:05:54.118649 2168420 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][141733950920]store:127.0.1.1:8110 heart beat, time_cost: 94, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 55, leader_time: 28, log_id: 3113910111214591913
+I1215 16:06:02.015486 2168440 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:06:02.019897 2168440 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000038289
+I1215 16:06:02.019907 2168440 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000038289
+I1215 16:06:02.019915 2168440 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000037092
+I1215 16:06:02.019984 2168440 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=38289 last_included_term=2
+I1215 16:06:12.663673 2168361 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:06:12.955287 2168416 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:06:24.326453 2168433 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][240518199378]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 2901428808497328971
+I1215 16:06:24.326503 2168433 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][240518199378]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 6, log_id: 2901428808497328971
+I1215 16:06:24.326510 2168433 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][240518199378]store:127.0.1.1:8110 heart beat, time_cost: 73, instance_time: 3, peer_balance_time: 3, schema_time: 1, peer_time: 43, leader_time: 19, log_id: 2901428808497328971
+I1215 16:06:32.772001 2168358 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:06:33.063560 2168416 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:06:52.881412 2168440 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:06:53.172979 2168433 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:06:54.508639 2168368 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][133144016677]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 11610524284417934876
+I1215 16:06:54.508682 2168368 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][133144016677]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 8 leader_balance_time: 5, log_id: 11610524284417934876
+I1215 16:06:54.508687 2168368 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][133144016677]store:127.0.1.1:8110 heart beat, time_cost: 63, instance_time: 4, peer_balance_time: 2, schema_time: 1, peer_time: 34, leader_time: 19, log_id: 11610524284417934876
+I1215 16:07:02.015614 2168416 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:07:02.020182 2168416 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000039486
+I1215 16:07:02.020202 2168416 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000039486
+I1215 16:07:02.020217 2168416 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000038289
+I1215 16:07:02.020336 2168416 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=39486 last_included_term=2
+I1215 16:07:12.991053 2168395 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:07:13.282269 2168367 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:07:24.687871 2168440 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][158913818980]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 2310993086775921407
+I1215 16:07:24.687906 2168440 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][158913818980]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 6 leader_balance_time: 5, log_id: 2310993086775921407
+I1215 16:07:24.687911 2168440 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][158913818980]store:127.0.1.1:8110 heart beat, time_cost: 50, instance_time: 3, peer_balance_time: 2, schema_time: 1, peer_time: 27, leader_time: 16, log_id: 2310993086775921407
+I1215 16:07:33.098439 2168395 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:07:33.389999 2168420 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:07:53.206290 2168390 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:07:53.497841 2168442 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:07:54.873172 2168383 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][120259113006]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 6626197179149677214
+I1215 16:07:54.873246 2168383 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][120259113006]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 10 leader_balance_time: 8, log_id: 6626197179149677214
+I1215 16:07:54.873256 2168383 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][120259113006]store:127.0.1.1:8110 heart beat, time_cost: 103, instance_time: 5, peer_balance_time: 2, schema_time: 2, peer_time: 66, leader_time: 26, log_id: 6626197179149677214
+I1215 16:08:02.015839 2168408 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:08:02.020150 2168408 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000040683
+I1215 16:08:02.020159 2168408 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000040683
+I1215 16:08:02.020169 2168408 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000039486
+I1215 16:08:02.020242 2168408 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=40683 last_included_term=2
+I1215 16:08:13.316855 2168432 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:08:13.608506 2168363 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:08:25.047781 2168396 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][158913818633]process peer hearbeat, table_exist_time: 0, partition_exist_time: 0, ilegal_peer_time: 0, log_id: 16854938898414292764
+I1215 16:08:25.047818 2168396 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][158913818633]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 7 leader_balance_time: 4, log_id: 16854938898414292764
+I1215 16:08:25.047825 2168396 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][158913818633]store:127.0.1.1:8110 heart beat, time_cost: 57, instance_time: 2, peer_balance_time: 2, schema_time: 2, peer_time: 29, leader_time: 19, log_id: 16854938898414292764
+I1215 16:08:33.426525 2168358 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:08:33.717970 2168415 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:08:53.533794 2168372 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:08:53.825322 2168431 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:08:55.232033 2168418 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][124554080732]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 18066341404513574871
+I1215 16:08:55.232097 2168418 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][124554080732]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 11 leader_balance_time: 8, log_id: 18066341404513574871
+I1215 16:08:55.232110 2168418 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][124554080732]store:127.0.1.1:8110 heart beat, time_cost: 92, instance_time: 3, peer_balance_time: 2, schema_time: 2, peer_time: 52, leader_time: 29, log_id: 18066341404513574871
+I1215 16:09:02.016003 2168363 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:09:02.020504 2168432 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000041880
+I1215 16:09:02.020522 2168432 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000041880
+I1215 16:09:02.020530 2168432 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000040683
+I1215 16:09:02.020613 2168432 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=41880 last_included_term=2
+I1215 16:09:13.641901 2168415 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:09:13.933524 2168353 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:09:25.425987 2168346 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][154618852112]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 2350408849561806411
+I1215 16:09:25.426050 2168346 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][154618852112]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 11 leader_balance_time: 7, log_id: 2350408849561806411
+I1215 16:09:25.426059 2168346 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][154618852112]store:127.0.1.1:8110 heart beat, time_cost: 90, instance_time: 4, peer_balance_time: 3, schema_time: 2, peer_time: 52, leader_time: 26, log_id: 2350408849561806411
+I1215 16:09:33.748674 2168432 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:09:34.040302 2168352 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:09:53.856457 2168383 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:09:54.148011 2168408 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:09:55.613852 2168395 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][163208784528]process peer hearbeat, table_exist_time: 1, partition_exist_time: 0, ilegal_peer_time: 1, log_id: 8769379978345678936
+I1215 16:09:55.613914 2168395 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][163208784528]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 2, leader_region_time: 9 leader_balance_time: 7, log_id: 8769379978345678936
+I1215 16:09:55.613924 2168395 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][163208784528]store:127.0.1.1:8110 heart beat, time_cost: 87, instance_time: 4, peer_balance_time: 2, schema_time: 2, peer_time: 52, leader_time: 25, log_id: 8769379978345678936
+I1215 16:10:02.016180 2168440 node.cpp:975] node tso_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:10:02.020684 2168440 snapshot.cpp:642] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000043078
+I1215 16:10:02.020695 2168440 snapshot.cpp:648] Renaming ./meta_data/raft_data/snapshot/tso/temp to ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000043078
+I1215 16:10:02.020706 2168440 snapshot.cpp:519] Deleting ./meta_data/raft_data/snapshot/tso/snapshot_00000000000000041880
+I1215 16:10:02.020787 2168440 snapshot_executor.cpp:234] node tso_raft:127.0.1.1:8010:0:0 snapshot_save_done, last_included_index=43078 last_included_term=2
+I1215 16:10:10.815582 2168363 node.cpp:975] node auto_incr_raft:127.0.1.1:8010:0:0 starts to do snapshot
+I1215 16:10:10.815625 2168363 snapshot_executor.cpp:154] node auto_incr_raft:127.0.1.1:8010:0:0 the gap between fsm applied index 1 and last_snapshot_index 1 is less than 1, will clear bufferred logs and return success
+I1215 16:10:13.968572 2168391 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:10:14.256790 2168346 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:10:25.792640 2168433 log.h:176] [schema_manager.cpp:349][process_peer_heartbeat_for_store][154618848727]process peer hearbeat, table_exist_time: 0, partition_exist_time: 1, ilegal_peer_time: 0, log_id: 12658439238388289651
+I1215 16:10:25.792692 2168433 log.h:176] [schema_manager.cpp:380][process_leader_heartbeat_for_store][154618848727]store: 127.0.1.1:8110 process leader heartbeat, update_status_time: 1, leader_region_time: 15 leader_balance_time: 6, log_id: 12658439238388289651
+I1215 16:10:25.792709 2168433 log.h:176] [meta_state_machine.cpp:97][store_heartbeat][154618848727]store:127.0.1.1:8110 heart beat, time_cost: 81, instance_time: 2, peer_balance_time: 3, schema_time: 1, peer_time: 34, leader_time: 39, log_id: 12658439238388289651
+I1215 16:10:34.083539 2168416 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:10:34.366842 2168376 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.
+I1215 16:10:54.194242 2168361 log.h:176] [ddl_manager.cpp:704][work][4294992647]leader process ddl work.
+I1215 16:10:54.475790 2168431 log.h:176] [ddl_manager.cpp:350][operator()][4294992648]db manager working thread.

@@ -1,0 +1,39 @@
+Log file created at: 2025/12/15 15:40:58
+Running on machine: ubuntu
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1215 15:40:58.537096 2211866 log.h:199] [my_raft_log.cpp:39][register_once_or_die][0]Registered myraft extension
+W1215 15:40:58.547387 2211866 log.h:199] [main.cpp:198][main][0]add raft to baidu-rpc server success
+W1215 15:40:58.547498 2211866 log.h:199] [qos.h:139][reset_rate][0]statistics_threshold: 6000
+W1215 15:40:58.547647 2211866 log.h:199] [redis_router.cpp:127][init][0]Redis table __redis__.kv not found, using bootstrap mode
+W1215 15:40:58.548182 2211866 log.h:199] [redis_service.cpp:660][register_basic_redis_commands][0]Redis Phase 1 commands registered: GET/SET/DEL/MGET/MSET/EXPIRE/TTL
+W1215 15:40:58.549196 2211866 log.h:199] [main.cpp:228][main][0]start redis server success, listen port: 16379
+W1215 15:40:58.547727 2211945 log.h:199] [qos.h:476][analyze_qps][4294991105]sign sqlqos map is empty
+W1215 15:40:58.549250 2211945 log.h:199] [qos.cpp:323][token_bucket_modify][4294991105]max_token: 100000, global_extended_token: 100000, total_consume_token: 0, compression_ratio: 1.000000
+W1215 15:40:58.549253 2211945 log.h:199] [qos.cpp:347][token_bucket_modify][4294991105]globle extended bucket rate: 100000
+W1215 15:40:58.549256 2211945 log.h:199] [qos.h:139][reset_rate][4294991105]statistics_threshold: 6000
+W1215 15:40:58.547739 2211949 log.h:199] [qos.cpp:277][wheather_need_reject][4294991106]count: 0, window_count: 3000, need_reject: 0, match_reject_condition: 0, time: 173
+W1215 15:40:58.600004 2211866 log.h:199] [rocks_wrapper.cpp:369][init][0]reopen db:./store_data/rocks_db success
+W1215 15:40:58.600016 2211866 log.h:199] [rocks_wrapper.cpp:376][init][0]open column family:default
+W1215 15:40:58.600019 2211866 log.h:199] [rocks_wrapper.cpp:376][init][0]open column family:raft_log
+W1215 15:40:58.600021 2211866 log.h:199] [rocks_wrapper.cpp:376][init][0]open column family:data
+W1215 15:40:58.600023 2211866 log.h:199] [rocks_wrapper.cpp:376][init][0]open column family:meta_info
+W1215 15:40:58.600025 2211866 log.h:199] [rocks_wrapper.cpp:376][init][0]open column family:bin_log_new
+W1215 15:40:58.600029 2211866 log.h:199] [rocks_wrapper.cpp:484][init_cold_rocksdb][0]not init cold rocksdb
+W1215 15:40:58.600046 2211866 log.h:199] [rocks_wrapper.cpp:769][update_oldest_ts_in_binlog_cf][0]has no data in binlog cf
+W1215 15:40:58.600054 2211866 log.h:199] [rocks_wrapper.cpp:478][init][0]rocksdb init success
+W1215 15:40:58.600675 2211866 log.h:199] [store.cpp:197][init_before_listen][0]heart beat request:instance_info { address: "" capacity: 982240026624 used_size: 784900341760 resource_tag: "" physical_room: "default" dml_latency: 0 dml_qps: 0 raft_total_latency: 0 raft_total_qps: 0 select_latency: 0 select_qps: 0 network_segment: "" container_id: "" rocks_hang_check_cost: 0 init_address: "127.0.1.1:8110" } need_leader_balance: false when init store
+W1215 15:40:58.601272 2211866 log.h:199] [meta_server_interact.hpp:109][send_request_internal][0]connet with meta server success by bns name, leader:127.0.1.1:8010
+W1215 15:40:58.601400 2211866 log.h:199] [store.cpp:201][init_before_listen][0]heart beat response:errcode: SUCCESS errmsg: "success" when init store
+W1215 15:40:58.604296 2211866 log.h:199] [store.cpp:217][init_before_listen][0]get schema info from meta server success
+W1215 15:40:58.604302 2211866 log.h:199] [store.cpp:230][init_before_listen][0]has no prepared transcation
+W1215 15:40:58.604319 2211866 log.h:199] [store.cpp:315][init_before_listen][0]store init_before_listen success, region_size:0, doing_snapshot_regions_size:0heartbeat_process_time:3612 new_region_process_time:9
+W1215 15:40:58.605819 2211866 log.h:199] [main.cpp:253][main][0]start rpc success
+W1215 15:40:58.605825 2211866 log.h:199] [store.cpp:344][init_after_listen][0]init all region success init_region_time:0
+W1215 15:40:58.605867 2211866 log.h:199] [store.cpp:369][init_after_listen][0]store init_after_listen success, init success init_region_time:43
+W1215 15:40:58.605898 2211866 log.h:199] [main.cpp:260][main][0]store instance init success
+W1215 15:40:58.605983 2211999 log.h:199] [store.cpp:1997][cold_region_check][4294991122]region cnt in sst: 0, in store: 0 rocksdb sst cnt: 0, ext sst cnt: 0
+W1215 15:40:58.606001 2211959 log.h:199] [store.cpp:2629][check_region_peer_delay][4294991131]finish check_region_peer_delay, cost: 16
+W1215 15:40:58.606374 2211904 log.h:199] [store.cpp:1718][send_heart_beat][4294991113]heart beat
+W1215 15:41:03.634591 2211909 log.h:199] [store.cpp:2371][txn_clear_thread][4294991128]txn_clear_thread, count:1
+W1215 15:41:08.664068 2211983 log.h:199] [store.cpp:2371][txn_clear_thread][4294991128]txn_clear_thread, count:2
+W1215 15:41:13.693217 2211973 log.h:199] [store.cpp:2371][txn_clear_thread][4294991128]txn_clear_thread, count:3
