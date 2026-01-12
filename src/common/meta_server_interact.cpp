@@ -16,7 +16,7 @@
 #include "schema_factory.h"
 #include <gflags/gflags.h>
 
-namespace baikaldb {
+namespace neokv {
 DEFINE_int32(meta_request_timeout, 30000, 
             "meta as server request timeout, default:30000ms");
 DEFINE_int32(meta_connect_timeout, 5000, 

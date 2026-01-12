@@ -17,7 +17,7 @@
 #include <my_raft_meta_storage.h>
 #include <pthread.h> 
 
-namespace baikaldb {
+namespace neokv {
 
 static pthread_once_t g_register_once = PTHREAD_ONCE_INIT;
 

@@ -17,7 +17,7 @@
 #include <gperftools/malloc_extension.h>
 #endif
 
-namespace baikaldb {
+namespace neokv {
 
 DEFINE_int64(memory_gc_interval_s, 10, "mempry GC interval , default: 10s");
 DEFINE_int64(memory_stats_interval_s, 60, "mempry GC interval , default: 60s");

@@ -18,7 +18,7 @@
 #include "table_key.h"
 #include "region_control.h"
 
-namespace baikaldb {
+namespace neokv {
 const rocksdb::WriteOptions MetaWriter::write_options;
 
 // LEVEL 1

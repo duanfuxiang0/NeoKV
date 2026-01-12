@@ -20,7 +20,7 @@ SET(Boost_VERSION "106300")
 SET(Boost_LIB_VERSION "1_63_0")
 SET(BOOST_VER "1.63.0")
 SET(BOOST_TAR "boost_1_63_0" CACHE STRING "" FORCE)
-SET(BOOST_URL "https://jaist.dl.sourceforge.net/project/boost/boost/1.63.0/${BOOST_TAR}.tar.gz" CACHE STRING "" FORCE)
+SET(BOOST_URL "https://sourceforge.net/projects/boost/files/boost/1.63.0/${BOOST_TAR}.tar.gz/download" CACHE STRING "" FORCE)
 
 MESSAGE(STATUS "BOOST_TAR: ${BOOST_TAR}, BOOST_URL: ${BOOST_URL}")
 
@@ -52,7 +52,7 @@ ExternalProject_Add(
         #GIT_TAG "boost-1.63.0"
         DOWNLOAD_DIR ${BOOST_DOWNLOAD_DIR}
         DOWNLOAD_NO_PROGRESS 1
-        DOWNLOAD_COMMAND wget --quiet --no-check-certificate ${BOOST_URL} -O ${BOOST_TAR}.tar.gz COMMAND tar -zxf ${BOOST_TAR}.tar.gz --strip-components=1
+        DOWNLOAD_COMMAND bash -c "cd ${BOOST_DOWNLOAD_DIR} && (test -f ${BOOST_TAR}.tar.gz || wget --tries=3 --timeout=30 --no-check-certificate ${BOOST_URL} -O ${BOOST_TAR}.tar.gz) && tar -zxf ${BOOST_TAR}.tar.gz --strip-components=1"
         UPDATE_COMMAND ""
         CONFIGURE_COMMAND ""
         #BUILD_COMMAND sh bootstrap.sh --prefix=${BOOST_INSTALL_DIR} --with-libraries=thread && ./b2 install

@@ -20,7 +20,7 @@
 #include "transaction.h"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 class MetaWriter {
 public:
     static const rocksdb::WriteOptions write_options;

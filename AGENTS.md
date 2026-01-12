@@ -1,7 +1,7 @@
-# BaikalDB Development Guidelines
+# NEOKV Development Guidelines
 
 ## Build Commands
-- Build: `cmake . && make -j$(nproc)`
+- Build: `mkdir build && cd build && cmake .. && make -j$(nproc)`
 - Build with tests: `cmake -DWITH_TESTS=ON . && make -j$(nproc)`
 - Build with debug: `cmake -DDEBUG=ON -DWITH_DEBUG_SYMBOLS=ON . && make -j$(nproc)`
 

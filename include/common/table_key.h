@@ -8,7 +8,7 @@
 #include "rocksdb/slice.h"
 #include "key_encoder.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Simplified TableKey for reading keys
 class TableKey {
@@ -74,4 +74,4 @@ private:
     rocksdb::Slice _data;
 };
 
-} // namespace baikaldb
+} // namespace neokv

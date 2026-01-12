@@ -30,7 +30,7 @@
 #include <braft/storage.h>
 #endif
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(election_timeout_ms);
 DECLARE_string(log_uri);
 DECLARE_string(stable_uri);

@@ -6,7 +6,7 @@
 #include "rocksdb/compaction_filter.h"
 #include "common.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Simplified compaction filter - just passes through all keys for neo-redis
 // Forward declaration
@@ -41,6 +41,11 @@ public:
         // Stub - no split compaction filtering in neo-redis
     }
     
+    // Set binlog region (stub - not used in neo-redis)
+    void set_binlog_region(int64_t /*region_id*/) {
+        // Stub - neo-redis doesn't use binlog
+    }
+    
     // For neo-redis, we don't filter any keys during compaction
     // All key filtering is handled by TTL cleanup
     bool Filter(int level,
@@ -66,4 +71,4 @@ public:
     }
 };
 
-} // namespace baikaldb
+} // namespace neokv

@@ -23,7 +23,7 @@
 #include "rocks_wrapper.h"
 #include "sst_file_writer.h"
 
-namespace baikaldb {
+namespace neokv {
 
 const std::string SNAPSHOT_DATA_FILE = "region_data_snapshot.sst";
 const std::string SNAPSHOT_META_FILE = "region_meta_snapshot.sst";

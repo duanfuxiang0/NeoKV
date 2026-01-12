@@ -16,7 +16,7 @@
 #include "store_interact.hpp"
 #include <gflags/gflags.h>
 
-namespace baikaldb {
+namespace neokv {
 DEFINE_int32(store_request_timeout, 60000, 
             "store as server request timeout, default:60000ms");
 DEFINE_int32(store_connect_timeout, 5000, 

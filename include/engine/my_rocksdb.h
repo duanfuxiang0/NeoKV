@@ -16,7 +16,7 @@
 
 #include "rocks_wrapper.h"
 
-namespace baikaldb {
+namespace neokv {
 
 namespace myrocksdb {
 #define COLD_DB_CHECK_READ(handle) \
@@ -174,4 +174,4 @@ private:
 };
 
 } // namespace myrocksdb
-} // namespace baikaldb
+} // namespace neokv

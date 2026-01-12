@@ -1,6 +1,6 @@
 #include "meta_util.h"
 
-namespace baikaldb {
+namespace neokv {
 
 namespace partition_utils {
 
@@ -500,4 +500,4 @@ int get_partition_range(
 
 } // namespace partition_utils
 
-} // namespace baikaldb
+} // namespace neokv

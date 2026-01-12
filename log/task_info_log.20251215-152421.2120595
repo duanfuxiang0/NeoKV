@@ -1,5 +1,0 @@
-Log file created at: 2025/12/15 15:24:21
-Running on machine: ubuntu
-Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I1215 15:24:21.784584 2120595 log.h:176] [arrow_io_excutor.cpp:258][init][0]set cpu thread pool capacity: 32 -> 10
-I1215 15:24:21.786178 2120595 log.h:176] [memory_profile.cpp:115][init][0]root_limit_size :-1 _query_bytes_limit:-1

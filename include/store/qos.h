@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-namespace baikaldb {
+namespace neokv {
 
 // Stub for QoS - simplified for neo-redis
 class QoS {
@@ -23,4 +23,4 @@ public:
     void update_statistics(int64_t /*region_id*/, int64_t /*qps*/, int64_t /*cost*/) {}
 };
 
-} // namespace baikaldb
+} // namespace neokv

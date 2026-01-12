@@ -1,5 +1,5 @@
 syntax="proto2";
-package baikaldb.pb;
+package neokv.pb;
 option cc_generic_services = true;
 //option cc_enable_arenas = true;
 

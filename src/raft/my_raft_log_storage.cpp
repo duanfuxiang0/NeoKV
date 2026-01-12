@@ -19,7 +19,7 @@
 #include "concurrency.h"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(rocksdb_cost_sample);
 
 static int parse_my_raft_log_uri(const std::string& uri, std::string& id, bool& is_binlog){

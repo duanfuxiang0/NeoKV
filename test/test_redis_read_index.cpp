@@ -39,7 +39,6 @@
 #include "redis_router.h"
 #include "redis_service.h"
 #include "rocks_wrapper.h"
-#include "schema_factory.h"
 #include "store.h"
 
 namespace {
@@ -72,32 +71,32 @@ std::string local_uri(const std::string& path) {
     return std::string("local://") + path;
 }
 
-class FakeStoreService final : public baikaldb::pb::StoreService {
+class FakeStoreService final : public neokv::pb::StoreService {
 public:
     std::atomic<bool> ok{true};
 
     void get_applied_index(google::protobuf::RpcController* /*controller*/,
-                          const baikaldb::pb::GetAppliedIndex* request,
-                          baikaldb::pb::StoreRes* response,
+                          const neokv::pb::GetAppliedIndex* request,
+                          neokv::pb::StoreRes* response,
                           google::protobuf::Closure* done) override {
         brpc::ClosureGuard guard(done);
         response->Clear();
         response->set_errmsg("ok");
 
         if (!request->use_read_idx()) {
-            response->set_errcode(baikaldb::pb::SUCCESS);
+            response->set_errcode(neokv::pb::SUCCESS);
             response->mutable_region_raft_stat()->set_applied_index(0);
             return;
         }
 
         if (ok.load()) {
-            response->set_errcode(baikaldb::pb::SUCCESS);
+            response->set_errcode(neokv::pb::SUCCESS);
             response->mutable_region_raft_stat()->set_applied_index(0);
             return;
         }
 
         // Simulate leader ReadIndex failure.
-        response->set_errcode(baikaldb::pb::NOT_LEADER);
+        response->set_errcode(neokv::pb::NOT_LEADER);
         response->set_leader("127.0.0.1:1");
         response->set_errmsg("not leader");
     }
@@ -108,15 +107,15 @@ protected:
     static void SetUpTestSuite() {
         // Make test artifacts isolated.
         const int64_t suffix = butil::gettimeofday_us();
-        tmp_dir_ = std::string("/tmp/baikaldb_test_redis_read_index_") + std::to_string(suffix);
+        tmp_dir_ = std::string("/tmp/neokv_test_redis_read_index_") + std::to_string(suffix);
 
         // Keep raft artifacts away from repo.
-        baikaldb::FLAGS_raftlog_uri = local_uri(tmp_dir_ + "/raftlog_");
-        baikaldb::FLAGS_stable_uri = local_uri(tmp_dir_ + "/stable_");
-        baikaldb::FLAGS_snapshot_uri = local_uri(tmp_dir_ + "/snapshot");
+        neokv::FLAGS_raftlog_uri = local_uri(tmp_dir_ + "/raftlog_");
+        neokv::FLAGS_stable_uri = local_uri(tmp_dir_ + "/stable_");
+        neokv::FLAGS_snapshot_uri = local_uri(tmp_dir_ + "/snapshot");
 
         // Reduce test latency.
-        baikaldb::FLAGS_follow_read_timeout_s = 1;
+        neokv::FLAGS_follow_read_timeout_s = 1;
 
         // Start fake StoreService (leader) for get_applied_index.
         leader_port_ = pick_free_port();
@@ -132,37 +131,11 @@ protected:
         ASSERT_TRUE(boost::filesystem::create_directories(tmp_dir_));
 
         // Init RocksDB (data/meta/raft log are all in RocksWrapper DBs).
-        auto* rocks = baikaldb::RocksWrapper::get_instance();
+        auto* rocks = neokv::RocksWrapper::get_instance();
         ASSERT_EQ(0, rocks->init(tmp_dir_ + "/rocksdb"));
-        baikaldb::MetaWriter::get_instance()->init(rocks, rocks->get_meta_info_handle());
+        neokv::MetaWriter::get_instance()->init(rocks, rocks->get_meta_info_handle());
 
-        // Init minimal schema so Region::init() can pass.
-        auto* factory = baikaldb::SchemaFactory::get_instance();
-        factory->init();
-
-        baikaldb::pb::SchemaInfo schema;
-        schema.set_namespace_name("__redis__");
-        schema.set_database("__redis__");
-        schema.set_table_name("kv");
-        schema.set_partition_num(1);
-        schema.set_namespace_id(1);
-        schema.set_database_id(1);
-        schema.set_table_id(redis_table_id_);
-        schema.set_version(1);
-
-        auto* field = schema.add_fields();
-        field->set_field_name("k");
-        field->set_field_id(1);
-        field->set_mysql_type(baikaldb::pb::STRING);
-
-        auto* pk = schema.add_indexs();
-        pk->set_index_type(baikaldb::pb::I_PRIMARY);
-        pk->set_index_name("pk");
-        // SchemaFactory requires primary index_id == table_id
-        pk->set_index_id(redis_table_id_);
-        pk->add_field_ids(1);
-
-        factory->update_table(schema);
+        // Neo-redis: Region init does not depend on SQL schema.
 
         // Create a follower region (2 peers, cannot elect leader alone).
         self_port_ = pick_free_port();
@@ -176,7 +149,7 @@ protected:
         ASSERT_EQ(0, braft::add_service(&raft_server_, raft_ep));
         ASSERT_EQ(0, raft_server_.Start(raft_ep, nullptr));
 
-        baikaldb::pb::RegionInfo region_info;
+        neokv::pb::RegionInfo region_info;
         region_info.set_region_id(region_id_);
         region_info.set_table_id(redis_table_id_);
         region_info.set_version(1);
@@ -193,9 +166,8 @@ protected:
         ASSERT_EQ(0, butil::str2endpoint("127.0.0.1", self_port_, &self_ep));
         braft::PeerId pid(self_ep);
 
-        region_ = std::make_shared<baikaldb::Region>(
+        region_ = std::make_shared<neokv::Region>(
                 rocks,
-                factory,
                 self_addr_,
                 gid,
                 pid,
@@ -204,25 +176,25 @@ protected:
                 false);
 
         ASSERT_EQ(0, region_->init(true, 0));
-        baikaldb::Store::get_instance()->set_region(region_);
+        neokv::Store::get_instance()->set_region(region_);
 
         // Seed one key into local RocksDB.
         const std::string user_key = "k1";
-        const uint16_t slot = baikaldb::redis_slot(user_key);
-        const std::string rocks_key = baikaldb::RedisCodec::encode_key(
-                region_id_, baikaldb::REDIS_INDEX_ID, slot, user_key, baikaldb::REDIS_STRING);
-        const std::string rocks_val = baikaldb::RedisCodec::encode_value(baikaldb::REDIS_NO_EXPIRE, "v1");
+        const uint16_t slot = neokv::redis_slot(user_key);
+        const std::string rocks_key = neokv::RedisCodec::encode_key(
+                region_id_, neokv::REDIS_INDEX_ID, slot, user_key, neokv::REDIS_STRING);
+        const std::string rocks_val = neokv::RedisCodec::encode_value(neokv::REDIS_NO_EXPIRE, "v1");
         auto s = rocks->put(rocksdb::WriteOptions(), rocks->get_data_handle(), rocks_key, rocks_val);
         ASSERT_TRUE(s.ok());
 
         // Start Redis server.
         redis_port_ = pick_free_port();
         ASSERT_GT(redis_port_, 0);
-        baikaldb::FLAGS_redis_port = redis_port_;
-        baikaldb::FLAGS_redis_advertise_port = redis_port_;
+        neokv::FLAGS_redis_port = redis_port_;
+        neokv::FLAGS_redis_advertise_port = redis_port_;
 
         redis_service_ = std::make_unique<brpc::RedisService>();
-        ASSERT_TRUE(baikaldb::register_basic_redis_commands(redis_service_.get()));
+        ASSERT_TRUE(neokv::register_basic_redis_commands(redis_service_.get()));
 
         brpc::ServerOptions opts;
         opts.redis_service = redis_service_.get();
@@ -240,7 +212,7 @@ protected:
 
     static void TearDownTestSuite() {
         if (region_) {
-            baikaldb::Store::get_instance()->erase_region(region_id_);
+            neokv::Store::get_instance()->erase_region(region_id_);
             region_->shutdown();
             region_->join();
             region_.reset();
@@ -282,14 +254,14 @@ protected:
     static inline std::unique_ptr<brpc::RedisService> redis_service_;
 
     static inline brpc::Channel redis_channel_;
-    static inline std::shared_ptr<baikaldb::Region> region_;
+    static inline std::shared_ptr<neokv::Region> region_;
 
     static inline const int64_t region_id_ = 10001;
     static inline const int64_t redis_table_id_ = 1000;
 };
 
 TEST_F(RedisReadIndexIntegrationTest, FollowerReadReturnsMovedWhenDisabled) {
-    baikaldb::FLAGS_use_read_index = false;
+    neokv::FLAGS_use_read_index = false;
 
     brpc::RedisResponse res;
     single_call("GET k1", &res);
@@ -300,7 +272,7 @@ TEST_F(RedisReadIndexIntegrationTest, FollowerReadReturnsMovedWhenDisabled) {
 }
 
 TEST_F(RedisReadIndexIntegrationTest, FollowerReadReturnsValueWhenEnabled) {
-    baikaldb::FLAGS_use_read_index = true;
+    neokv::FLAGS_use_read_index = true;
     fake_store_service_->ok.store(true);
 
     brpc::RedisResponse res;
@@ -311,8 +283,8 @@ TEST_F(RedisReadIndexIntegrationTest, FollowerReadReturnsValueWhenEnabled) {
 }
 
 TEST_F(RedisReadIndexIntegrationTest, FollowerReadReturnsMovedWhenReadIndexFails) {
-    baikaldb::FLAGS_use_read_index = true;
-    baikaldb::FLAGS_demotion_read_index_without_leader = false;
+    neokv::FLAGS_use_read_index = true;
+    neokv::FLAGS_demotion_read_index_without_leader = false;
     fake_store_service_->ok.store(false);
 
     brpc::RedisResponse res;
@@ -323,7 +295,7 @@ TEST_F(RedisReadIndexIntegrationTest, FollowerReadReturnsMovedWhenReadIndexFails
     ASSERT_NE(std::string::npos, err.find("MOVED"));
 
     // restore default behavior for other tests
-    baikaldb::FLAGS_demotion_read_index_without_leader = true;
+    neokv::FLAGS_demotion_read_index_without_leader = true;
     fake_store_service_->ok.store(true);
 }
 

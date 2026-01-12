@@ -15,7 +15,7 @@
 
 #include <gflags/gflags.h>
 
-namespace baikaldb{
+namespace neokv{
 DEFINE_string(default_logical_room, "default", "default_logical_room");
 DEFINE_string(default_physical_room, "default", "default_physical_room"); 
 }

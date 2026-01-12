@@ -22,7 +22,7 @@
 #include <brpc/stream.h>
 #endif
 
-namespace baikaldb {
+namespace neokv {
 //backup
 struct BackupFileInfo {
     std::string path {""};

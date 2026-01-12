@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# BaikalDB Development Script
+# NeoKV Development Script
 # Usage:
-#   ./scripts/dev.sh build [target]     - Build (all, baikalMeta, baikalStore, baikaldb, test_xxx)
-#   ./scripts/dev.sh start [service]    - Start service (all, meta, store, redis)
-#   ./scripts/dev.sh stop [service]     - Stop service (all, meta, store)
-#   ./scripts/dev.sh restart [service]  - Restart service (all, meta, store)
+#   ./scripts/dev.sh build [target]     - Build (all, baikalMeta, baikalStore, neokv, test_xxx)
+#   ./scripts/dev.sh start [service]    - Start service (all, meta, store/kv)
+#   ./scripts/dev.sh stop [service]     - Stop service (all, meta, store/kv)
+#   ./scripts/dev.sh restart [service]  - Restart service (all, meta, store/kv)
 #   ./scripts/dev.sh test [name]        - Run tests (redis, slot, codec, or test binary name)
 #   ./scripts/dev.sh status             - Show service status
 #   ./scripts/dev.sh clean              - Clean data directories
@@ -66,11 +66,11 @@ do_build() {
         meta|baikalMeta)
             cmake . && make -j$(nproc) baikalMeta
             ;;
-        store|baikalStore)
+        store|kv|baikalStore)
             cmake . && make -j$(nproc) baikalStore
             ;;
-        db|baikaldb)
-            cmake . && make -j$(nproc) baikaldb
+        db|neokv)
+            cmake . && make -j$(nproc) neokv
             ;;
         test_*)
             cmake -DWITH_TESTS=ON . && make -j$(nproc) "$target"
@@ -96,7 +96,7 @@ get_pid() {
         meta)
             pgrep -f "bin/baikalMeta" 2>/dev/null | head -1 || true
             ;;
-        store)
+        store|kv)
             pgrep -f "bin/baikalStore" 2>/dev/null | head -1 || true
             ;;
     esac
@@ -186,7 +186,7 @@ do_start() {
                 return 1
             fi
             ;;
-        store|redis)
+        store|kv|redis)
             if is_running store; then
                 log_warn "baikalStore is already running (PID: $(get_pid store))"
                 return 0
@@ -198,7 +198,7 @@ do_start() {
                 do_start meta
             fi
             
-            log_step "Starting baikalStore (with Redis on port $REDIS_PORT)..."
+            log_step "Starting baikalStore (with Redis/KV on port $REDIS_PORT)..."
             ./output/bin/baikalStore \
                 --flagfile=conf/baikalStore/gflags.conf \
                 --db_path="$STORE_DATA_DIR/rocks_db" \
@@ -207,14 +207,14 @@ do_start() {
                 >/dev/null 2>&1 &
             
             if wait_for_port $REDIS_PORT 15; then
-                log_info "baikalStore started (PID: $(get_pid store)), Redis on port $REDIS_PORT"
+                log_info "baikalStore started (PID: $(get_pid store)), Redis/KV on port $REDIS_PORT"
             else
                 log_error "Failed to start baikalStore"
                 return 1
             fi
             ;;
         *)
-            log_error "Unknown service: $service (use: all, meta, store, redis)"
+            log_error "Unknown service: $service (use: all, meta, store/kv)"
             return 1
             ;;
     esac
@@ -243,7 +243,7 @@ do_stop() {
                 log_info "baikalMeta is not running"
             fi
             ;;
-        store|redis)
+        store|kv|redis)
             local pid=$(get_pid store)
             if [ -n "$pid" ]; then
                 log_step "Stopping baikalStore (PID: $pid)..."
@@ -259,7 +259,7 @@ do_stop() {
             fi
             ;;
         *)
-            log_error "Unknown service: $service"
+            log_error "Unknown service: $service (use: all, meta, store/kv)"
             return 1
             ;;
     esac
@@ -275,7 +275,7 @@ do_restart() {
 
 do_status() {
     echo ""
-    echo "=== BaikalDB Service Status ==="
+    echo "=== NeoKV Service Status ==="
     echo ""
     
     # Meta status
@@ -347,7 +347,7 @@ do_test() {
             log_step "Quick Redis smoke test..."
             if ! redis-cli -p $REDIS_PORT PING 2>/dev/null | grep -q PONG; then
                 log_error "Redis is not responding on port $REDIS_PORT"
-                log_info "Try: $0 start store"
+                log_info "Try: $0 start store (or $0 start kv)"
                 return 1
             fi
             echo "PING: $(redis-cli -p $REDIS_PORT PING)"
@@ -467,11 +467,11 @@ do_logs() {
         meta)
             tail -f "$META_DATA_DIR"/*.log 2>/dev/null || log_error "No meta logs found"
             ;;
-        store)
+        store|kv)
             tail -f "$STORE_DATA_DIR"/*.log 2>/dev/null || log_error "No store logs found"
             ;;
         *)
-            log_error "Unknown service: $service"
+            log_error "Unknown service: $service (use: meta, store/kv)"
             ;;
     esac
 }
@@ -480,7 +480,7 @@ do_logs() {
 # HELP
 # ============================================================================
 show_help() {
-    echo "BaikalDB Development Script"
+    echo "NeoKV Development Script"
     echo ""
     echo "Usage: $0 <command> [options]"
     echo ""
@@ -489,13 +489,13 @@ show_help() {
     echo "                     Targets: all, meta, store, db, tests, test_xxx"
     echo ""
     echo "  start [service]    Start services"
-    echo "                     Services: all, meta, store (alias: redis)"
+    echo "                     Services: all, meta, store/kv (store and kv are the same)"
     echo ""
     echo "  stop [service]     Stop services"
-    echo "                     Services: all, meta, store"
+    echo "                     Services: all, meta, store/kv"
     echo ""
     echo "  restart [service]  Restart services (stop + start)"
-    echo "                     Services: all, meta, store"
+    echo "                     Services: all, meta, store/kv"
     echo ""
     echo "  status             Show service status"
     echo ""
@@ -509,11 +509,14 @@ show_help() {
     echo "                     Targets: data, build, all"
     echo ""
     echo "  logs [service]     Tail service logs"
-    echo "                     Services: meta, store"
+    echo "                     Services: meta, store/kv"
     echo ""
     echo "Examples:"
     echo "  $0 build store          # Build only baikalStore"
     echo "  $0 build test_redis_slot # Build specific test"
+    echo "  $0 start meta           # Start meta service"
+    echo "  $0 start store          # Start store/kv service"
+    echo "  $0 start kv             # Start store/kv service (alias)"
     echo "  $0 restart store        # Restart baikalStore"
     echo "  $0 test redis           # Test Redis commands"
     echo "  $0 status               # Show all service status"

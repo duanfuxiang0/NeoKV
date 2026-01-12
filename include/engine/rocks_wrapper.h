@@ -30,7 +30,7 @@
 #include "rocksdb/advanced_cache.h"
 #include "proto/compaction.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(rocks_max_background_compactions);
 DECLARE_int32(addpeer_rate_limit_level);
 DECLARE_int32(level0_max_sst_num);

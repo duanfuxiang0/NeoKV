@@ -18,7 +18,7 @@
 
 #include <atomic>
 
-namespace baikaldb {
+namespace neokv {
 
 class MemoryGCHandler {
 public:
@@ -31,7 +31,7 @@ public:
     void memory_gc_thread();
 
     int init() {
-#ifdef BAIKAL_TCMALLOC
+#ifdef NEO_TCMALLOC
         _memory_gc_bth.run([this]() {memory_gc_thread();});
 #endif
         return 0;
@@ -48,8 +48,8 @@ private:
     DISALLOW_COPY_AND_ASSIGN(MemoryGCHandler);
 };
 
-#ifndef BAIKALDB_MEMTRACKER_DEFINED
-#define BAIKALDB_MEMTRACKER_DEFINED
+#ifndef NEOKV_MEMTRACKER_DEFINED
+#define NEOKV_MEMTRACKER_DEFINED
 class MemTracker {
 public:
     explicit MemTracker(uint64_t log_id, int64_t bytes_limit, MemTracker* parent = nullptr);
@@ -114,7 +114,7 @@ private:
 };
 
 typedef std::shared_ptr<MemTracker> SmartMemTracker;
-#endif // BAIKALDB_MEMTRACKER_DEFINED
+#endif // NEOKV_MEMTRACKER_DEFINED
 
 class MemTrackerPool {
 public:
@@ -147,4 +147,4 @@ private:
 
 
 
-} //namespace baikaldb
+} //namespace neokv

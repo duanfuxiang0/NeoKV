@@ -17,7 +17,7 @@
 #include "common.h"
 #include "concurrency.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int64(sql_token_bucket_timeout_min);
 DECLARE_int64(min_global_extended_percent);
 DECLARE_int64(qps_statistics_minutes_ago);
@@ -726,4 +726,4 @@ private:
     bthread_key_t _bthread_local_key;
 };
 
-} //namespace baikaldb
+} //namespace neokv

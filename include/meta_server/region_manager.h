@@ -25,7 +25,7 @@
 #include "cluster_manager.h"
 #include "table_manager.h"
 
-namespace baikaldb {
+namespace neokv {
 
 DECLARE_int64(modify_learner_peer_interval_us);
 

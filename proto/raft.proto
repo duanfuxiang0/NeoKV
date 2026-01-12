@@ -1,6 +1,6 @@
 syntax="proto2";
 import "common.proto";
-package baikaldb.pb;
+package neokv.pb;
 //option cc_enable_arenas = true;
 
 enum RaftControlOp {

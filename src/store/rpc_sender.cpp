@@ -14,7 +14,7 @@
 
 #include "rpc_sender.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int64(print_time_us);
 int RpcSender::send_no_op_request(const std::string& instance,
                                int64_t recevie_region_id,

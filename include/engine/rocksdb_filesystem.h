@@ -6,7 +6,7 @@
 #include "rocksdb/env.h"
 #include "rocksdb/file_system.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Simplified RocksdbFileSystemWrapper - uses default filesystem
 // Cold storage feature is disabled for neo-redis
@@ -24,4 +24,4 @@ public:
     }
 };
 
-} // namespace baikaldb
+} // namespace neokv

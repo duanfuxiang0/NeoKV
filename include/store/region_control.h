@@ -18,7 +18,7 @@
 #include "common.h"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 class Region;
 class RegionControl {
 typedef std::shared_ptr<Region> SmartRegion;

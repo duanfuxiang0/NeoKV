@@ -1,5 +1,5 @@
 syntax="proto2";
-package baikaldb.pb;
+package neokv.pb;
 import "common.proto";
 option cc_generic_services = true;
 

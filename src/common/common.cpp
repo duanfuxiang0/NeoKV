@@ -48,18 +48,18 @@
 
 using google::protobuf::FieldDescriptorProto;
 
-namespace baikaldb {
+namespace neokv {
 DEFINE_int32(raft_write_concurrency, 40, "raft_write concurrency, default:40");
 DEFINE_int32(service_write_concurrency, 40, "service_write concurrency, default:40");
 DEFINE_int32(snapshot_load_num, 4, "snapshot load concurrency, default 4");
-DEFINE_int32(baikal_heartbeat_concurrency, 10, "baikal heartbeat concurrency, default:10");
+DEFINE_int32(neo_heartbeat_concurrency, 10, "neo heartbeat concurrency, default:10");
 DEFINE_int64(incremental_info_gc_time, 3600 * 1000 * 1000LL, "time interval to clear incremental info");
 DECLARE_string(default_physical_room);
 DEFINE_bool(enable_debug, false, "open DB_DEBUG log");
 DEFINE_bool(enable_self_trace, true, "open SELF_TRACE log");
 DEFINE_bool(servitysinglelog, true, "diff servity message in seperate logfile");
 DEFINE_bool(open_service_write_concurrency, true, "open service_write_concurrency, default: true");
-DEFINE_int32(baikal_heartbeat_interval_us, 10 * 1000 * 1000, "baikal_heartbeat_interval(us)");
+DEFINE_int32(neo_heartbeat_interval_us, 10 * 1000 * 1000, "neo_heartbeat_interval(us)");
 DEFINE_bool(schema_ignore_case, false, "whether ignore case when match db/table name");
 DEFINE_bool(disambiguate_select_name, false, "whether use the first when select name is ambiguous, default false");
 DEFINE_int32(new_sign_read_concurrency, 10, "new_sign_read concurrency, default:20");
@@ -1043,4 +1043,4 @@ bool is_valid_ip(const std::string& ip) {
     return result != 0;
 }
 
-}  // baikaldb
+}  // neokv

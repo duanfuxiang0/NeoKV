@@ -16,7 +16,7 @@
 
 #include "rocks_wrapper.h"
 
-namespace baikaldb {
+namespace neokv {
 class LogEntryReader {
 public:
     virtual ~LogEntryReader() {}

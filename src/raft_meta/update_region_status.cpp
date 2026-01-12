@@ -14,7 +14,7 @@
 
 #include "update_region_status.h"
 
-namespace baikaldb {
+namespace neokv {
 void UpdateRegionStatus::reset_region_status(int64_t /*region_id*/) {
     return; 
 }

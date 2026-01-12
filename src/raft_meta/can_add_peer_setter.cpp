@@ -14,7 +14,7 @@
 
 #include "can_add_peer_setter.h"
 
-namespace baikaldb {
+namespace neokv {
 void CanAddPeerSetter::set_can_add_peer(int64_t /*region_id*/) {
 }
 }

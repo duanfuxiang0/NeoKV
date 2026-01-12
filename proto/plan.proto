@@ -3,7 +3,7 @@ import "common.proto";
 import "optype.proto";
 import "expr.proto";
 import "meta.interface.proto";
-package baikaldb.pb;
+package neokv.pb;
 //option cc_enable_arenas = true;
 
 enum PlanNodeType {
@@ -62,12 +62,12 @@ message SelectManagerNode {
 
 enum TxnCmdType {
     TXN_INVALID = 0;        // invalid transaction cmd
-    TXN_BEGIN = 1;          // start transaction/begin on baikaldb
+    TXN_BEGIN = 1;          // start transaction/begin on neokv
     TXN_BEGIN_STORE = 2;    // start transaction/begin on store
-    TXN_COMMIT = 3;         // commit on baikaldb
+    TXN_COMMIT = 3;         // commit on neokv
     TXN_COMMIT_STORE = 4;   // commit on store
     TXN_COMMIT_BEGIN = 5;   // commit txn and then begin a new one
-    TXN_ROLLBACK = 6;       // rollback on baikaldb
+    TXN_ROLLBACK = 6;       // rollback on neokv
     TXN_ROLLBACK_STORE = 7; // rollback on store
     TXN_ROLLBACK_BEGIN = 8; // rollback txn and then begin a new one
     TXN_PREPARE = 9;        // prepare

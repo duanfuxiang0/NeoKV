@@ -14,7 +14,7 @@
 
 #pragma once
 
-namespace baikaldb {
+namespace neokv {
 
 extern int register_myraft_extension();
 

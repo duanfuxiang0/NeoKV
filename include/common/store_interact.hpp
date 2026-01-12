@@ -28,7 +28,7 @@
 #include "proto/store.interface.pb.h"
 #include "common.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(store_request_timeout);
 DECLARE_int32(store_connect_timeout); 
 

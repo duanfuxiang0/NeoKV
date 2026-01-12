@@ -73,7 +73,7 @@ template <typename T>
 void DB_FATAL_STATE(T sock, const char *fmt, ...) {}
 #endif //CHECK_LOG_FORMAT
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_bool(enable_debug);
 DECLARE_bool(enable_self_trace);
 DECLARE_bool(servitysinglelog);
@@ -186,7 +186,7 @@ inline void glog_info_writelog_long(const char* fmt, ...) {
 }
 #define DB_NOTICE_LONG(_fmt_, args...) \
     do {\
-        ::baikaldb::glog_info_writelog_long("[%s:%d][%s][%llu]" _fmt_, \
+        ::neokv::glog_info_writelog_long("[%s:%d][%s][%llu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
@@ -212,7 +212,7 @@ inline void glog_error_writelog(const char* fmt, ...) {
 #define DB_DEBUG(_fmt_, args...) \
     do {\
         if (!FLAGS_enable_debug) break; \
-        ::baikaldb::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 #else
@@ -222,39 +222,39 @@ inline void glog_error_writelog(const char* fmt, ...) {
 #define DB_TRACE(_fmt_, args...) \
     do {\
         if (!FLAGS_enable_self_trace) break; \
-        ::baikaldb::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
 #define DB_NOTICE(_fmt_, args...) \
     do {\
-        ::baikaldb::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
 #define DB_WARNING(_fmt_, args...) \
     do {\
-        ::baikaldb::glog_warning_writelog("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_warning_writelog("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
 #define DB_FATAL(_fmt_, args...) \
     do {\
-        ::baikaldb::glog_error_writelog("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_error_writelog("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
 #define SELF_TRACE(_fmt_, args...) \
     do {\
         if (!FLAGS_enable_self_trace) break; \
-        ::baikaldb::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_info_writelog("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
 #define SQL_TRACE(_fmt_, args...) \
     do {\
         if (!FLAGS_enable_self_trace) break; \
-        ::baikaldb::glog_info_writelog_long("[%s:%d][%s][%lu]" _fmt_, \
+        ::neokv::glog_info_writelog_long("[%s:%d][%s][%lu]" _fmt_, \
                 strrchr(__FILE__, '/') + 1, __LINE__, __FUNCTION__, bthread_self(), ##args);\
     } while (0);
 
@@ -348,6 +348,6 @@ inline int init_log(const char* bin_name) {
 #endif
 }
 
-} //namespace baikaldb
+} //namespace neokv
 
 /* vim: set ts=4 sw=4 sts=4 tw=100 */

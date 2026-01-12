@@ -15,7 +15,7 @@
 #include "can_add_peer_setter.h"
 #include "store.h"
 
-namespace baikaldb { 
+namespace neokv { 
 void CanAddPeerSetter::set_can_add_peer(int64_t region_id) {
     Store::get_instance()->set_can_add_peer_for_region(region_id);
 }

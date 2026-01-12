@@ -21,7 +21,7 @@
 #include "meta_util.h"
 #include "meta_rocksdb.h"
 
-namespace baikaldb {
+namespace neokv {
 DEFINE_int32(migrate_percent, 60, "migrate percent. default:60%");
 DEFINE_int32(error_judge_percent, 10, "error judge percen. default:10");
 DEFINE_int32(error_judge_number, 3, "error judge number. default:3");
@@ -37,18 +37,18 @@ DECLARE_int32(store_dead_interval_times);
 DECLARE_int32(store_faulty_interval_times);
 DECLARE_string(default_logical_room);
 DECLARE_string(default_physical_room);
-DECLARE_int32(baikal_heartbeat_interval_us);
-DECLARE_int32(baikal_faulty_interval_times);
-DECLARE_int32(baikal_clear_faulty_interval_times);
+DECLARE_int32(neo_heartbeat_interval_us);
+DECLARE_int32(neo_faulty_interval_times);
+DECLARE_int32(neo_clear_faulty_interval_times);
 
 bvar::Adder<int> min_fallback_count;
 bvar::Adder<int> min_count;
 bvar::Adder<int> rolling_fallback_count;
 bvar::Adder<int> rolling_count;
-bvar::Window<bvar::Adder<int> > g_baikalmeta_min_fallback_count("cluster_manager", "min_fallback_count", &min_fallback_count, 3600);
-bvar::Window<bvar::Adder<int> > g_baikalmeta_min_count("cluster_manager", "min_count", &min_count, 3600);
-bvar::Window<bvar::Adder<int> > g_baikalmeta_rolling_fallback_count("cluster_manager", "rolling_fallback_count", &rolling_fallback_count, 3600);
-bvar::Window<bvar::Adder<int> > g_baikalmeta_rolling_count("cluster_manager", "rolling_count", &rolling_count, 3600);
+bvar::Window<bvar::Adder<int> > g_neometa_min_fallback_count("cluster_manager", "min_fallback_count", &min_fallback_count, 3600);
+bvar::Window<bvar::Adder<int> > g_neometa_min_count("cluster_manager", "min_count", &min_count, 3600);
+bvar::Window<bvar::Adder<int> > g_neometa_rolling_fallback_count("cluster_manager", "rolling_fallback_count", &rolling_fallback_count, 3600);
+bvar::Window<bvar::Adder<int> > g_neometa_rolling_count("cluster_manager", "rolling_count", &rolling_count, 3600);
 
 // add peer时选择策略，按ip区分可以保证peers落在不同IP上，避免单机多实例主机故障的多副本丢失
 // 但在机器数较少时会造成peer分配不均，甚至无法选出足够的peers的问题。
@@ -524,90 +524,90 @@ void ClusterManager::update_instance(const pb::MetaManagerRequest& request, braf
     DB_NOTICE("modify tag success, request:%s", request.ShortDebugString().c_str());
 }
 
-void ClusterManager::add_baikal_instance(const pb::BaikalStatus& baikal_status) {
-    std::string address = baikal_status.address();
-    std::string resource_tag = baikal_status.resource_tag();
+void ClusterManager::add_neo_instance(const pb::BaikalStatus& neo_status) {
+    std::string address = neo_status.address();
+    std::string resource_tag = neo_status.resource_tag();
 
     if (address.empty() || resource_tag.empty()) {
         // should not reach here
-        DB_FATAL("baikal address or resource tag empty when try to add baikal instance. address :%s, resource tag:%s", 
+        DB_FATAL("neo address or resource tag empty when try to add neo instance. address :%s, resource tag:%s", 
                     address.c_str(), 
                     resource_tag.c_str());
         return;
     }
 
     // 判断该实例是否已经存在
-    if (0 != _baikal_instance_info.count(address)) {
-        DB_WARNING("baikal instance:%s has already exist", address.c_str());
+    if (0 != _neo_instance_info.count(address)) {
+        DB_WARNING("neo instance:%s has already exist", address.c_str());
         return;
     }
 
     // 更新内存值
     {
-        BAIDU_SCOPED_LOCK(_baikal_instance_mutex);
+        BAIDU_SCOPED_LOCK(_neo_instance_mutex);
         InstanceStateInfo state_info;
-        state_info.state = baikal_status.status();
+        state_info.state = neo_status.status();
         state_info.timestamp = butil::gettimeofday_us();
-        _baikal_instance_info[address] = state_info;
-        _baikal_instance_resource_tag_map[address] = resource_tag;
+        _neo_instance_info[address] = state_info;
+        _neo_instance_resource_tag_map[address] = resource_tag;
 
-        if (0 == _resource_tag_baikal_instances_map.count(resource_tag)) {
-            _resource_tag_baikal_instances_map[resource_tag] = std::set<std::string>();
+        if (0 == _resource_tag_neo_instances_map.count(resource_tag)) {
+            _resource_tag_neo_instances_map[resource_tag] = std::set<std::string>();
         }
-        std::set<std::string>& instances = _resource_tag_baikal_instances_map[resource_tag];
+        std::set<std::string>& instances = _resource_tag_neo_instances_map[resource_tag];
         instances.insert(address);
     }
-    DB_NOTICE("add baikal instance success, baikal address:%s , new resource_tag:%s", 
+    DB_NOTICE("add neo instance success, neo address:%s , new resource_tag:%s", 
                 address.c_str(), 
                 resource_tag.c_str());
 }
 
-void ClusterManager::update_baikal_instance(const pb::BaikalStatus& baikal_status) {
-    std::string address = baikal_status.address();
-    std::string resource_tag = baikal_status.resource_tag();
+void ClusterManager::update_neo_instance(const pb::BaikalStatus& neo_status) {
+    std::string address = neo_status.address();
+    std::string resource_tag = neo_status.resource_tag();
 
     if (address.empty() || resource_tag.empty()) {
         // should not reach here
-        DB_FATAL("baikal address or resource tag empty when try to update baikal instance. address :%s, resource tag:%s", 
+        DB_FATAL("neo address or resource tag empty when try to update neo instance. address :%s, resource tag:%s", 
                     address.c_str(), 
                     resource_tag.c_str());
         return;
     }
 
     // 判断该实例是否已经存在
-    if (0 == _baikal_instance_info.count(address)) {
-        DB_WARNING("baikal instance:%s doesn't exist", address.c_str());
+    if (0 == _neo_instance_info.count(address)) {
+        DB_WARNING("neo instance:%s doesn't exist", address.c_str());
         return;
     }
     // 更新内存值
     {
-        BAIDU_SCOPED_LOCK(_baikal_instance_mutex);
+        BAIDU_SCOPED_LOCK(_neo_instance_mutex);
         InstanceStateInfo state_info;
-        state_info.state = baikal_status.status();
+        state_info.state = neo_status.status();
         state_info.timestamp = butil::gettimeofday_us();
-        _baikal_instance_info[address] = state_info;
+        _neo_instance_info[address] = state_info;
 
-        std::string old_resource_tag = _baikal_instance_resource_tag_map[address];
+        std::string old_resource_tag = _neo_instance_resource_tag_map[address];
         // 如果需要更新resource_tag
         if(old_resource_tag != resource_tag) {
-            if (0 != _resource_tag_baikal_instances_map.count(old_resource_tag)) {
-                std::set<std::string>& instances = _resource_tag_baikal_instances_map[old_resource_tag];
+            if (0 != _resource_tag_neo_instances_map.count(old_resource_tag)) {
+                std::set<std::string>& instances = _resource_tag_neo_instances_map[old_resource_tag];
                 auto iter = instances.find(address);
                 if (iter != instances.end()) {
                     instances.erase(iter);
                 }
             }
 
-            if (0 == _resource_tag_baikal_instances_map.count(resource_tag)) {
-                _resource_tag_baikal_instances_map[resource_tag] = std::set<std::string>();
+            if (0 == _resource_tag_neo_instances_map.count(resource_tag)) {
+                _resource_tag_neo_instances_map[resource_tag] = std::set<std::string>();
             }
-            std::set<std::string>& instances = _resource_tag_baikal_instances_map[resource_tag];
+            std::set<std::string>& instances = _resource_tag_neo_instances_map[resource_tag];
             instances.insert(address);
 
-            _baikal_instance_resource_tag_map[address] = resource_tag;
+            _neo_instance_resource_tag_map[address] = resource_tag;
         }
     }
-    DB_NOTICE("modify baikal resourece tag success, baikal address:%s , new resource_tag:%s", 
+    DB_NOTICE("modify neo resourece tag success, neo address:%s , new resource_tag:%s", 
                 address.c_str(), 
                 resource_tag.c_str());
 }
@@ -824,7 +824,7 @@ void ClusterManager::set_instance_status(const pb::MetaManagerRequest* request,
         return;
     }
 }
-void ClusterManager::process_baikal_heartbeat(const pb::BaikalHeartBeatRequest* request,
+void ClusterManager::process_neo_heartbeat(const pb::BaikalHeartBeatRequest* request,
             pb::BaikalHeartBeatResponse* response) {
     auto idc_info_ptr = response->mutable_idc_info();
     {
@@ -854,35 +854,35 @@ void ClusterManager::process_baikal_heartbeat(const pb::BaikalHeartBeatRequest* 
         return;
     }
     // 非binlog backup实例，维护状态
-    int ret = update_baikal_instance_info(*request);
+    int ret = update_neo_instance_info(*request);
     if (ret == 0) {
-        construct_baikal_heartbeat_response(request, response);
+        construct_neo_heartbeat_response(request, response);
         return;
     }
 
     if (ret == -1) {
-        add_baikal_instance(request->baikal_status());
+        add_neo_instance(request->baikal_status());
     } else if (ret == -2) {
-        update_baikal_instance(request->baikal_status());
+        update_neo_instance(request->baikal_status());
     }
-    construct_baikal_heartbeat_response(request, response);
+    construct_neo_heartbeat_response(request, response);
 }
 
-void ClusterManager::construct_baikal_heartbeat_response(const pb::BaikalHeartBeatRequest *request, pb::BaikalHeartBeatResponse* response) {
+void ClusterManager::construct_neo_heartbeat_response(const pb::BaikalHeartBeatRequest *request, pb::BaikalHeartBeatResponse* response) {
     if (!request->has_baikal_status()) {
         return;
     }
     std::string resource_tag = request->baikal_status().resource_tag();
-    if (resource_tag.empty() || 0 == _resource_tag_baikal_instances_map.count(resource_tag)) {
+    if (resource_tag.empty() || 0 == _resource_tag_neo_instances_map.count(resource_tag)) {
         return;
     }
 
-    for (auto& address : _resource_tag_baikal_instances_map[resource_tag]) {
+    for (auto& address : _resource_tag_neo_instances_map[resource_tag]) {
         pb::BaikalStatus* baikal_status = response->add_baikal_status();
         baikal_status->set_address(address);
-        baikal_status->set_status(_baikal_instance_info[address].state);
+        baikal_status->set_status(_neo_instance_info[address].state);
         baikal_status->set_resource_tag(resource_tag);
-        baikal_status->set_last_heartbeat_timestamp(_baikal_instance_info[address].timestamp);
+        baikal_status->set_last_heartbeat_timestamp(_neo_instance_info[address].timestamp);
     }
 }
 
@@ -926,17 +926,17 @@ void ClusterManager::process_instance_param_heartbeat_for_store(const pb::StoreH
 }
 
 // 获取实例参数
-void ClusterManager::process_instance_param_heartbeat_for_baikal(const pb::BaikalOtherHeartBeatRequest* request,
+void ClusterManager::process_instance_param_heartbeat_for_neo(const pb::BaikalOtherHeartBeatRequest* request,
         pb::BaikalOtherHeartBeatResponse* response) {
-    if (request->has_baikaldb_resource_tag()) {
+    if (request->has_neokv_resource_tag()) {
         BAIDU_SCOPED_LOCK(_instance_param_mutex);
 
-        auto iter = _instance_param_map.find("__baikaldb");
+        auto iter = _instance_param_map.find("__neokv");
         if (iter != _instance_param_map.end()) {
             *(response->add_instance_param()) = iter->second;
         }
 
-        iter = _instance_param_map.find(request->baikaldb_resource_tag());
+        iter = _instance_param_map.find(request->neokv_resource_tag());
         if (iter != _instance_param_map.end()) {
             *(response->add_instance_param()) = iter->second;
         }
@@ -1193,45 +1193,45 @@ void ClusterManager::process_peer_heartbeat_for_store(const pb::StoreHeartBeatRe
     }
 }
 
-void ClusterManager::baikal_healthy_check_function() {
+void ClusterManager::neo_healthy_check_function() {
     // 放在外面防止其他线程insert导致迭代器失效
-    BAIDU_SCOPED_LOCK(_baikal_instance_mutex);
-    for (auto instance_pair = _baikal_instance_info.begin(); instance_pair != _baikal_instance_info.end(); ) {
+    BAIDU_SCOPED_LOCK(_neo_instance_mutex);
+    for (auto instance_pair = _neo_instance_info.begin(); instance_pair != _neo_instance_info.end(); ) {
         InstanceStateInfo& state_info = instance_pair->second;
         std::string instance_name = instance_pair->first;
         int64_t last_timestamp = state_info.timestamp;
         if ((butil::gettimeofday_us() - last_timestamp) > 
-                    FLAGS_baikal_heartbeat_interval_us * FLAGS_baikal_clear_faulty_interval_times) {
+                    FLAGS_neo_heartbeat_interval_us * FLAGS_neo_clear_faulty_interval_times) {
             // 超过清理时长获取不了心跳清除记录
-            instance_pair = _baikal_instance_info.erase(instance_pair);
+            instance_pair = _neo_instance_info.erase(instance_pair);
             DB_WARNING("baikal instance %s: No heartbeat received for more than %d seconds, cleared", 
                         instance_name.c_str(), 
-                        FLAGS_baikal_heartbeat_interval_us * FLAGS_baikal_clear_faulty_interval_times / 1000000);
+                        FLAGS_neo_heartbeat_interval_us * FLAGS_neo_clear_faulty_interval_times / 1000000);
             
-            if(0 == _baikal_instance_resource_tag_map.count(instance_name)) {
+            if(0 == _neo_instance_resource_tag_map.count(instance_name)) {
                 DB_WARNING("instance: %s resource tag does not exist", instance_name.c_str());
                 continue;
             }
-            std::string resource_tag = _baikal_instance_resource_tag_map[instance_name];
-            _baikal_instance_resource_tag_map.erase(instance_name);
+            std::string resource_tag = _neo_instance_resource_tag_map[instance_name];
+            _neo_instance_resource_tag_map.erase(instance_name);
 
-            if(0 == _resource_tag_baikal_instances_map.count(resource_tag)) {
+            if(0 == _resource_tag_neo_instances_map.count(resource_tag)) {
                 DB_WARNING("resource_tag: %s instances set does not exist", resource_tag.c_str());
                 continue;
             }
-            std::set<std::string>& instances = _resource_tag_baikal_instances_map[resource_tag];
+            std::set<std::string>& instances = _resource_tag_neo_instances_map[resource_tag];
             instances.erase(instance_name);
             if (0 == instances.size()) {
-                _resource_tag_baikal_instances_map.erase(resource_tag);
+                _resource_tag_neo_instances_map.erase(resource_tag);
             }
         } else if((butil::gettimeofday_us() - last_timestamp) > 
-                    FLAGS_baikal_heartbeat_interval_us * FLAGS_baikal_faulty_interval_times) {
+                    FLAGS_neo_heartbeat_interval_us * FLAGS_neo_faulty_interval_times) {
             // 超时获取不了心跳设置为FAULTY
             state_info.state = pb::FAULTY;
             ++ instance_pair;
             DB_WARNING("baikal instance %s: No heartbeat received for more than %d seconds, set as 'FAULTY'", 
                         instance_name.c_str(), 
-                        FLAGS_baikal_heartbeat_interval_us * FLAGS_baikal_faulty_interval_times / 1000000);
+                        FLAGS_neo_heartbeat_interval_us * FLAGS_neo_faulty_interval_times / 1000000);
         } else {
             ++ instance_pair;
         }
@@ -1992,7 +1992,7 @@ int ClusterManager::load_logical_snapshot(const std::string& logical_prefix,
 }
 
 
-int ClusterManager::update_baikal_instance_info(const pb::BaikalHeartBeatRequest& request) {
+int ClusterManager::update_neo_instance_info(const pb::BaikalHeartBeatRequest& request) {
     if (!request.has_baikal_status()) {
         return 0;
     }
@@ -2001,22 +2001,22 @@ int ClusterManager::update_baikal_instance_info(const pb::BaikalHeartBeatRequest
     if (address.empty() || resource_tag.empty()) {
         return 0;
     }
-    BAIDU_SCOPED_LOCK(_baikal_instance_mutex);
+    BAIDU_SCOPED_LOCK(_neo_instance_mutex);
     
-    if (0 == _baikal_instance_info.count(address)) {
+    if (0 == _neo_instance_info.count(address)) {
         // 不存在 需要添加
         return -1;
-    } else if (_baikal_instance_resource_tag_map[address] != resource_tag) {
+    } else if (_neo_instance_resource_tag_map[address] != resource_tag) {
         // 存在 但需要更新
         return -2;
     }
 
-    if(_baikal_instance_info[address].state != request.baikal_status().status()) {
+    if(_neo_instance_info[address].state != request.baikal_status().status()) {
         // 状态更新，需要同步到follower
         return -2;
     }
     // 正常需要更新心跳, 不会更新到follower
-    _baikal_instance_info[address].timestamp = butil::gettimeofday_us();
+    _neo_instance_info[address].timestamp = butil::gettimeofday_us();
     return 0;
 }
 

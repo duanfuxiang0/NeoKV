@@ -26,7 +26,7 @@ namespace braft {
 DECLARE_int32(raft_election_heartbeat_factor);
 }
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_string(meta_server_bns);
 DECLARE_int32(meta_replica_number);
 
@@ -60,50 +60,7 @@ void MetaServerClosure::Run() {
                 total_time_cost, 
                 remote_side.c_str());
     }
-    if (op_type == pb::OP_CREATE_TABLE) {
-        if (response != nullptr) {
-            if(ret == 0){
-                std::string table_name = schema_pb.table_name();
-                if (init_regions->size() <= FLAGS_pre_split_threashold) {
-                    if (TableManager::get_instance()->do_create_table_sync_req(
-                            schema_pb, init_regions, has_auto_increment, start_region_id, response) != 0) {
-                        DB_FATAL("fail to create table : %s", table_name.c_str());
-                    } else {
-                        DB_NOTICE("create table:%s completely", table_name.c_str());
-                    }
-                } else {
-                    DB_NOTICE("create table:%s async completely", table_name.c_str());
-                }
-            }
-        }
-    } else if (op_type == pb::OP_ADD_PARTITION) {
-        if (ret == 0) {
-            if (init_regions->size() <= FLAGS_pre_split_threashold) {
-                int ret = TableManager::get_instance()->send_init_regions_request(schema_pb.namespace_name(),
-                                    schema_pb.database(), schema_pb.table_name(), init_regions, true, drop_request);
-                if (ret < 0) {
-                    DB_FATAL("fail to add_partition, add_request: %s", add_request.ShortDebugString().c_str());
-                    SET_RESPONSE(response, pb::INTERNAL_ERROR, "add partition fail, fail to init_regions");
-                } else {
-                    DB_NOTICE("add_partition completely, add_request: %s", add_request.ShortDebugString().c_str());
-                }
-            } else {
-                DB_NOTICE("add_partition async completely, add_request: %s", add_request.ShortDebugString().c_str());
-            }
-        }
-    } else if (op_type == pb::OP_CREATE_VIEW) {
-        if (response != nullptr) {
-            if(ret == 0){
-                std::string view_name = schema_pb.table_name();
-                if (TableManager::get_instance()->do_create_view_sync_req(
-                        schema_pb, response) != 0) {
-                    DB_FATAL("fail to create view : %s", view_name.c_str());
-                } else {
-                    DB_NOTICE("create view:%s completely", view_name.c_str());
-                }
-            }
-        }
-    }
+    // Neo-redis: remove all SQL/DDL follow-up work (create table/view/partition pre-split, etc.).
     if (done != nullptr) {
         done->Run();
     }

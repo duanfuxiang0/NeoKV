@@ -1,8 +1,0 @@
-Log file created at: 2025/12/15 15:26:42
-Running on machine: ubuntu
-Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I1215 15:26:42.907968 2131727 log.h:176] [arrow_io_excutor.cpp:258][init][0]set cpu thread pool capacity: 32 -> 10
-I1215 15:26:42.909770 2131727 log.h:176] [memory_profile.cpp:115][init][0]root_limit_size :-1 _query_bytes_limit:-1
-I1215 15:26:42.911448 2131727 server.cpp:1212] Server[brpc::RedisService] is serving on port=16379.
-I1215 15:26:42.912539 2131727 server.cpp:1215] Check out http://ubuntu:16379 in web browser.
-I1215 15:26:42.914721 2131727 server.cpp:1272] Server[brpc::RedisService] is going to quit

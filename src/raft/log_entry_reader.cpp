@@ -19,7 +19,7 @@
 #include "mut_table_key.h"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 int LogEntryReader::read_log_entry(int64_t region_id, int64_t log_index, std::string& log_entry) {
     MutTableKey log_data_key;
     log_data_key.append_i64(region_id).append_u8(MyRaftLogStorage::LOG_DATA_IDENTIFY).append_i64(log_index);

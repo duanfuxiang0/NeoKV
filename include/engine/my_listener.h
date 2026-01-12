@@ -17,7 +17,7 @@
 #include "rocksdb/listener.h"
 #include "rocks_wrapper.h"
 
-namespace baikaldb {
+namespace neokv {
 class MyListener : public rocksdb::EventListener {
 public:
     virtual ~MyListener() {}

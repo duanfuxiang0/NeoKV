@@ -22,7 +22,7 @@ namespace braft {
 #endif
 DECLARE_int32(raft_election_heartbeat_factor);
 }
-namespace baikaldb {
+namespace neokv {
 class RaftControlDone : public braft::Closure {
 public:
     RaftControlDone(google::protobuf::RpcController* controller,

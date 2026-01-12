@@ -1,7 +1,7 @@
 #include "proto_process.hpp"
 #include "log.h"
 
-namespace baikaldb {
+namespace neokv {
 
 /// 删除meta信息
 int del_meta_info(pb::BaikalHeartBeatRequest& request) {
@@ -358,4 +358,4 @@ int add_meta_info(pb::IndexRecords& index_record, const int64_t meta_id) {
     return 0;
 }
 
-} // namespace baikaldb
+} // namespace neokv

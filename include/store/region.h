@@ -38,7 +38,6 @@
 #include <braft/repeated_timer_task.h>
 #endif
 #include "common.h"
-#include "schema_factory.h"
 #include "table_key.h"
 #include "mut_table_key.h"
 #include "rocks_wrapper.h"
@@ -46,23 +45,61 @@
 #include "proto/common.pb.h"
 #include "proto/meta.interface.pb.h"
 #include "proto/store.interface.pb.h"
-#include "reverse_index.h"
-#include "vector_index.h"
 #include "transaction_pool.h"
-#include "runtime_state.h"
-#include "runtime_state_pool.h"
 #include "rapidjson/document.h"
 #include "rocksdb_file_system_adaptor.h"
 #include "region_control.h"
 #include "meta_writer.h"
 #include "rpc_sender.h"
-#include "exec_node.h"
 #include "concurrency.h"
 #include "backup.h"
-#include "file_manager.h"
-#include "region_column.h"
-#include "column_types.h"
-#include "table_record.h"
+#include "table_record.h"  // Neo-redis: Provides SmartRecord stub
+
+// Neo-redis: Forward declarations for SQL types (used in disabled code)
+namespace neokv {
+class VectorIndex;
+class RuntimeState;
+class RuntimeStatePool;
+class ExecNode;
+class ReverseIndexBase;
+class MemTracker;
+typedef std::shared_ptr<MemTracker> SmartMemTracker;
+
+// Neo-redis: Inline stub types (previously in column_types.h)
+struct RegionResource {
+    pb::RegionInfo region_info;
+    RegionResource() = default;
+    ~RegionResource() = default;
+};
+
+// Neo-redis: Stub ColumnFileManager - OLAP not used
+class ColumnFileManager {
+public:
+    ColumnFileManager() = default;
+    ColumnFileManager(int64_t /*region_id*/) {}
+    ~ColumnFileManager() = default;
+    pb::ColumnStatus column_status() const { return pb::CS_NORMAL; }
+    int64_t column_lines() const { return 0; }
+    void manual_base_compaction() {}
+    void remove_column_data(pb::ColumnStatus /*status*/ = pb::CS_NORMAL, int /*flag*/ = 0) {}
+    static void remove_column_file(int64_t /*region_id*/, int64_t /*table_id*/) {}
+};
+
+// Neo-redis: Helper functions (previously in column_types.h)
+inline std::string timestamp_to_str(int64_t ts) {
+    if (ts <= 0) return "N/A";
+    return std::to_string(ts);
+}
+
+// Neo-redis: keep only Redis/KV write ops; SQL DML/2PC are removed.
+inline bool is_dml_op_type(pb::OpType type) {
+    return type == pb::OP_REDIS_WRITE;
+}
+
+inline bool is_2pc_op_type(pb::OpType /*type*/) {
+    return false;
+}
+}
 
 #ifdef BAIDU_INTERNAL
 #else
@@ -91,7 +128,7 @@ void get_status(NodeStatus* status) {
 using google::protobuf::Message;
 using google::protobuf::RepeatedPtrField;
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int64(disable_write_wait_timeout_us);
 DECLARE_int32(prepare_slow_down_wait);
 DECLARE_int64(binlog_warn_timeout_minute);
@@ -419,12 +456,7 @@ public:
     virtual ~Region() {
         shutdown();
         join();
-        for (auto& pair : _reverse_index_map) {
-            delete pair.second;
-        }
-        for (auto& pair : _vector_index_map) {
-            delete pair.second;
-        }
+        // Neo-redis: No reverse/vector index to cleanup
     }
     void wait_async_apply_log_queue_empty() {
         BthreadCond cond;
@@ -489,8 +521,7 @@ public:
         is_learner() ? _learner->get_status(status) : _node.get_status(status);
     }
 
-    Region(RocksWrapper* rocksdb, 
-            SchemaFactory*  factory,
+    Region(RocksWrapper* rocksdb,
             const std::string& address,
             const braft::GroupId& groupId,
             const braft::PeerId& peerId,
@@ -498,7 +529,6 @@ public:
             int64_t region_id,
             bool is_learner = false) :
                 _rocksdb(rocksdb),
-                _factory(factory),
                 _address(address),
                 _region_info(region_info),
                 _region_id(region_id),
@@ -529,12 +559,6 @@ public:
     }
 
     int init(bool new_region, int32_t snapshot_times);
-    void wait_table_info() {
-        while (!_factory->exist_tableid(get_table_id())) {
-            DB_WARNING("region_id: %ld wait for table_info: %ld", _region_id, get_table_id());
-            bthread_usleep(1000 * 1000);
-        }
-    }
 
     void raft_control(google::protobuf::RpcController* controller,
             const pb::RaftControlRequest* request,
@@ -543,17 +567,7 @@ public:
         _region_control.raft_control(controller, request, response, done);
     };
 
-    void async_apply_log_entry(google::protobuf::RpcController* controller,
-          const pb::BatchStoreReq* request,
-          pb::BatchStoreRes* response,
-          google::protobuf::Closure* done);
-
     void query(google::protobuf::RpcController* controller,
-            const pb::StoreReq* request,
-            pb::StoreRes* response,
-            google::protobuf::Closure* done);
-
-    void query_binlog(google::protobuf::RpcController* controller,
         const pb::StoreReq* request,
         pb::StoreRes* response,
         google::protobuf::Closure* done); 
@@ -563,36 +577,14 @@ public:
             int64_t applied_index, 
             int64_t term, bool need_txn_limit);
 
-    void dml_2pc(const pb::StoreReq& request, 
-            pb::OpType op_type, 
-            const pb::Plan& plan,
-            const RepeatedPtrField<pb::TupleDescriptor>& tuples, 
-            pb::StoreRes& response,
-            int64_t applied_index, 
-            int64_t term,
-            int seq_id, bool need_txn_limit);
-
-    void dml_1pc(const pb::StoreReq& request, 
-            pb::OpType op_type, 
-            const pb::Plan& plan,
-            const RepeatedPtrField<pb::TupleDescriptor>& tuples, 
-            pb::StoreRes& response,
-            int64_t applied_index,
-            int64_t term,
-            braft::Closure* done);
-
-    int select(const pb::StoreReq& request, pb::StoreRes& response);
-    int select(const pb::StoreReq& request, 
-            const pb::Plan& plan,
-            const RepeatedPtrField<pb::TupleDescriptor>& tuples,
-            pb::StoreRes& response);
     
     // Redis write operations (submits Raft task and waits for completion)
     // Returns 0 on success, -1 on error
     int exec_redis_write(const pb::RedisWriteRequest& redis_req, pb::StoreRes* response);
-    int select_normal(RuntimeState& state, ExecNode* root, const pb::StoreReq& request, pb::StoreRes& response);
-    int select_vectorized(RuntimeState& state, ExecNode* root, const pb::StoreReq& request, pb::StoreRes& response);
-    int select_sample(RuntimeState& state, ExecNode* root, const pb::AnalyzeInfo& analyze_info, pb::StoreRes& response);
+    // Neo-redis: SQL select functions disabled
+    // int select_normal(RuntimeState& state, ExecNode* root, const pb::StoreReq& request, pb::StoreRes& response);
+    // int select_vectorized(RuntimeState& state, ExecNode* root, const pb::StoreReq& request, pb::StoreRes& response);
+    // int select_sample(RuntimeState& state, ExecNode* root, const pb::AnalyzeInfo& analyze_info, pb::StoreRes& response);
     void do_apply(int64_t term, int64_t index, const pb::StoreReq& request, braft::Closure* done);
     virtual void on_apply(braft::Iterator& iter);
    
@@ -682,20 +674,6 @@ public:
     void compact_data_in_queue();
     int ingest_snapshot_sst(const std::string& dir);
     int ingest_sst_backup(const std::string& data_sst_file, const std::string& meta_sst_file); 
-    // other thread
-    void vector_truncate_del();
-    // other thread
-    void vector_compaction(bool is_manual = false);
-    // other thread
-    void reverse_merge();
-    // other thread
-    void reverse_merge_doing_ddl();
-    // other thread
-    void ttl_remove_expired_data();
-    void vector_schema_change();
-
-    int restore_faiss(const std::string& path, const std::vector<std::string>& files);
-
     // dump the the tuples in this region in format {{k1:v1},{k2:v2},{k3,v3}...}
     // used for debug
     std::string dump_hex();
@@ -705,13 +683,10 @@ public:
     void start_split_for_tail(braft::Closure* done, int64_t applied_index, int64_t term);
     void validate_and_add_version(const pb::StoreReq& request, braft::Closure* done, int64_t applied_index, int64_t term);
     void add_version_for_split_region(const pb::StoreReq& request, braft::Closure* done, int64_t applied_index, int64_t term);
-    void apply_txn_request(const pb::StoreReq& request, braft::Closure* done, int64_t index, int64_t term);
     void adjustkey_and_add_version(const pb::StoreReq& request, 
                                            braft::Closure* done, 
                                            int64_t applied_index, 
                                            int64_t term);
-    void exec_update_primary_timestamp(const pb::StoreReq& request,
-            braft::Closure* done, int64_t applied_index, int64_t term);
     
     void adjustkey_and_add_version_query(google::protobuf::RpcController* controller,
             const pb::StoreReq* request, 
@@ -725,14 +700,15 @@ public:
             bool tail_split,
             const std::string& split_key,
             int64_t key_term);
-    void get_split_key_for_tail_split();
     int init_new_region_leader(int64_t new_region_id, std::string instance, bool tail_split);
 
     void adjust_num_table_lines();
-    //split第二步，发送迭代器数据
+
+    // Neo-redis: Split function stubs (simplified split support)
+    void get_split_key_for_tail_split();
     void write_local_rocksdb_for_split();
-    int generate_multi_split_keys();
     int tail_split_replay_applied_txn_for_recovery();
+
     int replay_applied_txn_for_recovery(
             int64_t region_id,
             const std::string& instance,
@@ -1046,27 +1022,6 @@ public:
             pb::StoreRes* response,
             google::protobuf::Closure* done);
 
-    void exec_txn_query_state(google::protobuf::RpcController* controller,
-            const pb::StoreReq* request,
-            pb::StoreRes* response,
-            google::protobuf::Closure* done);
-    
-    void exec_kv_out_txn(const pb::StoreReq* request, 
-            pb::StoreRes* response,
-            const char* remote_side,
-            google::protobuf::Closure* done);
-    int exec_rollup_region_finish_request(const pb::StoreReq& request, 
-            const int64_t unappiled_begin_index, 
-            const int64_t unappiled_end_index, 
-            braft::Closure* done, 
-            int64_t term,
-            bool is_failed); 
-    int execute_cached_cmd(const pb::StoreReq& request, pb::StoreRes& response, 
-            uint64_t txn_id, 
-            SmartTransaction& txn, 
-            int64_t applied_index, 
-            int64_t term, 
-            uint64_t log_id);
 
     void clear_transactions() {
         if (_shutdown || !_init_success || get_version() <= 0) {
@@ -1077,48 +1032,12 @@ public:
         _multi_thread_cond.decrease_signal();
     }
     void update_ttl_info() {
-        if (_shutdown || !_init_success || get_version() <= 0) {
-            return;
-        }
-
-        TTLInfo ttl_info = _factory->get_ttl_duration(get_table_id());
-        if (ttl_info.ttl_duration_s > 0 && ttl_info.online_ttl_expire_time_us > 0) {
-            // online TTL 
-            if (ttl_info.online_ttl_expire_time_us != _online_ttl_base_expire_time_us) {
-                _online_ttl_base_expire_time_us = ttl_info.online_ttl_expire_time_us;
-                _use_ttl = true;
-                _txn_pool.update_ttl_info(_use_ttl, _online_ttl_base_expire_time_us);
-                DB_WARNING("table_id: %ld, region_id: %ld, ttl_duration_s: %ld, online_ttl_expire_time_us: %ld, %s", 
-                    get_table_id(), _region_id, ttl_info.ttl_duration_s, 
-                    ttl_info.online_ttl_expire_time_us, timestamp_to_str(ttl_info.online_ttl_expire_time_us/1000000).c_str());
-            }
-        }
+        // Neo-redis: SQL TTL removed (Redis TTL handled via RedisTTLCleaner/value codec).
+        return;
     }
-    //blacklist中新增的sign全部cancel
+    // Neo-redis: SQL blacklist feature disabled
     void cancel_all_blacklist_sign() {
-        if (_shutdown || !_init_success || get_version() <= 0) {
-            return;
-        }
-        SmartTable table_ptr = _factory->get_table_info_ptr(_table_id);
-        if (table_ptr == nullptr) {
-            return;
-        }
-        std::set<uint64_t> last_sign_blacklist;
-        if (_last_table_ptr != nullptr) {
-            last_sign_blacklist = _last_table_ptr->sign_blacklist;
-        }
-        std::unordered_map<uint64_t, SmartState> state_map = _state_pool.get_state_map();
-        for (auto& sign : table_ptr->sign_blacklist) {
-            if (last_sign_blacklist.count(sign) == 0) {
-                for (auto& pair : state_map) {
-                    if (pair.second->sign == sign) {
-                        pair.second->cancel();
-                        DB_WARNING("region_id: %ld, runtime:%p cancel", _region_id, pair.second.get());
-                    }
-                }
-            }
-        }
-        _last_table_ptr = table_ptr;
+        // Stub for neo-redis
     }
     void clear_orphan_transactions(braft::Closure* done, int64_t applied_index, int64_t term);
     void apply_clear_transactions_log();
@@ -1154,7 +1073,8 @@ public:
         std::lock_guard<std::mutex> lock(_region_lock);
         region_info->CopyFrom(_region_info);
     }
-    void kv_apply_raft(RuntimeState* state, SmartTransaction txn);
+    // Neo-redis: SQL kv_apply_raft disabled
+    // void kv_apply_raft(RuntimeState* state, SmartTransaction txn);
     void set_separate_switch(bool is_separate) {
         _storage_compute_separate = is_separate;
     }
@@ -1190,23 +1110,8 @@ public:
         return _commit_ts_map[txn_id];
     }
 
-    void remove_local_index_data();
     void delete_local_rocksdb_for_ddl(int64_t table_id, int64_t index_id);
-    int delete_hot_local_rocksdb(int64_t table_id, int64_t index_id);
 
-    int add_reverse_index(int64_t table_id, const std::set<int64_t>& index_ids);
-
-    void process_download_sst(brpc::Controller* controller, 
-        std::vector<std::string>& req_vec, SstBackupType type);
-    void process_upload_sst(brpc::Controller* controller, bool is_ingest);
-
-    void process_download_sst_streaming(brpc::Controller* controller, 
-        const pb::BackupRequest* request,
-        pb::BackupResponse* response);
-
-    void process_upload_sst_streaming(brpc::Controller* controller, bool is_ingest,
-        const pb::BackupRequest* request,
-        pb::BackupResponse* response);
     void process_query_peers(brpc::Controller* controller,
         const pb::BackupRequest* request,
         pb::BackupResponse* response);
@@ -1255,10 +1160,6 @@ public:
 
     int binlog_scan_when_restart();
 
-    void binlog_timeout_check();
-    
-    void binlog_fake(int64_t ts, BthreadCond& cond);
-
     pb::PeerStatus region_status() const {
         return _region_status;
     }
@@ -1280,17 +1181,21 @@ public:
     }
 
     bool is_async_apply_op_type(const pb::OpType& op_type) {
-        if (is_dml_op_type(op_type)
-            || is_2pc_op_type(op_type)
-            || op_type == pb::OP_NONE
-            || op_type == pb::OP_UPDATE_PRIMARY_TIMESTAMP
-            || op_type == pb::OP_KILL) {
-                return true;
-            }
-        return false;
+        switch (op_type) {
+        case pb::OP_REDIS_WRITE:
+        case pb::OP_NONE:
+        case pb::OP_START_SPLIT:
+        case pb::OP_START_SPLIT_FOR_TAIL:
+        case pb::OP_ADJUSTKEY_AND_ADD_VERSION:
+        case pb::OP_VALIDATE_AND_ADD_VERSION:
+        case pb::OP_ADD_VERSION_FOR_SPLIT_REGION:
+            return true;
+        default:
+            return false;
+        }
     }
     void check_peer_latency();
-    void get_read_index(const baikaldb::pb::GetAppliedIndex* request, pb::StoreRes* response);
+    void get_read_index(const neokv::pb::GetAppliedIndex* request, pb::StoreRes* response);
     // follower/learner read with ReadIndex gate:
     // ask leader for read_idx, wait until local apply catches up.
     // return pb::SUCCESS on success, otherwise an error code (e.g. NOT_LEADER/LEARNER_NOT_READY)
@@ -1301,56 +1206,10 @@ public:
     // 冷数据主键已经被刷冷, 只用判断索引还在不在就行
     bool has_index_sst_data(int64_t index_id, int64_t* seek_table_lines); 
 
-    // for olap
-    int manual_link_external_sst();
-    int ingest_cold_sst_on_snapshot_load();
-    bool need_flush_to_cold_rocksdb();
-    int flush_to_cold_rocksdb();
-    int flush_index_to_cold_rocksdb(const pb::OlapRegionInfo& olap_info);
-    int flush_hot_to_cold(std::vector<std::string>& external_files,
-                        std::map<int64_t, std::vector<std::string>>& index_ext_paths_mapping);
-    int flush_hot_index_to_cold(int64_t index_id, std::map<int64_t, std::vector<std::string>>& new_index_ext_paths_mapping);
-    int fits_snapshot_blacklist();
-    int sync_olap_info(pb::OlapRegionStat state, 
-                        const std::vector<std::string>& external_files,
-                        std::map<int64_t, std::vector<std::string> > index_ext_paths_mapping);
-    int sync_olap_index_info(const pb::OlapRegionInfo& old_olap_info, 
-                        pb::OlapRegionStat state, 
-                        std::map<int64_t, std::vector<std::string> > new_index_ext_paths_mapping);
-    void do_cold_index_ddl_work(const pb::OlapRegionInfo& olap_info);
-    int doing_cold_data_rollup(int64_t index_id);
-    // int copy_files(const std::vector<rocksdb::LiveFileMetaData>& sst_files, std::vector<std::string>& external_files);
-    // int copy_file(const std::string& local_file, std::string& external_file);
-    int get_cold_sst(std::set<std::string>& sst_relative_filename);
-    int get_cold_sst(std::set<std::string>& sst_relative_filename, std::set<int64_t>& index_ids);
-    int ingest_cold_sst(const std::vector<std::string>& external_files);
-    int ingest_cold_index_sst(std::vector<std::string>& external_files, int64_t index_id);
-    void apply_olap_info(const pb::StoreReq& request, braft::Closure* done);
-    void apply_olap_index_info(const pb::StoreReq& request, braft::Closure* done);
-    int modify_olap_region_num_table_lines();
+
     pb::OlapRegionStat olap_state() {
         return _olap_state.load();
     }
-
-    // for column
-    int sync_column_info(const std::vector<std::shared_ptr<ColumnFileInfo>>& new_column_files);
-    void apply_column_info(const pb::StoreReq& request, braft::Closure* done);
-    int column_on_snapshot_load_restart();
-    int column_on_snapshot_load(const std::string& dir);
-    void column_on_snapshot_save(braft::SnapshotWriter* writer, braft::Closure* done);
-    void column_snapshot_save();
-    int column_snapshot_save(const std::string& snapshot_path, std::vector<std::string>& files);
-    int get_column_files(const std::vector<pb::PossibleIndex::Range>& key_ranges, std::vector<std::shared_ptr<ParquetFile>>& files);
-    bool use_column_storage(const pb::Plan& plan, SmartTable table);
-    bool use_userid_statis(bool is_eq, const google::protobuf::RepeatedPtrField<pb::PossibleIndex::Range>& key_ranges);
-    std::vector<std::shared_ptr<ColumnFileInfo>> column_link_files(const std::vector<ColumnFileMeta>& file_infos, int64_t min_version, int64_t max_version);
-    void column_delete_files(const std::vector<std::shared_ptr<ColumnFileInfo>>& files);
-    bool can_do_column_compact();
-    int column_minor_compact();
-    void column_major_compact(bool is_base);
-    void column_flush();
-    void column_base_row2column();
-    void column_flush_to_cold();
     pb::ColumnStatus column_status() {
         return _column_mgr.column_status();
     }
@@ -1364,17 +1223,6 @@ public:
         // 重新触发行转列
         _column_mgr.remove_column_data(pb::CS_INVALID, 0);
     }
-
-    // for binlog backup
-    int restore_offline_binlog_info_on_snapshot_load(bool need_ingest_sst);
-    int get_binlog_backup_days();
-    void do_backup_binlog();
-    void print_offline_binlog_infos();
-    int ingest_offline_binlog_sst(const std::vector<std::string>& data_ssts, 
-                                  const std::vector<std::string>& binlog_ssts);
-    void delete_remote_expired_file();
-    bool need_clear_offline_binlog_sst();
-    int clear_offline_binlog(int64_t start_ts, int64_t end_ts);
 
     static void add_peer_info(pb::StoreHeartBeatRequest& request, const pb::RegionInfo& region_info, 
                               int64_t applied_index, bool is_learner, bool has_exist_leader);
@@ -1457,49 +1305,6 @@ private:
         std::map<int64_t, bool> timeout_start_ts_done; // 标记超时反查的start_ts, 仅用来避免重复commit导致的报警，不用于严格一致性场景
     };
 
-    // online binlog function
-    void recover_binlog();
-    void read_binlog(const pb::StoreReq* request, pb::StoreRes* response, const std::string& remote_side, uint64_t log_id);
-    void query_binlog_ts(const pb::StoreReq* request, pb::StoreRes* response);
-    void apply_binlog(const pb::StoreReq& request, braft::Closure* done);
-    int write_binlog_record(SmartRecord record);
-    int write_binlog_value(const std::map<std::string, ExprValue>& field_value_map);
-    int64_t binlog_get_int64_val(const std::string& name, const std::map<std::string, ExprValue>& field_value_map);
-    int64_t read_data_cf_oldest_ts();
-    bool flash_back_need_read(const pb::StoreReq* request, 
-                            const std::map<std::string, ExprValue>& field_value_map,
-                            const std::set<std::string>& req_db_tables,
-                            const std::set<uint64_t>& req_signs);
-    
-    std::string binlog_get_str_val(const std::string& name, const std::map<std::string, ExprValue>& field_value_map);
-    
-    void binlog_get_scan_fields(std::map<int32_t, FieldInfo*>& field_ids, std::vector<int32_t>& field_slot, 
-    SmartTable& binlog_table, SmartIndex& binlog_pri);
-    void binlog_get_field_values(std::map<std::string, ExprValue>& field_value_map, SmartRecord& record, SmartTable& binlog_table);
-    int binlog_reset_on_snapshot_load_restart();
-    
-    int binlog_reset_on_snapshot_load();
-    void binlog_update_map_when_scan(const std::map<std::string, ExprValue>& field_value_map);
-    int binlog_update_map_when_apply(const std::map<std::string, ExprValue>& field_value_map, const std::string& remote_side);
-    int binlog_update_check_point();
-    int get_primary_region_info(int64_t primary_region_id, pb::RegionInfo& region_info);
-    
-    void binlog_query_primary_region(const int64_t& start_ts, const int64_t& txn_id, pb::RegionInfo& region_info, int64_t rollback_ts);
-    void binlog_fill_exprvalue(const pb::BinlogDesc& binlog_desc, pb::OpType op_type, std::map<std::string, ExprValue>& field_value_map);
-    //offline binlog backup
-    void transfer_binlog_leader();
-    bool has_enough_online_binlog_data();
-    bool need_trigger_to_backup(const int backup_days);
-    int  write_offline_binlog_data();
-    void update_offline_binlog_info(const pb::StoreReq& request, braft::Closure* done);
-    void recover_offline_binlog_info(const pb::StoreReq* request, pb::StoreRes* response);
-    void query_offline_binlog_info(pb::StoreRes* response);
-    //binlog end
-    void apply_kv_in_txn(const pb::StoreReq& request, braft::Closure* done, 
-                         int64_t index, int64_t term);
-
-    void apply_kv_out_txn(const pb::StoreReq& request, braft::Closure* done,
-                                  int64_t index, int64_t term, bool is_replay);
     
     // Redis write operations (OP_REDIS_WRITE)
     void apply_redis_write(const pb::StoreReq& request, braft::Closure* done,
@@ -1557,24 +1362,6 @@ private:
 
     int check_learner_snapshot();
 
-    bool check_key_fits_region_range(SmartIndex pk_info, SmartTransaction txn,
-        const pb::RegionInfo& region_info, const pb::KvOp& kv_op);
-
-    bool check_key_exist(SmartTransaction txn, const pb::KvOp& kv_op) {
-        if (kv_op.is_primary_key()) {
-            MutTableKey key(kv_op.key());
-            key.replace_i64(_region_id, 0);
-            std::string value;
-            int rc = txn->get_for_update(key.data(), &value);
-            if (rc == 0) {
-                return true;
-            } else if (rc == -1) {
-                return false;
-            }
-        }
-        return false;
-    }
-
     int check_follower_snapshot(const std::string& peer);
 
     void update_binlog_read_max_ts(int64_t ts) {
@@ -1597,17 +1384,9 @@ private:
         _streaming_result.last_update_time.reset();
     }
 
-    void update_unsafe_reverse_index_map(std::map<int64_t, ReverseIndexBase*>& reverse_index_map) {
-        for (auto& pair : reverse_index_map) {
-            int64_t reverse_index_id = pair.first;
-            auto index_info = _factory->get_index_info(reverse_index_id);
-            if (index_info.state != pb::IS_PUBLIC) {
-                BAIDU_SCOPED_LOCK(_reverse_unsafe_index_map_lock);
-                if (_reverse_unsafe_index_map.count(reverse_index_id) == 0) {
-                    _reverse_unsafe_index_map[reverse_index_id] = pair.second;
-                }
-            }
-        }
+    // Neo-redis: SQL reverse index disabled
+    void update_unsafe_reverse_index_map(std::map<int64_t, ReverseIndexBase*>& /*reverse_index_map*/) {
+        // Stub for neo-redis
     }
     // follower read
     int append_pending_read(SmartFollowerReadCond c);
@@ -1620,14 +1399,10 @@ private:
         return time(NULL) - timestamp;
     }
 
-    static int mpp_send_version_old(
-        const pb::ExchangeSenderNode& pb_exchange_sender_node, const bool is_merge, const int64_t region_id,
-        const ::google::protobuf::RepeatedPtrField<pb::RegionInfo>& region_infos);
 
 private:
     //Singleton
     RocksWrapper*       _rocksdb;
-    SchemaFactory*      _factory;
     rocksdb::ColumnFamilyHandle* _data_cf;    
     rocksdb::ColumnFamilyHandle* _meta_cf;    
     std::string         _address; //ip:port
@@ -1636,7 +1411,7 @@ private:
     //region metainfo
     pb::RegionInfo      _region_info;
     std::mutex          _region_lock;    
-    //split后缓存分裂出去的region信息供baikaldb使用
+    //split后缓存分裂出去的region信息供neokv使用
     std::vector<pb::RegionInfo> _new_region_infos;
     size_t _snapshot_data_size = 0;
     size_t _snapshot_meta_size = 0;
@@ -1647,13 +1422,12 @@ private:
     int64_t             _table_id = 0; // region.main_table_id
     int64_t             _global_index_id = 0; //region.table_id
     
-    //merge后该region为空，记录目标region，供baikaldb使用，只会merge一次，不必使用vector
+    //merge后该region为空，记录目标region，供neokv使用，只会merge一次，不必使用vector
     pb::RegionInfo      _merge_region_info;
-    // 倒排索引需要
-    // todo liguoqiang  如何初始化这个
-    std::map<int64_t, ReverseIndexBase*> _reverse_index_map;
-    std::map<int64_t, ReverseIndexBase*> _reverse_unsafe_index_map;
-    std::map<int64_t, VectorIndex*> _vector_index_map;
+    // Neo-redis: SQL reverse/vector index maps removed
+    // std::map<int64_t, ReverseIndexBase*> _reverse_index_map;
+    // std::map<int64_t, ReverseIndexBase*> _reverse_unsafe_index_map;
+    // std::map<int64_t, VectorIndex*> _vector_index_map;
     // todo 是否可以改成无锁的
     BthreadCond _disable_write_cond;
     BthreadCond _real_writing_cond;
@@ -1713,8 +1487,9 @@ private:
     bool                                _removed = false;
     TimeCost                            _removed_time_cost;
     TransactionPool                     _txn_pool;
-    RuntimeStatePool                    _state_pool;
-    SmartTable                          _last_table_ptr; //黑名单屏蔽单线程使用
+    // Neo-redis: SQL RuntimeStatePool removed
+    // RuntimeStatePool                    _state_pool;
+    // Neo-redis: SQL table schema cache removed
 
     // shared_ptr is not thread safe when assign
     std::mutex  _ptr_mutex;
@@ -1725,8 +1500,9 @@ private:
     bthread::Mutex                         _commit_meta_mutex;
     scoped_refptr<braft::FileSystemAdaptor>  _snapshot_adaptor = nullptr;
     bool                                     _is_global_index = false; //是否是全局索引的region
-    std::mutex       _reverse_index_map_lock;
-    std::mutex       _reverse_unsafe_index_map_lock;
+    // Neo-redis: SQL reverse index locks removed
+    // std::mutex       _reverse_index_map_lock;
+    // std::mutex       _reverse_unsafe_index_map_lock;
     std::mutex       _backup_lock;
     Backup          _backup;
     //binlog

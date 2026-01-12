@@ -23,7 +23,7 @@
 #include "meta_util.h"
 #include "meta_state_machine.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_string(default_logical_room);
 DECLARE_string(default_physical_room);
 DECLARE_bool(need_check_slow);
@@ -106,7 +106,7 @@ public:
         static ClusterManager instance;
         return &instance;
     }
-    friend class QueryClusterManager;
+    // Neo-redis: meta query endpoints removed.
     void process_cluster_info(google::protobuf::RpcController* controller,
                               const pb::MetaManagerRequest* request, 
                               pb::MetaManagerResponse* response,
@@ -122,8 +122,8 @@ public:
     void update_instance(const pb::MetaManagerRequest& request, braft::Closure* done);
     
     // 只在leader内存添加、更新
-    void add_baikal_instance(const pb::BaikalStatus& baikal_status); 
-    void update_baikal_instance(const pb::BaikalStatus& baikal_status);
+    void add_neo_instance(const pb::BaikalStatus& neo_status); 
+    void update_neo_instance(const pb::BaikalStatus& neo_status);
 
     void update_instance_param(const pb::MetaManagerRequest& request, braft::Closure* done);
 
@@ -135,12 +135,12 @@ public:
     void set_instance_status(const pb::MetaManagerRequest* request,
                              pb::MetaManagerResponse* response,
                              uint64_t log_id); 
-    void process_baikal_heartbeat(const pb::BaikalHeartBeatRequest* request,
+    void process_neo_heartbeat(const pb::BaikalHeartBeatRequest* request,
             pb::BaikalHeartBeatResponse* response); 
     void process_instance_heartbeat_for_store(const pb::InstanceInfo& request);
     void process_instance_param_heartbeat_for_store(const pb::StoreHeartBeatRequest* request, 
                 pb::StoreHeartBeatResponse* response);
-    void process_instance_param_heartbeat_for_baikal(const pb::BaikalOtherHeartBeatRequest* request,
+    void process_instance_param_heartbeat_for_neo(const pb::BaikalOtherHeartBeatRequest* request,
                 pb::BaikalOtherHeartBeatResponse* response);
     void process_peer_heartbeat_for_store(const pb::StoreHeartBeatRequest* request, 
                 pb::StoreHeartBeatResponse* response);
@@ -151,8 +151,8 @@ public:
             std::unordered_map<std::string, int64_t>& pk_prefix_add_peer_counts,
             std::unordered_map<std::string, int64_t>& pk_prefix_average_counts);
     void get_switch(const pb::QueryRequest* request, pb::QueryResponse* response);
-    void baikal_healthy_check_function();
-    void construct_baikal_heartbeat_response(const pb::BaikalHeartBeatRequest *request, pb::BaikalHeartBeatResponse* response);
+    void neo_healthy_check_function();
+    void construct_neo_heartbeat_response(const pb::BaikalHeartBeatRequest *request, pb::BaikalHeartBeatResponse* response);
     void store_healthy_check_function();
     // just for 单测使用
     void get_network_segment_count(const std::string& resource_tag, size_t & count, size_t& prefix) {
@@ -533,7 +533,7 @@ public:
     
     // return -1: add instance -2: update instance
     int update_instance_info(const pb::InstanceInfo& instance_info);
-    int update_baikal_instance_info(const pb::BaikalHeartBeatRequest& request);
+    int update_neo_instance_info(const pb::BaikalHeartBeatRequest& request);
     
     int set_migrate_for_instance(const std::string& instance) {
         return set_status_for_instance(instance, pb::MIGRATE);
@@ -600,7 +600,7 @@ private:
         bthread_mutex_init(&_physical_mutex, NULL);
         bthread_mutex_init(&_instance_mutex, NULL);
         bthread_mutex_init(&_instance_param_mutex, NULL);
-        bthread_mutex_init(&_baikal_instance_mutex, NULL);
+        bthread_mutex_init(&_neo_instance_mutex, NULL);
         {
             BAIDU_SCOPED_LOCK(_physical_mutex);
             _physical_info[FLAGS_default_physical_room] = 
@@ -678,11 +678,11 @@ private:
     //resource_tag与实例对应关系, key:resource_tag， value:实例
     std::unordered_map<std::string, std::set<std::string>>      _resource_tag_instance_map;
 
-    bthread_mutex_t                                             _baikal_instance_mutex;
-    // baikal实例信息，只记录状态 address->InstanceStateInfo
-    std::unordered_map<std::string, InstanceStateInfo>          _baikal_instance_info;
-    std::unordered_map<std::string, std::string>                _baikal_instance_resource_tag_map;
-    std::unordered_map<std::string, std::set<std::string>>      _resource_tag_baikal_instances_map;
+    bthread_mutex_t                                             _neo_instance_mutex;
+    // neo实例信息，只记录状态 address->InstanceStateInfo
+    std::unordered_map<std::string, InstanceStateInfo>          _neo_instance_info;
+    std::unordered_map<std::string, std::string>                _neo_instance_resource_tag_map;
+    std::unordered_map<std::string, std::set<std::string>>      _resource_tag_neo_instances_map;
 
     //实例信息
     std::unordered_map<std::string, Instance>                   _instance_info;

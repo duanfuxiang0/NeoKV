@@ -1,5 +1,5 @@
 syntax="proto2"; 
-package baikaldb.pb;
+package neokv.pb;
 //option cc_enable_arenas = true;
 
 // 1-100是预留给store的操作

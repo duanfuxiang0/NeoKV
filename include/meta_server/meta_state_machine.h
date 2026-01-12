@@ -18,14 +18,14 @@
 #include "common_state_machine.h"
 #include "proto/meta.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 class MetaStateMachine : public CommonStateMachine {
 public:
     MetaStateMachine(const braft::PeerId& peerId):
                 CommonStateMachine(0, "meta_raft", "/meta_server", peerId),
                 _bth(&BTHREAD_ATTR_SMALL),
                 _healthy_check_start(false),
-                _baikal_heart_beat("baikal_heart_beat"),
+                _neo_heart_beat("neo_heart_beat"),
                 _store_heart_beat("store_heart_beat") {
         bthread_mutex_init(&_param_mutex, NULL);        
     }
@@ -39,12 +39,12 @@ public:
                          pb::StoreHeartBeatResponse* response,                    
                          google::protobuf::Closure* done); 
     
-    void baikal_heartbeat(google::protobuf::RpcController* controller,             
+    void neo_heartbeat(google::protobuf::RpcController* controller,             
                          const pb::BaikalHeartBeatRequest* request,                
                          pb::BaikalHeartBeatResponse* response,                    
                          google::protobuf::Closure* done); 
 
-    void baikal_other_heartbeat(google::protobuf::RpcController* controller,             
+    void neo_other_heartbeat(google::protobuf::RpcController* controller,             
                          const pb::BaikalOtherHeartBeatRequest* request,                
                          pb::BaikalOtherHeartBeatResponse* response,                    
                          google::protobuf::Closure* done); 
@@ -147,10 +147,10 @@ private:
 
     bool _unsafe_decision = false;
     int64_t _applied_index = 0;
-    bvar::LatencyRecorder   _baikal_heart_beat;
+    bvar::LatencyRecorder   _neo_heart_beat;
     bvar::LatencyRecorder   _store_heart_beat;
 };
 
-} //namespace baikaldb
+} //namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

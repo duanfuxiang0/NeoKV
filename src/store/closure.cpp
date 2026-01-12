@@ -15,7 +15,7 @@
 #include "closure.h"
 #include "store.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int64(print_time_us);
 void DMLClosure::Run() {
     int64_t region_id = 0;

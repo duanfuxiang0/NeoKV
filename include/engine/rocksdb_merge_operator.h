@@ -5,7 +5,7 @@
 
 #include "rocksdb/merge_operator.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Neo-redis doesn't use SQL merge operators
 // This is a stub to allow compilation
@@ -31,4 +31,4 @@ public:
 // OLAPMergeOperator - for compatibility, just an alias
 using OLAPMergeOperator = MyMergeOperator;
 
-} // namespace baikaldb
+} // namespace neokv

@@ -59,6 +59,7 @@
 #include "log.h"
 #include "proto/common.pb.h"
 #include "proto/meta.interface.pb.h"
+#include "rocksdb/slice.h"
 
 #ifdef BAIDU_INTERNAL
 namespace baidu {
@@ -73,7 +74,7 @@ namespace braft = raft;
 #define BRPC_VALIDATE_GFLAG BAIDU_RPC_VALIDATE_GFLAG
 #endif
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(first_batch_size_for_vector);
 DECLARE_int32(db_request_timeout);
 DECLARE_int32(db_connect_timeout);
@@ -110,8 +111,8 @@ inline std::string ts_to_datetime_str(int64_t ts) {
     return std::string(buf);
 }
 
-#define BAIKALDB_LIKELY(x)   __builtin_expect(!!(x), 1)
-#define BAIKALDB_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#define NEOKV_LIKELY(x)   __builtin_expect(!!(x), 1)
+#define NEOKV_UNLIKELY(x) __builtin_expect(!!(x), 0)
 enum RETURN_VALUE {
     RET_SUCCESS          = 0,
     RET_ERROR            = 1,   // Common error.
@@ -1787,5 +1788,55 @@ extern int convert_charset(const pb::Charset& from_charset, const std::string& f
 
 extern bool is_valid_ip(const std::string& ip);
 
-} // namespace baikaldb
+// Neo-redis helper functions (originally in deleted SQL files)
+
+// Compare end keys - empty key means infinity
+inline int end_key_compare(const std::string& key1, const std::string& key2) {
+    if (key1.empty() && key2.empty()) {
+        return 0;
+    }
+    if (key1.empty()) {
+        return 1;  // key1 is infinity, greater than key2
+    }
+    if (key2.empty()) {
+        return -1;  // key2 is infinity, key1 is less
+    }
+    return key1.compare(key2);
+}
+
+inline int end_key_compare(const rocksdb::Slice& key1, const std::string& key2) {
+    if (key1.empty() && key2.empty()) {
+        return 0;
+    }
+    if (key1.empty()) {
+        return 1;
+    }
+    if (key2.empty()) {
+        return -1;
+    }
+    return key1.compare(rocksdb::Slice(key2));
+}
+
+// Error codes (originally in SQL error handling)
+constexpr int ER_ERROR_FIRST = 1000;
+constexpr int ER_INDEX_CORRUPT = 1196;
+
+// Check if primitive type is integer
+inline bool is_int(pb::PrimitiveType type) {
+    switch (type) {
+        case pb::INT8:
+        case pb::INT16:
+        case pb::INT32:
+        case pb::INT64:
+        case pb::UINT8:
+        case pb::UINT16:
+        case pb::UINT32:
+        case pb::UINT64:
+            return true;
+        default:
+            return false;
+    }
+}
+
+} // namespace neokv
 

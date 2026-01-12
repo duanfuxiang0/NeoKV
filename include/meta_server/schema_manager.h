@@ -14,13 +14,13 @@
 
 #pragma once
 
+#include <memory>
 #include "proto/meta.interface.pb.h"
-#include "proto/store.interface.pb.h"
 #include "meta_state_machine.h"
 
-namespace baikaldb {
+namespace neokv {
+// Neo-redis: SchemaManager is trimmed to only keep region split/merge and region meta updates.
 typedef std::shared_ptr<pb::RegionInfo> SmartRegionInfo;
-DECLARE_int32(balance_periodicity);
 class SchemaManager {
 public:
     static const std::string MAX_NAMESPACE_ID_KEY;
@@ -36,22 +36,6 @@ public:
                   const pb::MetaManagerRequest* request, 
                   pb::MetaManagerResponse* response,
                   google::protobuf::Closure* done); 
-    
-    void process_schema_heartbeat_for_store(const pb::StoreHeartBeatRequest* request,
-                                            pb::StoreHeartBeatResponse* response);
-    void process_peer_heartbeat_for_store(const pb::StoreHeartBeatRequest* request,
-                                            pb::StoreHeartBeatResponse* response,
-                                            uint64_t log_id);
-    void process_leader_heartbeat_for_store(const pb::StoreHeartBeatRequest* request,
-                                            pb::StoreHeartBeatResponse* response,
-                                            uint64_t log_id);
-    void process_baikal_heartbeat(const pb::BaikalHeartBeatRequest* request,
-                                pb::BaikalHeartBeatResponse* response,
-                                uint64_t log_id);
-    //为权限操作类接口提供输入参数检查和id获取功能
-    int check_and_get_for_privilege(pb::UserPrivilege& user_privilege);
-
-    int load_snapshot();
     void set_meta_state_machine(MetaStateMachine* meta_state_machine) {
         _meta_state_machine = meta_state_machine;
     }
@@ -60,49 +44,12 @@ public:
     }
 private:
     SchemaManager() {}
-    int pre_process_for_create_table(const pb::MetaManagerRequest* request,
-                                    pb::MetaManagerResponse* response,
-                                    uint64_t log_id);
     int pre_process_for_merge_region(const pb::MetaManagerRequest* request,
                                     pb::MetaManagerResponse* response,
                                     uint64_t log_id);
     int pre_process_for_split_region(const pb::MetaManagerRequest* request, 
                                     pb::MetaManagerResponse* response,
                                     uint64_t log_id);
-    int load_max_id_snapshot(const std::string& max_id_prefix, 
-                              const std::string& key, 
-                              const std::string& value);
-    int whether_dists_legal(pb::MetaManagerRequest* request, 
-                            pb::MetaManagerResponse* response,
-                            std::string& candidate_logical_room,
-                            uint64_t log_id);
-    int whether_main_logical_room_legal(pb::MetaManagerRequest* request, 
-                            pb::MetaManagerResponse* response,
-                            uint64_t log_id);
-    bool is_table_info_op_type(pb::OpType op_type) {
-        if (op_type == pb::OP_CREATE_TABLE
-            || op_type == pb::OP_DROP_TABLE
-            || op_type == pb::OP_RESTORE_TABLE
-            || op_type == pb::OP_RENAME_TABLE
-            || op_type == pb::OP_CREATE_VIEW
-            || op_type == pb::OP_DROP_VIEW) {
-            return true;
-        }
-        return false;
-    }
-    // Partition
-    int pre_process_for_partition(const pb::MetaManagerRequest* request,
-                                  pb::MetaManagerResponse* response,
-                                  uint64_t log_id);
-    int pre_process_for_dynamic_partition(const pb::MetaManagerRequest* request,
-                                          pb::MetaManagerResponse* response,
-                                          uint64_t log_id,
-                                          pb::PrimitiveType partition_col_type);
-
-    // DBLink Mysql
-    int pre_process_for_dblink_mysql(const pb::MetaManagerRequest* request,
-                                     pb::MetaManagerResponse* response,
-                                     uint64_t log_id);
 
     MetaStateMachine* _meta_state_machine;
 }; //class

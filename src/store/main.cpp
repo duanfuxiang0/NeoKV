@@ -30,7 +30,7 @@
 #include "qos.h"
 #include "memory_profile.h"
 #include "rocks_wrapper.h"
-#define BAIKALDB_REDIS_FULL
+#define NEOKV_REDIS_FULL
 #include "redis_service.h"
 #include "redis_router.h"
 #include "redis_ttl_cleaner.h"
@@ -65,10 +65,10 @@ void sigsegv_handler(int signum, siginfo_t* info, void* ptr) {
 }
 
 int main(int argc, char **argv) {
-#ifdef BAIKALDB_REVISION
-    google::SetVersionString(BAIKALDB_REVISION);
-    static bvar::Status<std::string> baikaldb_version("baikaldb_version", "");
-    baikaldb_version.set_value(BAIKALDB_REVISION);
+#ifdef NEOKV_REVISION
+    google::SetVersionString(NEOKV_REVISION);
+    static bvar::Status<std::string> neokv_version("neokv_version", "");
+    neokv_version.set_value(NEOKV_REVISION);
 #endif
     google::SetCommandLineOption("flagfile", "conf/gflags.conf");
     google::ParseCommandLineFlags(&argc, &argv, true);
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     boost::filesystem::remove_all(remove_path); 
     
     // Initialize log
-    if (baikaldb::init_log(argv[0]) != 0) {
+    if (neokv::init_log(argv[0]) != 0) {
         fprintf(stderr, "log init failed.");
         return -1;
     }
@@ -95,11 +95,11 @@ int main(int argc, char **argv) {
         }
     }
 
-    baikaldb::register_myraft_extension();
+    neokv::register_myraft_extension();
     int ret = 0;
     
     // Initialize store QoS
-    baikaldb::StoreQos* store_qos = baikaldb::StoreQos::get_instance();
+    neokv::StoreQos* store_qos = neokv::StoreQos::get_instance();
     ret = store_qos->init();
     if (ret < 0) {
         DB_FATAL("store qos init fail");
@@ -107,13 +107,13 @@ int main(int argc, char **argv) {
     }
     
     // Initialize memory handlers
-    baikaldb::MemoryGCHandler::get_instance()->init();
-    baikaldb::MemTrackerPool::get_instance()->init();
+    neokv::MemoryGCHandler::get_instance()->init();
+    neokv::MemTrackerPool::get_instance()->init();
     
     // Add Raft service to brpc server
     butil::EndPoint addr;
     addr.ip = butil::IP_ANY;
-    addr.port = baikaldb::FLAGS_store_port;
+    addr.port = neokv::FLAGS_store_port;
     if (0 != braft::add_service(&server, addr)) { 
         DB_FATAL("Fail to init raft");
         return -1;
@@ -123,12 +123,12 @@ int main(int argc, char **argv) {
     // Initialize Redis server if enabled
     bool redis_started = false;
     std::unique_ptr<brpc::RedisService> redis_service_guard;
-    if (baikaldb::FLAGS_redis_port > 0) {
+    if (neokv::FLAGS_redis_port > 0) {
         // Initialize Redis router (bootstrap mode)
-        baikaldb::RedisRouter::get_instance()->init();
+        neokv::RedisRouter::get_instance()->init();
 
         redis_service_guard.reset(new brpc::RedisService());
-        if (!baikaldb::register_basic_redis_commands(redis_service_guard.get())) {
+        if (!neokv::register_basic_redis_commands(redis_service_guard.get())) {
             DB_FATAL("init redis command handlers fail");
             return -1;
         }
@@ -136,19 +136,19 @@ int main(int argc, char **argv) {
         redis_options.redis_service = redis_service_guard.release();
         butil::EndPoint redis_addr;
         redis_addr.ip = butil::IP_ANY;
-        redis_addr.port = baikaldb::FLAGS_redis_port;
+        redis_addr.port = neokv::FLAGS_redis_port;
         if (redis_server.Start(redis_addr, &redis_options) != 0) {
             DB_FATAL("Fail to start redis server");
             return -1;
         }
         redis_started = true;
-        DB_WARNING("start redis server success, listen port: %d", baikaldb::FLAGS_redis_port);
+        DB_WARNING("start redis server success, listen port: %d", neokv::FLAGS_redis_port);
     } else {
         DB_WARNING("redis_port <= 0, redis service disabled");
     }
     
     // Initialize Store
-    baikaldb::Store* store = baikaldb::Store::get_instance();
+    neokv::Store* store = neokv::Store::get_instance();
     std::vector<std::int64_t> init_region_ids;
     ret = store->init_before_listen(init_region_ids);
     if (ret < 0) {
@@ -174,10 +174,10 @@ int main(int argc, char **argv) {
     }
     
     // Initialize Redis TTL cleaner if Redis is enabled
-    if (redis_started && baikaldb::FLAGS_redis_ttl_cleanup_interval_s > 0) {
-        baikaldb::RedisTTLCleaner::get_instance()->init(baikaldb::FLAGS_redis_ttl_cleanup_interval_s);
+    if (redis_started && neokv::FLAGS_redis_ttl_cleanup_interval_s > 0) {
+        neokv::RedisTTLCleaner::get_instance()->init(neokv::FLAGS_redis_ttl_cleanup_interval_s);
         DB_WARNING("Redis TTL cleaner started with interval %d seconds", 
-                   baikaldb::FLAGS_redis_ttl_cleanup_interval_s);
+                   neokv::FLAGS_redis_ttl_cleanup_interval_s);
     }
     
     std::ofstream init_fs("init.success", std::ofstream::out | std::ofstream::trunc);
@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
     
     if (redis_started) {
         // Stop TTL cleaner first
-        baikaldb::RedisTTLCleaner::get_instance()->shutdown();
+        neokv::RedisTTLCleaner::get_instance()->shutdown();
         DB_WARNING("redis TTL cleaner stopped");
         
         redis_server.Stop(0);
@@ -207,11 +207,11 @@ int main(int argc, char **argv) {
     store_qos->close();
     DB_WARNING("store qos close success");
     
-    baikaldb::MemoryGCHandler::get_instance()->close();
-    baikaldb::MemTrackerPool::get_instance()->close();
+    neokv::MemoryGCHandler::get_instance()->close();
+    neokv::MemTrackerPool::get_instance()->close();
     
     // Exit if server.join is blocked
-    baikaldb::Bthread bth;
+    neokv::Bthread bth;
     bth.run([]() {
         bthread_usleep(2 * 60 * 1000 * 1000);
         DB_FATAL("store force exit");

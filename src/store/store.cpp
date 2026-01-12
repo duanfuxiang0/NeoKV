@@ -37,8 +37,9 @@
 #include "qos.h"
 #include "rocksdb_filesystem.h"
 #include "rocksdb/statistics.h"
+#include "butil/files/file_enumerator.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int64(store_heart_beat_interval_us);
 DECLARE_int32(balance_periodicity);
 DECLARE_string(stable_uri);
@@ -137,29 +138,6 @@ int Store::init_before_listen(std::vector<std::int64_t>& init_region_ids) {
     }
     boost::trim(FLAGS_resource_tag);
     _resource_tag = FLAGS_resource_tag;
-
-#ifdef BAIDU_INTERNAL
-    // 初始化外部文件系统，用于olap
-    std::vector<AfsExtFileSystem::AfsUgi> ugi_infos;
-    ret = get_afs_infos(ugi_infos);
-    if (ret < 0) {
-        DB_FATAL("get afs infos failed");
-        return -1;
-    }
-    std::shared_ptr<ExtFileSystem> ext_fs(new AfsExtFileSystem(ugi_infos));
-
-    ret = ext_fs->init();
-    if (ret < 0) {
-        DB_FATAL("init external filesystem failed");
-        return -1;
-    }
-
-    ret = SstExtLinker::get_instance()->init(ext_fs, FLAGS_db_path + "_cold");
-    if (ret < 0) {
-        DB_FATAL("init sst ext linker failed");
-        return -1;
-    }
-#endif
     // init rocksdb handler
     _rocksdb = RocksWrapper::get_instance();
     if (!_rocksdb) {
@@ -189,7 +167,6 @@ int Store::init_before_listen(std::vector<std::int64_t>& init_region_ids) {
         return ret;
     }
 
-    _factory = SchemaFactory::get_instance();
     pb::StoreHeartBeatRequest request;
     pb::StoreHeartBeatResponse response;
     //1、构造心跳请求, 重启时的心跳包除了实例信息外，其他都为空
@@ -199,8 +176,6 @@ int Store::init_before_listen(std::vector<std::int64_t>& init_region_ids) {
     //2、发送请求
     if (_meta_server_interact.send_request("store_heartbeat", request, response) == 0) {
         DB_WARNING("heart beat response:%s when init store", response.ShortDebugString().c_str());
-        //同步处理心跳, 重启拉到的第一个心跳包只有schema信息
-        _factory->update_tables_double_buffer_sync(response.schema_change_info());
     } else {
         DB_FATAL("send heart beat request to meta server fail");
         return -1;
@@ -214,7 +189,7 @@ int Store::init_before_listen(std::vector<std::int64_t>& init_region_ids) {
     }
     int64_t heartbeat_process_time = step_time_cost.get_time();
     step_time_cost.reset();
-    DB_WARNING("get schema info from meta server success");
+    DB_WARNING("store heartbeat to meta server success");
 
     std::unordered_set<int64_t> delete_region_ids;
     if (FLAGS_process_delete_regions_when_init) {
@@ -223,26 +198,7 @@ int Store::init_before_listen(std::vector<std::int64_t>& init_region_ids) {
         }
     }
 
-    // init val 
-    std::vector<rocksdb::Transaction*> recovered_txns;
-    _rocksdb->get_db()->GetAllPreparedTransactions(&recovered_txns);
-    if (recovered_txns.empty()) {
-        DB_WARNING("has no prepared transcation");
-        _has_prepared_tran = false;
-    }
-    for (auto txn : recovered_txns) {
-        std::string txn_name = txn->GetName().c_str();
-        std::vector<std::string> split_vec;
-        boost::split(split_vec, txn_name, boost::is_any_of("_"));
-        int64_t region_id = boost::lexical_cast<int64_t>(split_vec[0]);
-        uint64_t txn_id = boost::lexical_cast<uint64_t>(split_vec[1]);
-        prepared_txns[region_id].insert(txn_id);
-        DB_WARNING("rollback transaction, txn: %s, region_id: %ld, txn_id: %lu", 
-                    txn->GetName().c_str(), region_id, txn_id);
-        txn->Rollback();
-        delete txn;
-    }
-    recovered_txns.clear();
+    // Neo-redis: SQL prepared-transaction recovery removed.
 
     for (auto& region_info : region_infos) {
         DB_WARNING("region_info:%s when init store", region_info.ShortDebugString().c_str());
@@ -260,8 +216,7 @@ int Store::init_before_listen(std::vector<std::int64_t>& init_region_ids) {
         if (!is_learner) {
             region_info.clear_peers();
         }
-        SmartRegion region(new(std::nothrow) Region(_rocksdb, 
-                    _factory,
+        SmartRegion region(new(std::nothrow) Region(_rocksdb,
                     _address,
                     groupId,
                     peerId,
@@ -344,26 +299,25 @@ int Store::init_after_listen(const std::vector<int64_t>& init_region_ids) {
     DB_WARNING("init all region success init_region_time:%ld", step_time_cost.get_time());
     
     _split_check_bth.run([this]() {whether_split_thread();});
-    _vector_compact_bth.run([this]() {vector_compact_thread();});
-    _merge_bth.run([this]() {reverse_merge_thread();});
-    _merge_unsafe_bth.run([this]() {unsafe_reverse_merge_thread();});
-    _ttl_bth.run([this]() {ttl_remove_thread();});
-    _delay_remove_data_bth.run([this]() {delay_remove_data_thread();});
-    _flush_bth.run([this]() {flush_memtable_thread();});
-    _cold_region_flush_bth.run([this]() {cold_region_flush_thread();});
-    _cold_region_check_bth.run([this]() {olap_region_check_thread();});
-    _column_minor_compact_bth.run([this]() {column_minor_compact_thread();});
-    _column_major_compact_bth.run([this]() {column_major_compact_thread();});
-    _column_flush_bth.run([this]() {column_flush_thread();});
-    _snapshot_bth.run([this]() {snapshot_thread();});
-    _offline_binlog_backup_bth.run([this]() {binlog_region_backup_thread();});
-    _txn_clear_bth.run([this]() {txn_clear_thread();});
-    _binlog_timeout_check_bth.run([this]() {binlog_timeout_check_thread();});
-    _binlog_fake_bth.run([this]() {binlog_fake_thread();});
-    _region_peer_delay_bth.run([this]() {check_region_peer_delay();});
+    // Neo-redis: Disabled SQL-specific threads
+    // _vector_compact_bth.run([this]() {vector_compact_thread();});  // Vector index
+    // _merge_bth.run([this]() {reverse_merge_thread();});           // SQL reverse index
+    // _merge_unsafe_bth.run([this]() {unsafe_reverse_merge_thread();});  // SQL reverse index
+    // _ttl_bth.run([this]() {ttl_remove_thread();});                // SQL TTL (Redis has its own TTL)
+    _delay_remove_data_bth.run([this]() {delay_remove_data_thread();});  // Keep: region cleanup
+    _flush_bth.run([this]() {flush_memtable_thread();});                 // Keep: RocksDB flush
+    // _cold_region_flush_bth.run([this]() {cold_region_flush_thread();});    // OLAP cold storage
+    // _cold_region_check_bth.run([this]() {olap_region_check_thread();});    // OLAP
+    // _column_minor_compact_bth.run([this]() {column_minor_compact_thread();});  // Column store
+    // _column_major_compact_bth.run([this]() {column_major_compact_thread();});  // Column store
+    // _column_flush_bth.run([this]() {column_flush_thread();});     // Column store
+    _snapshot_bth.run([this]() {snapshot_thread();});                    // Keep: Raft snapshot
+    // _offline_binlog_backup_bth.run([this]() {binlog_region_backup_thread();});  // Binlog
+    // _txn_clear_bth.run([this]() {txn_clear_thread();});           // SQL transactions
+    // _binlog_timeout_check_bth.run([this]() {binlog_timeout_check_thread();});  // Binlog
+    // _binlog_fake_bth.run([this]() {binlog_fake_thread();});       // Binlog
+    _region_peer_delay_bth.run([this]() {check_region_peer_delay();});   // Keep: peer delay check
     _compact_region_by_total_sst_delete_keys.run([this]() {compact_region_by_sst_delete_keys_thread();});
-    _has_prepared_tran = true;
-    prepared_txns.clear();
     doing_snapshot_regions.clear();
     _is_init = true;
     DB_WARNING("store init_after_listen success, init success init_region_time:%ld", step_time_cost.get_time());
@@ -377,10 +331,6 @@ void Store::init_region(google::protobuf::RpcController* controller,
     TimeCost time_cost;
     brpc::ClosureGuard done_guard(done);
     brpc::Controller* cntl =static_cast<brpc::Controller*>(controller);
-    if (!_factory) {
-        cntl->SetFailed(EINVAL, "record encoder not set");
-        return;
-    }
     if (_shutdown) {
         DB_WARNING("store has entered shutdown"); 
         response->set_errcode(pb::INPUT_PARAM_ERROR);
@@ -425,18 +375,7 @@ void Store::init_region(google::protobuf::RpcController* controller,
         }
     }
 
-    //新增table信息
-    if (!_factory->exist_tableid(table_id)) {
-        if (request->has_schema_info()) {
-            update_schema_info(request->schema_info(), nullptr);
-        } else {
-            DB_FATAL("table info missing when add region, table_id:%lu, region_id: %ld, log_id:%lu",
-                       table_id, region_info.region_id(), log_id);
-            response->set_errcode(pb::INPUT_PARAM_ERROR);
-            response->set_errmsg("table info is missing when add region");
-            return;
-        }
-    }
+    // Neo-redis: no SQL table schema, region init only depends on RegionInfo.
 
     auto orgin_region = get_region(region_id);
     // 已经软删，遇到需要新建就马上删除让位
@@ -463,8 +402,7 @@ void Store::init_region(google::protobuf::RpcController* controller,
         return;
     }
     braft::PeerId peerId(addr, 0);
-    SmartRegion region(new(std::nothrow) Region(_rocksdb, 
-                                                _factory,
+    SmartRegion region(new(std::nothrow) Region(_rocksdb,
                                                 _address,
                                                 groupId,
                                                 peerId,
@@ -534,8 +472,6 @@ void Store::region_raft_control(google::protobuf::RpcController* controller,
         return;
     }
     if (request->op_type() == pb::SetPeer && request->force() && region->removed()) {
-        // 需要等table info才能init成功
-        region->wait_table_info(); // 死循环 !
         // 恢复相当于重启region
         region->set_restart(true);
         region->init(false, 0);
@@ -584,34 +520,6 @@ void Store::health_check(google::protobuf::RpcController* controller,
             response->set_errcode(pb::STORE_ROCKS_HANG);
         }
     }
-}
-
-void Store::async_apply_log_entry(google::protobuf::RpcController* controller,
-                                 const pb::BatchStoreReq* request,
-                                 pb::BatchStoreRes* response,
-                                 google::protobuf::Closure* done) {
-    bthread_usleep(20);
-    brpc::ClosureGuard done_guard(done);
-    brpc::Controller* cntl =
-            static_cast<brpc::Controller*>(controller);
-    uint64_t log_id = 0;
-    if (request == nullptr || response == nullptr || cntl == nullptr) {
-        return;
-    }
-    const auto& remote_side_tmp = butil::endpoint2str(cntl->remote_side());
-    const char* remote_side = remote_side_tmp.c_str();
-    if (cntl->has_log_id()) {
-        log_id = cntl->log_id();
-    }
-    SmartRegion region = get_region(request->region_id());
-    if (region == nullptr || region->removed()) {
-        response->set_errcode(pb::REGION_NOT_EXIST);
-        response->set_errmsg("region_id not exist in store");
-        DB_WARNING("region_id: %ld not exist in store, logid:%lu, remote_side: %s",
-                   request->region_id(), log_id, remote_side);
-        return;
-    }
-    region->async_apply_log_entry(controller, request, response, done_guard.release());
 }
 
 void Store::query(google::protobuf::RpcController* controller,
@@ -727,35 +635,6 @@ void Store::query_batch(google::protobuf::RpcController* controller,
     batch_query_bth.join();
 }
 
-void Store::query_binlog(google::protobuf::RpcController* controller,
-                  const pb::StoreReq* request,
-                  pb::StoreRes* response,
-                  google::protobuf::Closure* done) {
-    bthread_usleep(20);
-    brpc::ClosureGuard done_guard(done);
-    brpc::Controller* cntl =
-            static_cast<brpc::Controller*>(controller);
-    uint64_t log_id = 0;
-    const auto& remote_side_tmp = butil::endpoint2str(cntl->remote_side());
-    const char* remote_side = remote_side_tmp.c_str();
-    if (cntl->has_log_id()) {
-        log_id = cntl->log_id();
-    }
-    //DB_WARNING("region_id: %ld before get_region, logid:%lu, remote_side: %s", request->region_id(), log_id, remote_side);
-    SmartRegion region = get_region(request->region_id());
-    if (region == nullptr || region->removed()) {
-        response->set_errcode(pb::REGION_NOT_EXIST);
-        response->set_errmsg("region_id not exist in store");
-        DB_WARNING("region_id: %ld not exist in store, logid:%lu, remote_side: %s",
-                request->region_id(), log_id, remote_side);
-        return;
-    }
-    region->query_binlog(controller,
-                  request,
-                  response,
-                  done_guard.release());
-}
-
 void Store::remove_region(google::protobuf::RpcController* controller,
                        const pb::RemoveRegion* request,
                        pb::StoreRes* response,
@@ -790,7 +669,7 @@ void Store::remove_region(google::protobuf::RpcController* controller,
 }
 
 void Store::restore_region(google::protobuf::RpcController* controller,
-                              const baikaldb::pb::RegionIds* request,
+                              const neokv::pb::RegionIds* request,
                               pb::StoreRes* response,
                               google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -798,8 +677,6 @@ void Store::restore_region(google::protobuf::RpcController* controller,
     response->set_errmsg("success");
     TimeCost cost;
     auto call = [](SmartRegion region) {
-        // 需要等table info才能init成功
-        region->wait_table_info();
         // 恢复相当于重启region
         region->set_restart(true);
         region->init(false, 0);
@@ -851,7 +728,7 @@ void Store::add_peer(google::protobuf::RpcController* controller,
 }
 
 void Store::get_applied_index(google::protobuf::RpcController* controller,
-                              const baikaldb::pb::GetAppliedIndex* request,
+                              const neokv::pb::GetAppliedIndex* request,
                               pb::StoreRes* response,
                               google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -879,7 +756,7 @@ void Store::get_applied_index(google::protobuf::RpcController* controller,
 }
 
 void Store::compact_region(google::protobuf::RpcController* controller,
-                              const baikaldb::pb::RegionIds* request,
+                              const neokv::pb::RegionIds* request,
                               pb::StoreRes* response,
                               google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -924,16 +801,9 @@ void Store::compact_region(google::protobuf::RpcController* controller,
                 if (region == nullptr) {
                     continue;
                 }
-                if (type == 4) {
-                    region->column_manual_base_compaction();
-                } else if (type == 5) {
-                    region->column_manual_row2column();
-                } else if (type == 6) {
-                    region->vector_compaction(true);
-                } else {
-                    DB_WARNING("invalid type: %d", type);
-                    continue;
-                }
+                // Neo-redis: type 4,5,6 (column/vector) not supported
+                DB_WARNING("column/vector compact type %d not supported in neo-redis", type);
+                continue;
             } else {
                 RegionControl::compact_data(region_id);
             }
@@ -943,7 +813,7 @@ void Store::compact_region(google::protobuf::RpcController* controller,
 }
 
 void Store::manual_split_region(google::protobuf::RpcController* controller,
-                            const baikaldb::pb::RegionIds* request,
+                            const neokv::pb::RegionIds* request,
                             pb::StoreRes* response,
                             google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -995,28 +865,6 @@ void Store::manual_split_region(google::protobuf::RpcController* controller,
                 continue;
             }
             if (userid == 0) {
-                bool is_cold = false;
-                bool is_olap_table = _factory->is_olap_table(region->get_table_id(), region->get_partition_id(), &is_cold);
-                if (is_olap_table) {
-                    if (is_cold) {
-                        continue;
-                    }
-                    int ret = region->modify_olap_region_num_table_lines();
-                    if (ret < 0) {
-                        continue;
-                    }
-                    int64_t region_capacity = 10000000;
-                    ret = _factory->get_region_capacity(region->get_global_index_id(), region_capacity);
-                    if (ret != 0) {
-                        DB_DEBUG("table info not exist, region_id: %ld", region_id);
-                        continue;
-                    }
-                    region_capacity = std::max(FLAGS_min_split_lines, region_capacity);
-                    if (region->get_num_table_lines() < FLAGS_split_threshold * region_capacity / 100) {
-                        continue;
-                    }
-                } 
-
                 if (0 != region->get_split_key(split_key, split_key_term)) {
                     DB_WARNING("get_split_key failed: region=%ld", region_id);
                     continue;
@@ -1035,42 +883,8 @@ void Store::manual_split_region(google::protobuf::RpcController* controller,
     bth.join();
 }
 
-void Store::manual_link_external_sst(google::protobuf::RpcController* controller,
-                            const baikaldb::pb::RegionIds* request,
-                            pb::StoreRes* response,
-                            google::protobuf::Closure* done) {
-    brpc::ClosureGuard done_guard(done);
-    response->set_errcode(pb::SUCCESS);
-    response->set_errmsg("success");
-    DB_WARNING("request: %s", request->ShortDebugString().c_str());
-    for (int64_t region_id : request->region_ids()) {
-        SmartRegion region = get_region(region_id);
-        if (region == nullptr || region->get_version() == 0 || region->is_binlog_region() || region->is_learner() || 
-                region->removed() || !region->is_leader()) {
-            response->set_errcode(pb::EXEC_FAIL);
-            response->set_errmsg("cant do manual link");
-            if (region != nullptr && !region->is_leader()) {
-                response->set_errcode(pb::NOT_LEADER);
-                response->set_leader(butil::endpoint2str(region->get_leader()).c_str());
-                response->set_errmsg("not leader");
-            }
-            
-            DB_WARNING("region_id: %ld cant do manual link", region_id);
-            break;
-        }
-
-        int ret = region->manual_link_external_sst();
-        if (ret != 0) {
-            response->set_errcode(pb::EXEC_FAIL);
-            response->set_errmsg("cant do manual link");
-            DB_WARNING("region_id: %ld cant do manual link", region_id);
-            break;
-        }
-    }
-}
-
 void Store::snapshot_region(google::protobuf::RpcController* controller,
-                            const baikaldb::pb::RegionIds* request,
+                            const neokv::pb::RegionIds* request,
                             pb::StoreRes* response,
                             google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -1105,7 +919,7 @@ void Store::snapshot_region(google::protobuf::RpcController* controller,
 }
 
 void Store::query_region(google::protobuf::RpcController* controller,
-                            const baikaldb::pb::RegionIds* request,
+                            const neokv::pb::RegionIds* request,
                             pb::StoreRes* response,
                             google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -1133,250 +947,6 @@ void Store::query_region(google::protobuf::RpcController* controller,
                 region->rollback_txn_before(timeout);
             }
         });
-        return;
-    }
-    if (request->query_apply_index()) {
-        auto extra_res = response->mutable_extra_res();
-
-        std::vector<rocksdb::LiveFileMetaData> metadata;
-        _rocksdb->get_cold_live_files(&metadata);
-        std::map<int64_t, std::set<std::string>> region_sst_map;
-        for (const auto& md : metadata) {
-            if (md.column_family_name != RocksWrapper::COLD_DATA_CF) {
-                continue;
-            }
-            TableKey smallestkey(md.smallestkey);
-            TableKey largestkey(md.largestkey);
-            int64_t smallest_region_id = smallestkey.extract_i64(0);
-            int64_t largest_region_id  = largestkey.extract_i64(0);
-            if (smallest_region_id != largest_region_id) {
-                DB_FATAL("cold sst: %s has diff region_id %ld vs %ld", md.relative_filename.c_str(), smallest_region_id, largest_region_id);
-                continue;
-            }
-            region_sst_map[smallest_region_id].insert(md.relative_filename);
-        }
-
-        std::map<std::string, SstExtLinker::ExtFileInfo> sst_ext_map;
-        SstExtLinker::get_instance()->sst_ext_map(sst_ext_map);
-        std::map<int64_t, int64_t> hot_region_size_map;
-        get_hot_region_size(hot_region_size_map);
-
-        std::vector<int64_t> region_ids;
-        region_ids.reserve(1024);
-        if (request->region_ids_size() <= 0) {
-            traverse_region_map([&region_ids](const SmartRegion& region) {
-                region_ids.emplace_back(region->get_region_id());
-            });
-        } else {
-            for (auto region_id : request->region_ids()) {
-                region_ids.emplace_back(region_id);
-            }
-        }
-        for (int64_t region_id : region_ids) {
-            auto info = extra_res->add_infos();
-            info->set_region_id(region_id);
-            info->set_resource_tag(FLAGS_resource_tag);
-            SmartRegion region = get_region(region_id);
-            if (region == nullptr) {
-                info->set_table_id(-1);
-                info->set_version(-1);
-                info->set_apply_index(-1);
-                info->set_status("NOTFOUND");
-                DB_FATAL("region_id: %ld not exist, may be removed", region_id);
-                continue;
-            } 
-
-            info->set_table_id(region->get_table_id());
-            info->set_version(region->get_version());
-            info->set_apply_index(region->get_log_index());
-            if (region->is_leader()) {
-                info->set_status("LEADER");
-            } else if (region->is_learner()) {
-                info->set_status("LEARNER");
-            } else {
-                info->set_status("FOLLOWER");
-            }
-
-            pb::RegionColumnFiles column_info;
-            int ret = _meta_writer->read_column_file_info(region->get_region_id(), column_info);
-            if (ret < 0) {
-                info->set_column_info("");
-            } else {
-                // 清理startkey endkey，避免冗余打印
-                for (int i = 0; i < column_info.active_files_size(); ++i) {
-                    column_info.mutable_active_files(i)->clear_start_key();
-                    column_info.mutable_active_files(i)->clear_end_key();
-                }
-                for (int i = 0; i < column_info.delete_files_size(); ++i) {
-                    column_info.mutable_delete_files(i)->clear_start_key();
-                    column_info.mutable_delete_files(i)->clear_end_key();
-                }
-                info->set_column_info(column_info.ShortDebugString());
-            }
-
-            pb::OlapRegionInfo olap_info;
-            ret = _meta_writer->read_olap_info(region->get_region_id(), olap_info);
-            if (ret < 0) {
-                DB_WARNING("region_id: %ld read olap info failed", region->get_region_id());
-                continue;
-            }
-
-            info->set_olap_state(olap_info.state());
-
-            if (olap_info.state() < pb::OLAP_FLUSHED || olap_info.external_full_path_size() <= 0) {
-                DB_WARNING("region_id: %ld diff state info: %s", region->get_region_id(), olap_info.ShortDebugString().c_str());
-                info->set_region_size(hot_region_size_map[region_id]);
-                continue;
-            }
-
-            for (int i = 0; i < olap_info.olap_index_info_list_size(); i++) {
-                info->add_olap_index_info_list()->Swap(olap_info.mutable_olap_index_info_list(i));
-            }
-
-            uint64_t total_size = 0;
-            std::set<std::string> rocks_external_files;
-            for (const auto& f : olap_info.external_full_path()) {
-                rocks_external_files.emplace(f);
-                info->add_external_full_path(f);
-                uint64_t size;
-                int ret = get_size_by_external_file_name(&size, nullptr, f);
-                if (ret != 0) {
-                    continue;
-                }
-                total_size += size;
-            }
-            info->set_region_size(total_size);
-
-            auto iter = region_sst_map.find(region->get_region_id());
-            if (iter == region_sst_map.end()) {
-                info->set_path_diff(true);
-                DB_FATAL("region_id: %ld cant find cold sst, olap_info: %s", region->get_region_id(), olap_info.ShortDebugString().c_str());
-                continue;
-            }
-
-            if (rocks_external_files.size() != iter->second.size()) {
-                info->set_path_diff(true);
-                DB_FATAL("region_id: %ld diff size rocks vs json", region->get_region_id());
-                continue;
-            }
-
-            std::set<std::string> json_external_files;
-            for (const std::string& f : iter->second) {
-                auto it = sst_ext_map.find(f);
-                if (it == sst_ext_map.end()) {
-                    info->set_path_diff(true);
-                    DB_FATAL("region_id: %ld cant find sst: %s", region->get_region_id(), f.c_str());
-                } else {
-                    json_external_files.emplace(it->second.full_name);
-                }
-            }
-
-            std::set<std::string> diff;
-            std::set_difference(rocks_external_files.begin(), rocks_external_files.end(), 
-                                json_external_files.begin(), json_external_files.end(),
-                                std::inserter(diff, diff.begin()));
-
-            if (!diff.empty()) {
-                info->set_path_diff(true);
-                DB_FATAL("region_id: %ld diff sst rocks vs json", region->get_region_id());
-            }
-
-            info->set_path_diff(false);
-        }
-        return;
-    }
-    if (request->query_all_afs_file()) {
-        auto extra_res = response->mutable_extra_res();
-        std::map<std::string, SstExtLinker::ExtFileInfo> sst_ext_map;
-        SstExtLinker::get_instance()->sst_ext_map(sst_ext_map);
-        for (const auto& pair : sst_ext_map) {
-            std::string* full_name = extra_res->add_afs_full_names();
-            *full_name = pair.second.full_name;
-        }
-        extra_res->set_get_afs_path_succ(true);
-        return;
-    }
-    if (request->query_olap_keypoint()) {
-        std::map<int64_t, int64_t> userid_count;
-        auto extra_res = response->mutable_extra_res();
-        for (int64_t region_id : request->region_ids()) {
-            SmartRegion region = get_region(region_id);
-            if (region == nullptr) {
-                DB_WARNING("region_id: %ld not exist", region_id);
-                return;
-            }
-            int64_t table_id = region->get_table_id();
-            auto table_info = _factory->get_table_info_ptr(table_id);
-            auto pri_index = _factory->get_index_info_ptr(table_id);
-            if (pri_index == nullptr || table_info == nullptr) {
-                return;
-            }
-            if (!is_int(pri_index->fields[0].type)) {
-                return;
-            }
-            SmartRecord record = _factory->new_record(table_id);
-            if (record == nullptr) {
-                return;
-            }
-            std::string region_start_key = region->get_start_key();
-            std::string region_end_key = region->get_end_key();
-            MutTableKey rocksdb_start_key;
-            MutTableKey rocksdb_end_key;
-            rocksdb_start_key.append_i64(region_id);
-            rocksdb_start_key.append_i64(table_id);
-            rocksdb_start_key.append_string(region_start_key);
-            rocksdb_end_key.append_i64(region_id);
-            rocksdb_end_key.append_i64(table_id);
-            if (region_end_key.empty()) {
-                rocksdb_end_key.append_u64(UINT64_MAX);
-            } else {
-                rocksdb_end_key.append_string(region_end_key);
-            }
-
-            rocksdb::TablePropertiesCollection props;
-            if (region->olap_state() >= pb::OLAP_FLUSHED) {
-                _rocksdb->get_cold_sst_properties(rocksdb_start_key.data(), rocksdb_end_key.data(), props);
-            } else {
-                _rocksdb->get_sst_properties(rocksdb_start_key.data(), rocksdb_end_key.data(), props);
-            }
-            std::vector<rocksdb::Slice> keys;
-            _rocksdb->decode_key_points(region_start_key, region_end_key, rocksdb_start_key.data().substr(0, 16), props, keys);
-            for (const auto& key : keys) {
-                SmartRecord record = _factory->new_record(*table_info);
-                if (record == nullptr) {
-                    return;
-                }
-                int ret = record->decode_key(*pri_index, key);
-                if (ret != 0) {
-                    return;
-                }
-
-                auto desc = record->get_field_by_idx(pri_index->fields[0].pb_idx);
-                if (desc == nullptr) {
-                    return;
-                }
-
-                ExprValue value = record->get_value(desc);
-                if (value.is_null()) {
-                    return;
-                }
-
-                int64_t userid = value.get_numberic<int64_t>();
-                if (userid_count.count(userid) > 0) {
-                    userid_count[userid] += 1;
-                } else {    
-                    userid_count[userid] = 1;
-                }
-            }
-        }
-
-        extra_res->set_query_keypoint_succ(true);
-        for (const auto& pair : userid_count) {
-            auto info = extra_res->add_userid_count();
-            info->set_userid(pair.first);
-            info->set_count(pair.second);
-        }
-
         return;
     }
     if (request->region_ids_size() == 0) {
@@ -1647,7 +1217,7 @@ int Store::delete_path(const pb::CompactionFileRequest* request,
 }
 
 void Store::query_illegal_region(google::protobuf::RpcController* controller,
-                            const baikaldb::pb::RegionIds* request,
+                            const neokv::pb::RegionIds* request,
                             pb::StoreRes* response,
                             google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
@@ -1742,87 +1312,7 @@ void Store::update_meta_list() {
     }
 }
 
-void Store::vector_compact_thread() {
-    while (!_shutdown) {
-        TimeCost cost;
-        static bvar::LatencyRecorder vector_compact_time_cost("vector_compact_time_cost");
-        traverse_copy_region_map([](const SmartRegion& region) {
-            if (!region->is_binlog_region()) {
-                region->vector_compaction();
-            }
-        });
-        vector_compact_time_cost << cost.get_time();
-        bthread_usleep_fast_shutdown(FLAGS_reverse_merge_interval_us, _shutdown);
-    }
-}
-
-
-void Store::reverse_merge_thread() {
-    while (!_shutdown) {
-        TimeCost cost;
-        static bvar::LatencyRecorder reverse_merge_time_cost("reverse_merge_time_cost");
-        traverse_copy_region_map([](const SmartRegion& region) {
-            if (!region->is_binlog_region()) {
-                region->reverse_merge();
-            }
-        });
-        reverse_merge_time_cost << cost.get_time();
-        bthread_usleep_fast_shutdown(FLAGS_reverse_merge_interval_us, _shutdown);
-    }
-}
-
-void Store::unsafe_reverse_merge_thread() {
-    while (!_shutdown) {
-        TimeCost cost;
-        static bvar::LatencyRecorder unsafe_reverse_merge_time_cost("unsafe_reverse_merge_time_cost");
-        traverse_copy_region_map([](const SmartRegion& region) {
-            if (!region->is_binlog_region()) {
-                region->reverse_merge_doing_ddl();
-            }
-        });
-        unsafe_reverse_merge_time_cost << cost.get_time();
-        bthread_usleep_fast_shutdown(FLAGS_reverse_merge_interval_us, _shutdown);
-    }  
-}
-
-void Store::ttl_remove_thread() {
-    TimeCost time;
-    while (!_shutdown) {
-        bthread_usleep_fast_shutdown(30 * 1000 * 1000LL, _shutdown);
-        if (_shutdown) {
-            return;
-        }
-        
-        traverse_copy_region_map([](const SmartRegion& region) {
-            region->update_ttl_info();
-        });
-        // 控制ttl在ttl_remove_interval_period指定时间范围,典型是晚上流量低峰
-        std::vector<std::string> periods = string_split(FLAGS_ttl_remove_interval_period, '-');
-        if (periods.size() == 2) {
-            try {
-                int start_hour = std::stoi(periods[0]);
-                int end_hour = std::stoi(periods[1]);
-                if (start_hour >= 0 && start_hour <= 23 && end_hour >= 0 && end_hour <= 23) {
-                    TimePeriodChecker tc(start_hour, end_hour);
-                    if (!tc.now_in_interval_period()) {
-                        continue;
-                    }
-                }
-            } catch (...) {
-                DB_WARNING("FLAGS_ttl_remove_interval_period %s", FLAGS_ttl_remove_interval_period.c_str());
-            }
-        }
-
-        if (time.get_time() > FLAGS_ttl_remove_interval_s * 1000 * 1000LL) {
-            traverse_copy_region_map([](const SmartRegion& region) {
-                if (!FLAGS_stop_ttl_data) {
-                    region->ttl_remove_expired_data();
-                }
-            });
-            time.reset();
-        }
-    }
-}
+// Neo-redis: vector_compact_thread removed, no vector index support
 
 void Store::delay_remove_data_thread() {
     while (!_shutdown) {
@@ -1852,9 +1342,7 @@ void Store::delay_remove_data_thread() {
                 erase_region(drop_region_id);
             }
         });
-        traverse_copy_region_map([this](const SmartRegion& region) {
-            region->remove_local_index_data();
-        });
+        // Neo-redis: remove_local_index_data() not needed, no local index
     }
 }
 
@@ -1923,172 +1411,6 @@ void Store::flush_memtable_thread() {
     }
 }
 
-void Store::cold_region_flush_thread() {
-    while (!_shutdown) {
-        TimeCost time;
-        // 后续可以使用令牌桶精细控制速度 OLAPTODO
-        int32_t concurrency = FLAGS_cold_region_flush_concurrency;
-        BthreadCond concurrency_cond(-concurrency);
-        std::vector<SmartRegion> regions;
-        if (!FLAGS_stop_cold_region_flush && _rocksdb->has_init_cold_rocksdb()) {
-            traverse_copy_region_map([&regions](const SmartRegion& region) {
-                if (region->need_flush_to_cold_rocksdb()) {
-                    regions.emplace_back(region);
-                }
-            });
-        }
-
-        for (SmartRegion region : regions) {
-            auto flush_func = [&concurrency_cond, region] {
-                region->flush_to_cold_rocksdb();
-                concurrency_cond.decrease_signal();
-            };
-            Bthread bth; 
-            concurrency_cond.increase_wait();
-            if (_shutdown) {
-                break;
-            }
-            bth.run(flush_func);
-            if (concurrency != FLAGS_cold_region_flush_concurrency) {
-                // 外部修改了并发，及时跳出，下一轮使用新的并发度
-                break;
-            }
-        }
-
-        concurrency_cond.wait(-concurrency);
-        if (time.get_time() > 10 * 1000 * 1000LL) {
-            // 已经超过定时周期直接继续
-            continue;
-        }
-        bthread_usleep_fast_shutdown(10 * 1000 * 1000, _shutdown);
-    }
-}
-
-void Store::cold_region_check() {
-    std::vector<SmartRegion> regions;
-    traverse_copy_region_map([&regions](const SmartRegion& region) {
-        if (region->olap_state() > pb::OLAP_IMMUTABLE) {
-            regions.emplace_back(region);
-        }
-    });
-
-    std::vector<rocksdb::LiveFileMetaData> metadata;
-    _rocksdb->get_cold_live_files(&metadata);
-    std::map<int64_t, std::set<std::string>> region_sst_map;
-    for (const auto& md : metadata) {
-        print_metadata_info(md);
-        if (md.column_family_name != RocksWrapper::COLD_DATA_CF) {
-            continue;
-        }
-        TableKey smallestkey(md.smallestkey);
-        TableKey largestkey(md.largestkey);
-        int64_t smallest_region_id = smallestkey.extract_i64(0);
-        int64_t largest_region_id  = largestkey.extract_i64(0);
-        if (smallest_region_id != largest_region_id) {
-            // 报警
-            DB_FATAL("cold sst: %s has diff region_id %ld vs %ld", md.relative_filename.c_str(), smallest_region_id, largest_region_id);
-            continue;
-        }
-        region_sst_map[smallest_region_id].insert(md.relative_filename);
-    }
-
-    std::map<std::string, SstExtLinker::ExtFileInfo> sst_ext_map;
-    SstExtLinker::get_instance()->sst_ext_map(sst_ext_map);
-    DB_WARNING("region cnt in sst: %ld, in store: %ld rocksdb sst cnt: %ld, ext sst cnt: %ld", 
-            region_sst_map.size(), regions.size(), metadata.size(), sst_ext_map.size());
-    for (SmartRegion region : regions) {
-        pb::OlapRegionInfo olap_info;
-        int ret = _meta_writer->read_olap_info(region->get_region_id(), olap_info);
-        if (ret < 0) {
-            DB_WARNING("region_id: %ld read olap info failed", region->get_region_id());
-            continue;
-        }
-
-        if (olap_info.state() < pb::OLAP_FLUSHED || olap_info.external_full_path_size() <= 0) {
-            DB_WARNING("region_id: %ld diff state info: %s", region->get_region_id(), olap_info.ShortDebugString().c_str());
-            continue;
-        }
-
-        std::set<std::string> rocks_external_files;
-        uint64_t total_size = 0;
-        uint64_t total_lines = 0;
-        for (const auto& f : olap_info.external_full_path()) {
-            rocks_external_files.emplace(f);
-            uint64_t size;
-            uint64_t lines;
-            int ret = get_size_by_external_file_name(&size, &lines, f);
-            if (ret != 0) {
-                continue;
-            }
-            total_size += size;
-            total_lines += lines;
-        }
-        
-        int64_t index_lines = 0;
-        if (olap_info.olap_index_info_list_size() > 0) {
-            for (const auto& info : olap_info.olap_index_info_list()) {
-                if (region->get_table_id() == info.index_id()) {
-                    continue;
-                }
-                for (const auto& f : info.external_path()) {
-                    uint64_t size;
-                    uint64_t lines;
-                    int ret = get_size_by_external_file_name(&size, &lines, f);
-                    if (ret != 0) {
-                        continue;
-                    }
-                    index_lines += lines;
-                }
-            }
-        }
-
-        if (region->column_status() == pb::CS_COLD) {
-            int64_t column_lines = region->column_lines();
-            if (total_lines != column_lines && (total_lines - index_lines) != column_lines) {
-                DB_COLUMN_FATAL("region_id: %ld diff lines row vs column total_lines:%lu, index_lines:%ld, column_lines:%ld", 
-                    region->get_region_id(), total_lines, index_lines, column_lines);
-            }
-        }
-
-        // 更新行数和大小
-        region->set_used_size(total_size);
-        if (total_lines != region->get_num_table_lines()) {
-            region->set_num_table_lines(total_lines);
-        }
-
-        auto iter = region_sst_map.find(region->get_region_id());
-        if (iter == region_sst_map.end()) {
-            DB_FATAL("region_id: %ld cant find cold sst, olap_info: %s", region->get_region_id(), olap_info.ShortDebugString().c_str());
-            continue;
-        }
-
-        if (rocks_external_files.size() != iter->second.size()) {
-            DB_FATAL("region_id: %ld diff size rocks vs json", region->get_region_id());
-            continue;
-        }
-
-        std::set<std::string> json_external_files;
-        for (const std::string& f : iter->second) {
-            auto it = sst_ext_map.find(f);
-            if (it == sst_ext_map.end()) {
-                DB_FATAL("region_id: %ld cant find sst: %s", region->get_region_id(), f.c_str());
-            } else {
-                json_external_files.emplace(it->second.full_name);
-            }
-        }
-
-        std::set<std::string> diff;
-        std::set_difference(rocks_external_files.begin(), rocks_external_files.end(), 
-                            json_external_files.begin(), json_external_files.end(),
-                            std::inserter(diff, diff.begin()));
-
-        if (!diff.empty()) {
-            DB_FATAL("region_id: %ld diff sst rocks vs json", region->get_region_id());
-        }
-
-    }
-}
-
 void Store::hot_region_check() {
     // 使用bvar来统计region size的分位值
     static bvar::LatencyRecorder region_size("region_size");
@@ -2104,9 +1426,6 @@ void Store::hot_region_check() {
     std::map<int64_t, int64_t> region_size_map;
     std::map<int64_t, EstimateLines> tmp_region_lines;
     for (const auto& md : metadata) {
-        if (md.column_family_name == RocksWrapper::DATA_CF) {
-            print_metadata_info(md);
-        }
         if (md.column_family_name == RocksWrapper::DATA_CF && md.level == 6) {
             TableKey smallestkey(md.smallestkey);
             TableKey largestkey(md.largestkey);
@@ -2182,169 +1501,6 @@ void Store::get_hot_region_size(std::map<int64_t, int64_t>& region_size_map) {
     }
 }
 
-void Store::column_minor_compact_thread() {
-    while (!_shutdown) {
-        TimeCost time;
-        int32_t concurrency = FLAGS_column_minor_compact_concurrency;
-        BthreadCond concurrency_cond(-concurrency);
-        std::vector<SmartRegion> regions;
-        traverse_copy_region_map([&regions](const SmartRegion& region) {
-            if (region->can_do_column_compact() && !region->is_shutdown()) {
-                regions.emplace_back(region);
-            }
-        });
-
-        for (SmartRegion region : regions) {
-            auto flush_func = [&concurrency_cond, region] {
-                region->column_minor_compact();
-                region->column_snapshot_save();
-                concurrency_cond.decrease_signal();
-            };
-            Bthread bth; 
-            concurrency_cond.increase_wait();
-            bth.run(flush_func);
-            if (concurrency != FLAGS_column_minor_compact_concurrency) {
-                // 外部修改了并发，及时跳出，下一轮使用新的并发度
-                break;
-            }
-            if (_shutdown) {
-                break;
-            }
-        }
-
-        concurrency_cond.wait(-concurrency);
-        if (time.get_time() > 10 * 1000 * 1000LL) {
-            // 已经超过定时周期直接继续
-            continue;
-        }
-        bthread_usleep_fast_shutdown(10 * 1000 * 1000, _shutdown);
-    }
-}
-
-void Store::column_major_compact_thread() {
-    while (!_shutdown) {
-        TimeCost time;
-        int32_t concurrency = FLAGS_column_major_compact_concurrency;
-        BthreadCond concurrency_cond(-concurrency);
-        std::vector<SmartRegion> regions;
-        traverse_copy_region_map([&regions](const SmartRegion& region) {
-            if (region->can_do_column_compact() && !region->is_shutdown()) {
-                regions.emplace_back(region);
-            }
-        });
-
-        for (SmartRegion region : regions) {
-            auto flush_func = [&concurrency_cond, region] {
-                region->column_major_compact(false);
-                region->column_major_compact(true);
-                concurrency_cond.decrease_signal();
-            };
-            Bthread bth; 
-            concurrency_cond.increase_wait();
-            bth.run(flush_func);
-            if (concurrency != FLAGS_column_major_compact_concurrency) {
-                // 外部修改了并发，及时跳出，下一轮使用新的并发度
-                break;
-            }
-            if (_shutdown) {
-                break;
-            }
-        }
-
-        concurrency_cond.wait(-concurrency);
-        if (time.get_time() > 10 * 1000 * 1000LL) {
-            // 已经超过定时周期直接继续
-            continue;
-        }
-        bthread_usleep_fast_shutdown(10 * 1000 * 1000, _shutdown);
-    }
-}
-
-void Store::column_flush_thread() {
-    while (!_shutdown) {
-        TimeCost time;
-        int32_t concurrency = FLAGS_column_flush_concurrency;
-        BthreadCond concurrency_cond(-concurrency);
-        std::vector<SmartRegion> regions;
-        traverse_copy_region_map([&regions](const SmartRegion& region) {
-            if (!region->is_shutdown()) {
-                regions.emplace_back(region);
-            }
-        });
-
-        for (SmartRegion region : regions) {
-            auto flush_func = [&concurrency_cond, region] {
-                region->column_flush();
-                concurrency_cond.decrease_signal();
-            };
-            Bthread bth; 
-            concurrency_cond.increase_wait();
-            bth.run(flush_func);
-            if (concurrency != FLAGS_column_flush_concurrency) {
-                // 外部修改了并发，及时跳出，下一轮使用新的并发度
-                break;
-            }
-            if (_shutdown) {
-                break;
-            }
-        }
-
-        concurrency_cond.wait(-concurrency);
-        if (time.get_time() > 10 * 1000 * 1000LL) {
-            // 已经超过定时周期直接继续
-            continue;
-        }
-        bthread_usleep_fast_shutdown(10 * 1000 * 1000, _shutdown);
-    }
-}
-
-void Store::binlog_region_backup_thread() {
-    while (!_shutdown) {
-        bthread_usleep_fast_shutdown(3600 * 1000 * 1000ULL, _shutdown);
-        
-        std::vector<SmartRegion> regions;
-        std::vector<SmartRegion> need_clear_offline_binlog_regions;
-        if (!FLAGS_stop_cold_region_flush && _rocksdb->has_init_cold_rocksdb()) {
-            traverse_copy_region_map([&regions, &need_clear_offline_binlog_regions](const SmartRegion& region) {
-                if (region->get_binlog_backup_days() > 0) {
-                    regions.emplace_back(region);
-                }
-                if (region->need_clear_offline_binlog_sst()) {
-                    need_clear_offline_binlog_regions.emplace_back(region);
-                }
-            });
-        }
-        for (SmartRegion region : regions) {
-            if (region == nullptr) {
-                continue;
-            }
-            region->do_backup_binlog();
-        }
-        // ttl afs file
-        for (SmartRegion region : regions) {
-            if (region == nullptr) {
-                continue;
-            }
-            region->delete_remote_expired_file();
-        }
-        for (SmartRegion region : need_clear_offline_binlog_regions) {
-            if (region == nullptr) {
-                continue;
-            }
-            // binlog表关闭了离线备份,直接删除所有的cold rocksdb link,重置时间戳范围[0,0]
-            region->clear_offline_binlog(0, 0);
-        }
-    }
-}
-
-void Store::olap_region_check_thread() {
-    while (!_shutdown) {
-        cold_region_check();
-        hot_region_check();
-        bthread_usleep_fast_shutdown(1800 * 1000 * 1000LL, _shutdown);
-    }
-}
-
 void Store::snapshot_thread() {
     BthreadCond concurrency_cond(-5); // -n就是并发跑n个bthread
     while (!_shutdown) {
@@ -2358,54 +1514,6 @@ void Store::snapshot_thread() {
     }
     // 等待全部snapshot都结束
     concurrency_cond.wait(-5);
-}
-
-void Store::txn_clear_thread() {
-    int64_t count = 0;
-    while (!_shutdown) {
-        traverse_copy_region_map([](const SmartRegion& region) {
-            // clear prepared and expired transactions
-            region->clear_transactions();
-        });
-        bthread_usleep_fast_shutdown(FLAGS_transaction_clear_interval_ms * 1000, _shutdown);
-        DB_WARNING("txn_clear_thread, count:%ld", ++count);
-
-    }
-}
-
-void Store::binlog_timeout_check_thread() {
-    while (!_shutdown) {
-        traverse_copy_region_map([this](const SmartRegion& region) {
-            if (region->is_binlog_region() && !region->is_shutdown()) {
-                region->binlog_timeout_check();
-            }
-        });
-        bthread_usleep_fast_shutdown(FLAGS_binlog_timeout_check_ms * 1000, _shutdown);
-    }
-}
-
-void Store::binlog_fake_thread() {
-    TimeCost time;
-    while (!_shutdown) {
-        BthreadCond cond(-40);
-        traverse_copy_region_map([this, &cond](const SmartRegion& region) {
-            if (region->is_binlog_region() && region->is_leader()) {
-                int64_t ts = get_tso();
-                if (ts < 0) {
-                    return;
-                }
-                region->binlog_fake(ts, cond);
-            }
-        });
-
-        cond.wait(-40);
-        if (time.get_time() > FLAGS_oldest_binlog_ts_interval_s * 1000 * 1000LL) {
-            // 更新oldest ts
-            RocksWrapper::get_instance()->update_oldest_ts_in_binlog_cf();
-            time.reset();
-        }
-        bthread_usleep_fast_shutdown(FLAGS_binlog_fake_ms * 1000, _shutdown);
-    }
 }
 
 int64_t Store::get_tso() {
@@ -2530,7 +1638,7 @@ void Store::process_split_request(int64_t table_id, int64_t region_id, bool tail
     region_split->set_table_id(table_id);
     if (tail_split) {
         region_split->set_tail_split(true);
-        int region_num = _factory->get_tail_split_nums(table_id);
+        int region_num = 1;
         region_split->set_new_region_num(region_num);
     }
     //发送请求，收到响应
@@ -2669,47 +1777,10 @@ void Store::whether_split_thread() {
                 continue;
             }
 
-            //判断是否需要分裂，分裂的标准是used_size > 1.5 * region_capacity
-            int64_t region_capacity = 10000000;
-            int ret = _factory->get_region_capacity(ptr_region->get_global_index_id(), region_capacity);
-            if (ret != 0) {
-                DB_DEBUG("table info not exist, region_id: %ld", region_ids[i]);
-                continue;
-            }
-            region_capacity = std::max(FLAGS_min_split_lines, region_capacity);
-
-            bool is_cold = false;
-            bool is_olap_table = _factory->is_olap_table(ptr_region->get_table_id(), ptr_region->get_partition_id(), &is_cold);
-            //设置计算存储分离开关
-            if (is_olap_table) {
-                // olap表默认开启kv分离
-                ptr_region->set_separate_switch(true);
-                if (is_cold) {
-                    continue;
-                }
-                if (ptr_region->get_num_table_lines() < region_capacity) {
-                    continue;
-                }
-                int ret = ptr_region->modify_olap_region_num_table_lines();
-                if (ret < 0) {
-                    continue;
-                }
-                if (ptr_region->get_num_table_lines() < region_capacity) {
-                    continue;
-                }
-                if (!FLAGS_olap_region_split_enable) {
-                    continue;
-                }
-            } else {
-                ptr_region->set_separate_switch(_factory->get_separate_switch(ptr_region->get_table_id()));
-            }
-            //update region_used_size
+            // Neo-redis: split threshold uses a global default, not per-table schema config.
+            int64_t region_capacity = FLAGS_min_split_lines;
+            // update region_used_size
             ptr_region->set_used_size(region_sizes[i]);
-
-            if (_factory->is_in_fast_importer(ptr_region->get_table_id())) {
-                DB_DEBUG("region_id: %ld is in fast importer", region_ids[i]);
-                continue;
-            }
             if (ptr_region->olap_state() != pb::OLAP_ACTIVE) {
                 DB_WARNING("region_id: %ld is not active", ptr_region->get_region_id());
                 continue;
@@ -2759,9 +1830,6 @@ void Store::whether_split_thread() {
                 }
             }
             
-            if (!_factory->get_merge_switch(ptr_region->get_table_id())) {
-                continue;
-            }
             //简化特殊处理，首尾region不merge
             if (ptr_region->is_tail() || ptr_region->is_head()) {
                 continue;
@@ -3003,24 +2071,10 @@ int Store::get_used_size_per_region(const std::vector<int64_t>& region_ids, uint
 void Store::update_schema_info(const pb::SchemaInfo& table, 
                                std::map<int64_t, std::set<int64_t>>* reverse_index_map,
                                std::unordered_set<int64_t>* vector_table_set) {
-    //锁住的是update_table和table_info_mapping, table_info锁的位置不能改
-    _factory->update_table(table);
-    if (table.has_deleted() && table.deleted()) {
-        return;
-    }
-    for (size_t idx = 0; idx < table.indexs_size(); ++idx) {
-        const pb::IndexInfo& index_info = table.indexs(idx);
-        if (index_info.index_type() == pb::I_FULLTEXT && index_info.state() != pb::IS_PUBLIC) {
-            if (reverse_index_map != nullptr) {
-                (*reverse_index_map)[table.table_id()].emplace(index_info.index_id());
-            }
-        }
-        if (index_info.index_type() == pb::I_VECTOR) {
-            if (vector_table_set != nullptr) {
-                vector_table_set->emplace(table.table_id());
-            }
-        }
-    }
+    (void)table;
+    (void)reverse_index_map;
+    (void)vector_table_set;
+    // Neo-redis: SQL schema/index updates removed.
 }
 
 void Store::check_region_legal_complete(int64_t region_id) {
@@ -3104,18 +2158,11 @@ void Store::construct_heart_beat_request(
     _disk_used.set_value(disk_capacity - left_size);
     instance_info->set_capacity(disk_capacity);
     instance_info->set_used_size(disk_capacity - left_size);
-#ifdef BAIKALDB_REVISION
-    instance_info->set_version(BAIKALDB_REVISION);
+#ifdef NEOKV_REVISION
+    instance_info->set_version(NEOKV_REVISION);
 #endif
 
-    //构造schema version信息
-    std::unordered_map<int64_t, int64_t> table_id_version_map;
-    _factory->get_all_table_version(table_id_version_map);
-    for (auto table_info : table_id_version_map) { 
-        pb::SchemaHeartBeat* schema = request.add_schema_infos();
-        schema->set_table_id(table_info.first);
-        schema->set_version(table_info.second);
-    }
+    // Neo-redis: no SQL schema version heartbeat.
 
     if (count == 1 && region_infos != nullptr) {
         instance_info->set_init_address(_address);
@@ -3170,30 +2217,9 @@ void Store::process_heart_beat_response(const pb::StoreHeartBeatResponse& respon
         RocksWrapper::get_instance()->adjust_option(_param_map);
     }
     _meta_need_report = response.need_report();
-    std::unordered_set<int64_t> vector_table_set;
-    std::map<int64_t, std::set<int64_t>> reverse_index_map;
+    // Neo-redis: reverse_index_map and vector_table_set not used
     for (auto& schema_info : response.schema_change_info()) {
-        update_schema_info(schema_info, &reverse_index_map, &vector_table_set);
-    }
-    if (!reverse_index_map.empty()) {
-        traverse_copy_region_map([this, &reverse_index_map](const SmartRegion& region) {
-            if (!region->removed()) {
-                auto iter = reverse_index_map.find(region->get_table_id());
-                if (iter != reverse_index_map.end()) {
-                    region->add_reverse_index(iter->first, iter->second);
-                }
-            }
-        });
-    }
-    if (!vector_table_set.empty()) {
-        traverse_copy_region_map([this, &vector_table_set](const SmartRegion& region) {
-            if (!region->removed()) {
-                auto iter = vector_table_set.find(region->get_table_id());
-                if (iter != vector_table_set.end()) {
-                    region->vector_schema_change();
-                }
-            }
-        });
+        update_schema_info(schema_info, nullptr, nullptr);
     }
     for (auto& add_peer_request : response.add_peers()) {
         SmartRegion region = get_region(add_peer_request.region_id());
@@ -3385,16 +2411,9 @@ void Store::backup_region(google::protobuf::RpcController* controller,
         cntl->http_response().set_status_code(brpc::HTTP_STATUS_INTERNAL_SERVER_ERROR);
         return;
     }
-    //request_vec[3]=="1"，表示需要ingest最新的sst.
-    bool ingest_store_latest_sst = request_vec.size() > 3 && request_vec[3] == "1";
-
-    if (request_vec[0] == "download") {
-        DB_NOTICE("backup download sst region[%ld]", region_id);
-        region->process_download_sst(cntl, request_vec, backup_type);
-    } else if (request_vec[0] == "upload") {
-        DB_NOTICE("backup upload sst region[%ld]", region_id);
-        region->process_upload_sst(cntl, ingest_store_latest_sst);
-    }
+    // Neo-redis: SST backup not supported
+    DB_WARNING("SST backup not supported in neo-redis, region_id: %ld", region_id);
+    cntl->http_response().set_status_code(brpc::HTTP_STATUS_NOT_IMPLEMENTED);
 }
 
 void Store::backup(google::protobuf::RpcController* controller,
@@ -3412,12 +2431,13 @@ void Store::backup(google::protobuf::RpcController* controller,
         return;
     }
     if (request->backup_op() == pb::BACKUP_DOWNLOAD) {
-        DB_NOTICE("backup download sst region[%ld]", region_id);
-        region->process_download_sst_streaming(cntl, request, response);
+        // Neo-redis: streaming backup disabled
+        response->set_errcode(pb::NOT_LEADER);
+        DB_WARNING("streaming backup not supported in neo-redis, region_id: %ld", region_id);
     } else if (request->backup_op() == pb::BACKUP_UPLOAD) {
-        DB_NOTICE("backup upload sst region[%ld]", region_id);
-        region->process_upload_sst_streaming(cntl, request->ingest_store_latest_sst(), 
-            request, response);
+        // Neo-redis: streaming backup disabled  
+        response->set_errcode(pb::NOT_LEADER);
+        DB_WARNING("streaming backup not supported in neo-redis, region_id: %ld", region_id);
     } else if (request->backup_op() == pb::BACKUP_QUERY_PEERS) {
         region->process_query_peers(cntl, request, response);
     } else if (request->backup_op() == pb::BACKUP_QUERY_STREAMING){

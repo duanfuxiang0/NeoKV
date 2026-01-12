@@ -14,7 +14,7 @@
 
 #include "split_index_getter.h"
 
-namespace baikaldb {
+namespace neokv {
 int64_t SplitIndexGetter::get_split_index(int64_t /*region_id*/) {
     return INT_FAST64_MAX;
 }

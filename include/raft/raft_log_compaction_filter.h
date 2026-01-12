@@ -20,7 +20,7 @@
 #include "key_encoder.h"
 #include "split_index_getter.h"
 
-namespace baikaldb {
+namespace neokv {
 class RaftLogCompactionFilter : public rocksdb::CompactionFilter {
 public:
     static RaftLogCompactionFilter* get_instance() {

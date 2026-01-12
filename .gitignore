@@ -49,16 +49,48 @@ cmake-build-release
 .settings/language.settings.xml
 
 # bazel
-bazel-BaikalDB
+bazel-NEOKV
 bazel-bin
 bazel-genfiles
 bazel-out
 bazel-testlogs
 
-.cache/
-CMakeFiles/
-output/
-kvrocks
+.cache
+CMakeFiles
+output
 sqlparser/
-third-party/
-**/**/*.cmake
+third-party
+
+# CMake / CTest (generated)
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+compile_commands.json
+install_manifest.txt
+install_manifest_*.txt
+Testing
+
+# Common build directories
+/build
+
+# CMake FetchContent/ExternalProject download/build dirs
+/_deps
+
+# CMake in-source Makefiles (avoid ignoring real Makefiles like sysbench/)
+/Makefile
+/baikal-client/Makefile
+
+# Cursor IDE / local workspace
+/.cursor
+
+# Runtime logs / data directories (generated at runtime)
+/log
+/store_data
+/meta_data
+/raft_data
+/monitor
+/init.success
+
+# Local build outputs (generated)
+/bin
+/lib

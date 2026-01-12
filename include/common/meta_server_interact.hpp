@@ -29,7 +29,7 @@
 #include "common.h"
 #include "proto_process.hpp"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int64(time_between_meta_connect_error_ms);
 class MetaServerInteract {
     struct MetaInteractInfo;

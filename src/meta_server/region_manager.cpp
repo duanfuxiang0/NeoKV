@@ -22,7 +22,7 @@
 #include "table_manager.h"
 #include "meta_rocksdb.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(concurrency_num);
 DECLARE_int64(store_heart_beat_interval_us);
 DECLARE_int32(store_dead_interval_times);

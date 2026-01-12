@@ -23,9 +23,8 @@
 #include "common.h"
 #include "meta_server_interact.hpp"
 
-namespace baikaldb {
+namespace neokv {
 class MetaStateMachine;
-class AutoIncrStateMachine;
 class TSOStateMachine;
 class MetaServer : public pb::MetaService {
 public:
@@ -80,12 +79,12 @@ public:
                                  pb::StoreHeartBeatResponse* response,
                                  google::protobuf::Closure* done); 
 
-    virtual void baikal_heartbeat(google::protobuf::RpcController* controller,
+    virtual void neo_heartbeat(google::protobuf::RpcController* controller,
                                   const pb::BaikalHeartBeatRequest* request,
                                   pb::BaikalHeartBeatResponse* response,
                                   google::protobuf::Closure* done); 
 
-    virtual void baikal_other_heartbeat(google::protobuf::RpcController* controller,
+    virtual void neo_other_heartbeat(google::protobuf::RpcController* controller,
                                   const pb::BaikalOtherHeartBeatRequest* request,
                                   pb::BaikalOtherHeartBeatResponse* response,
                                   google::protobuf::Closure* done); 
@@ -106,9 +105,6 @@ public:
             google::protobuf::Closure* done);
 
     void flush_memtable_thread();
-    void apply_region_thread();
-    void distribute_leader_thread();
-    int send_rpc_to_trans_leader(int type, std::string old_leader, std::map<std::string, int>& peer_leader_cnt);
 
     void shutdown_raft();
     bool have_data();
@@ -130,17 +126,12 @@ private:
     bthread::Mutex _meta_interact_mutex;
     std::map<std::string, MetaServerInteract*> _meta_interact_map;
     MetaStateMachine* _meta_state_machine = NULL;
-    AutoIncrStateMachine* _auto_incr_state_machine = NULL;
     TSOStateMachine*      _tso_state_machine = NULL;
     Bthread _flush_bth;
-    //region区间修改等信息应用raft
-    Bthread _apply_region_bth;
-    // 将leader分配给不同的机器
-    Bthread _distribute_leader_bth;
     bool _init_success = false;
     bool _shutdown = false;
 }; //class
 
-}//namespace baikaldb
+}//namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

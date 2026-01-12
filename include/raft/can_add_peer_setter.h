@@ -15,7 +15,7 @@
 #pragma once
 #include <cstdint>
 
-namespace baikaldb {
+namespace neokv {
 class CanAddPeerSetter {
 public:
     virtual ~CanAddPeerSetter() {}

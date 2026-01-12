@@ -23,7 +23,7 @@
 #endif
 #include "common.h"
 
-namespace baikaldb {
+namespace neokv {
 
 class IndexTermMap {
 public:

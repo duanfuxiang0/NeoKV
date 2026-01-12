@@ -22,7 +22,7 @@
 #endif
 #include "password.h"
 
-namespace baikaldb {
+namespace neokv {
 static inline void my_xor(uint8_t* to, const uint8_t* s1, const uint8_t* s2, uint32_t len) {
     const uint8_t* s1_end = s1 + len;
     while (s1 < s1_end) {

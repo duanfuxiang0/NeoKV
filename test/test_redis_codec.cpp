@@ -15,7 +15,7 @@
 #include "redis_codec.h"
 #include <gtest/gtest.h>
 
-namespace baikaldb {
+namespace neokv {
 
 TEST(RedisCodecTest, EncodeDecodeKey) {
     int64_t region_id = 12345;
@@ -119,7 +119,7 @@ TEST(RedisCodecTest, BuildPrefix) {
     EXPECT_EQ(0, slot_prefix.compare(0, 16, region_prefix));
 }
 
-} // namespace baikaldb
+} // namespace neokv
 
 int main(int argc, char* argv[]) {
     testing::InitGoogleTest(&argc, argv);

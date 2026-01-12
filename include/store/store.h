@@ -33,11 +33,10 @@
 #include "proto/store.interface.pb.h"
 #include "proto/common.pb.h"
 #include "region.h"
-#include "schema_factory.h"
 #include "rocks_wrapper.h"
 #include "table_record.h"
 #include "meta_server_interact.hpp"
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(snapshot_load_num);
 DECLARE_int32(raft_write_concurrency);
 DECLARE_int32(service_write_concurrency);
@@ -87,16 +86,6 @@ public:
                   const pb::BatchRegionStoreReq* request,
                   pb::BatchRegionStoreRes* batch_response,
                   google::protobuf::Closure* done);
-    void async_apply_log_entry(google::protobuf::RpcController* controller,
-                              const pb::BatchStoreReq* request,
-                              pb::BatchStoreRes* response,
-                              google::protobuf::Closure* done);
-
-    virtual void query_binlog(google::protobuf::RpcController* controller,
-                       const pb::StoreReq* request,
-                       pb::StoreRes* response,
-                       google::protobuf::Closure* done);
-
     //删除region和region中的数据
     virtual void remove_region(google::protobuf::RpcController* controller,
                                const pb::RemoveRegion* request,
@@ -156,10 +145,6 @@ public:
                                      pb::RocksStatisticRes* response,
                                      google::protobuf::Closure* done);
                                      
-    virtual void manual_link_external_sst(google::protobuf::RpcController* controller,
-                                const pb::RegionIds* request,
-                                pb::StoreRes* response,
-                                google::protobuf::Closure* done);
     //上报心跳
     void heart_beat_thread();
 
@@ -172,29 +157,11 @@ public:
     void check_region_peer_delay();
 
     void vector_compact_thread();
-    void reverse_merge_thread();
-    void unsafe_reverse_merge_thread();
-    void ttl_remove_thread();
     void delay_remove_data_thread();
-
     void flush_memtable_thread();
-    void cold_region_flush_thread();
-    void cold_region_check();
     void hot_region_check();
     void get_hot_region_size(std::map<int64_t, int64_t>& region_size_map);
-    void olap_region_check_thread();
-
-    void column_minor_compact_thread();
-    void column_major_compact_thread();
-    void column_flush_thread();
-
-    void binlog_region_backup_thread();
     void snapshot_thread();
-    void txn_clear_thread();
-    
-    void binlog_timeout_check_thread();
-
-    void binlog_fake_thread();
 
     void whether_split_thread();
 
@@ -226,9 +193,6 @@ public:
     
     void sub_split_num() {
         --_split_num;
-    }
-    bool has_prepared_tran () const {
-        return _has_prepared_tran;
     }
     SmartRegion get_region(int64_t region_id) {
         DoubleBufRegion::ScopedPtr ptr;
@@ -315,35 +279,13 @@ public:
         _split_check_bth.join();
         DB_WARNING("split check bth join");
         _vector_compact_bth.join();
-        DB_WARNING("vector bth check bth join");
-        _merge_bth.join();
-        DB_WARNING("merge bth check bth join");
-        _merge_unsafe_bth.join();
-        DB_WARNING("merge unsafe bth check bth join");
-        _ttl_bth.join();
-        DB_WARNING("ttl bth check bth join");
+        DB_WARNING("vector bth join");
         _delay_remove_data_bth.join();
-        DB_WARNING("delay_remove_region_bth bth check bth join");
+        DB_WARNING("delay_remove_region_bth join");
         _flush_bth.join();
-        DB_WARNING("flush check bth join");
-        _cold_region_flush_bth.join();
-        DB_WARNING("cold region flush bth join");
-        _cold_region_check_bth.join();
-        DB_WARNING("cold region check bth join");
-        _column_minor_compact_bth.join();
-        _column_major_compact_bth.join();
-        _column_flush_bth.join();
-        DB_WARNING("column bth join");
-        _offline_binlog_backup_bth.join();
-        DB_WARNING("offline binlog backup bth join");
+        DB_WARNING("flush bth join");
         _snapshot_bth.join();
         DB_WARNING("snapshot bth join");
-        _txn_clear_bth.join();
-        DB_WARNING("txn_clear bth join");
-        _binlog_timeout_check_bth.join();
-        DB_WARNING("binlog timeout check bth join");
-        _binlog_fake_bth.join();
-        DB_WARNING("fake binlog bth join");
         _multi_thread_cond.wait();
         DB_WARNING("_multi_thread_cond wait finish");
         _rocksdb->close();
@@ -369,33 +311,6 @@ private:
              region_error_count("region_error_count") {
     }
 
-    class TimePeriodChecker {
-    public:
-        TimePeriodChecker(int start_hour, int end_hour) : _start_hour(start_hour),_end_hour(end_hour) {}
-
-        bool now_in_interval_period() {
-            struct tm ptm;
-            time_t timep = time(NULL);
-            localtime_r(&timep, &ptm);
-            int now = ptm.tm_hour;
-            // 跨夜
-            if (_end_hour < _start_hour) {
-                if (now >= _end_hour && now < _start_hour) {
-                    return false;
-                }
-                return true;
-            } else {
-                if (now >= _start_hour && now < _end_hour) {
-                    return true;
-                }
-                return false;
-            }
-        }
-    private:
-        int _start_hour;
-        int _end_hour;
-    };
-    
     int drop_region_from_store(int64_t drop_region_id, bool need_delay_drop);
 
     void update_schema_info(const pb::SchemaInfo& table, 
@@ -447,7 +362,6 @@ private:
     std::string                             _resource_tag;
 
     RocksWrapper*                           _rocksdb;
-    SchemaFactory*                          _factory;
     MetaWriter*                             _meta_writer = nullptr;
     
     // region_id => Region handler
@@ -466,36 +380,12 @@ private:
     Bthread _split_check_bth;
     //向量索引定时compact线程
     Bthread _vector_compact_bth;
-    //全文索引定时merge线程
-    Bthread _merge_bth;
-    //全文索引(unsafe)定时线程
-    Bthread _merge_unsafe_bth;
-    //TTL定期删除过期数据
-    Bthread _ttl_bth;
     //延迟删除region
     Bthread _delay_remove_data_bth;
-
     //定时flush region meta信息，确保rocksdb的wal正常删除
     Bthread _flush_bth;
-    //将冷region flush到cold rocksdb
-    Bthread _cold_region_flush_bth;
-    //定时检查cold region sst
-    Bthread _cold_region_check_bth;
-    //列存minor compact线程
-    Bthread _column_minor_compact_bth;
-    //列存major compact线程
-    Bthread _column_major_compact_bth;
-    Bthread _column_flush_bth;
-    //定时备份binlog
-    Bthread _offline_binlog_backup_bth;
     //外部控制定时触发snapshot
     Bthread _snapshot_bth;
-    // thread for transaction monitor and clear
-    Bthread _txn_clear_bth;
-    // binlog没有及时commit或rollback的事务定时检查
-    Bthread _binlog_timeout_check_bth;
-    // 定时fake binlog线程
-    Bthread _binlog_fake_bth;
     // 定时检测rocksdb是否hang，并且打印rocksdb properties
     Bthread _db_statistic_bth;
 
@@ -513,7 +403,6 @@ private:
     ExecutionQueue _remove_region_queue;
     ExecutionQueue _transfer_leader_queue;
 
-    bool _has_prepared_tran = true;
     bool _has_binlog_region = false;
     bool _meta_need_report = false; // meta下发需要完全上报
     BthreadCond _get_tso_cond {-1};
@@ -527,20 +416,12 @@ private:
     std::map<int64_t, EstimateLines> _region_lines;
 
 public:
-    bool exist_prepared_log(int64_t region_id, uint64_t txn_id) {
-        if (prepared_txns.find(region_id) != prepared_txns.end()
-                && prepared_txns[region_id].find(txn_id) != prepared_txns[region_id].end()) {
-            return true;
-        } 
-        return false;
-    }
     bool doing_snapshot_when_stop(int64_t region_id) {
         if (doing_snapshot_regions.find(region_id) != doing_snapshot_regions.end()) {
             return true;
         }
         return false;
     }
-    std::unordered_map<int64_t, std::set<uint64_t>> prepared_txns;
     std::set<int64_t>   doing_snapshot_regions;
     bvar::LatencyRecorder raft_total_cost;
     bvar::LatencyRecorder dml_time_cost;

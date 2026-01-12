@@ -1,5 +1,5 @@
 syntax="proto2";
-package baikaldb.pb;
+package neokv.pb;
 import "common.proto";
 import "raft.proto";
 import "plan.proto";
@@ -43,8 +43,8 @@ message RedisWriteRequest {
 };
 
 // CachePlan is used in three place:
-// 1) In-txn cmd cache in BaikalDB and region sides
-// 2) Write ahead log entry in BaikalDB side for prepared-transaction recovery
+// 1) In-txn cmd cache in NEOKV and region sides
+// 2) Write ahead log entry in NEOKV side for prepared-transaction recovery
 // 3) replay transaction action for Region split and load_snapshot
 message CachePlan {
     required OpType op_type = 1;
@@ -52,7 +52,7 @@ message CachePlan {
     required Plan   plan    = 3;  //cached query plan
     repeated TupleDescriptor tuples  = 4;
 
-    //store to which regions commit will be sent, used for BaikalDB txn recovery
+    //store to which regions commit will be sent, used for NEOKV txn recovery
     repeated RegionInfo regions = 5;
     repeated KvOp       kv_ops  = 6;
 };
@@ -206,7 +206,7 @@ message StoreReq {
     optional bool not_check_region  = 15; //为true则不判断数据与region的匹配性
     optional RegionInfo new_region_info = 16;
     optional bool select_without_leader = 17;   //为true则select不判断是否leader,增加读性能
-    optional fixed64 db_conn_id     = 18; //baikaldb connection id
+    optional fixed64 db_conn_id     = 18; //neokv connection id
     optional DdlWorkInfo ddlwork_info = 19; //更新ddl work
     optional int64   num_increase_rows = 20;
     repeated KvOp          kv_ops   = 21; //kv op

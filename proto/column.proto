@@ -1,7 +1,7 @@
 syntax = "proto2";
 import "common.proto";
 import "optype.proto";
-package baikaldb.pb;
+package neokv.pb;
 option cc_generic_services = true;
 
 enum ColumnStatus {

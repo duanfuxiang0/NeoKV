@@ -28,7 +28,7 @@
 #include "proto/raft.pb.h"
 #include "common.h"
 
-namespace baikaldb {
+namespace neokv {
 extern void common_raft_control(google::protobuf::RpcController* controller,
                          const pb::RaftControlRequest* request,
                          pb::RaftControlResponse* response,

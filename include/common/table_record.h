@@ -7,7 +7,7 @@
 #include <string>
 #include <cstdint>
 
-namespace baikaldb {
+namespace neokv {
 
 // Stub TableRecord - SQL record structure not used in neo-redis
 class TableRecord {
@@ -22,4 +22,4 @@ inline SmartRecord create_record() {
     return std::make_shared<TableRecord>();
 }
 
-} // namespace baikaldb
+} // namespace neokv

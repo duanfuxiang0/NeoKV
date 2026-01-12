@@ -15,7 +15,7 @@
 #include "update_region_status.h"
 #include "store.h"
 
-namespace baikaldb {
+namespace neokv {
 void UpdateRegionStatus::reset_region_status(int64_t region_id) { 
     DB_WARNING("region status was reset, reigon_id: %ld", region_id);
     Store::get_instance()->reset_region_status(region_id);

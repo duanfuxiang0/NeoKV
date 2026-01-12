@@ -1,5 +1,0 @@
-test_redis_slot 2 0.00433357
-test_redis_codec 2 0.00114933
-test_redis_raft 2 0.0652239
-test_redis_read_index 1 0.0626573
----

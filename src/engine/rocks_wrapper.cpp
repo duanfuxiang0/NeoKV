@@ -28,7 +28,7 @@
 #include "rocksdb_filesystem.h"
 #include "rocksdb/statistics.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // ts_to_datetime_str is now defined in common.h
 

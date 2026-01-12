@@ -5,7 +5,7 @@
 #include "proto/meta.interface.pb.h"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 // 新增字段需要判断是否进行meta标识信息的增删!!!
 
 // DBLINK表
@@ -92,4 +92,4 @@ int add_meta_info(pb::IndexInfo& index_info, const int64_t meta_id);
 int add_meta_info(pb::BinlogInfo& binlog_info, const int64_t meta_id);
 int add_meta_info(pb::IndexRecords& index_record, const int64_t meta_id);
 
-} // namespace baikaldb
+} // namespace neokv

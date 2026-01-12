@@ -13,9 +13,9 @@
 # limitations under the License.
 
 cmake_minimum_required(VERSION 3.2)
-project(BaikalDB C CXX)
+project(NEOKV C CXX)
 
-option(WITH_BAIKAL_CLIENT "build baikal-client" OFF)
+option(WITH_NEO_CLIENT "build neo-client" OFF)
 option(DEBUG "Print debug logs" OFF)
 option(WITH_SYSTEM_LIBS "use system installed headers and libraries instead of auto dependency" OFF)
 option(WITH_DEBUG_SYMBOLS "With debug symbols" OFF)
@@ -368,8 +368,8 @@ if (NOT DEBUG)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG")
 endif ()
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ${DEBUG_SYMBOL} -O2 -pipe -m64 -fopenmp -Wall -W -fPIC -Wno-unused-parameter -Wno-strict-aliasing -Wno-parentheses -fno-omit-frame-pointer -Wno-unused-result")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ${DEBUG_SYMBOL} -O2 -pipe -m64 -fopenmp -Wall -W -fPIC -Wno-unused-parameter -Wno-strict-aliasing -Wno-parentheses -fno-omit-frame-pointer -Wno-unused-result")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ${DEBUG_SYMBOL} -O2 -pipe -m64 -Wall -W -fPIC -Wno-unused-parameter -Wno-strict-aliasing -Wno-parentheses -fno-omit-frame-pointer -Wno-unused-result")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ${DEBUG_SYMBOL} -O2 -pipe -m64 -Wall -W -fPIC -Wno-unused-parameter -Wno-strict-aliasing -Wno-parentheses -fno-omit-frame-pointer -Wno-unused-result")
 
 add_definitions(
         -D_GNU_SOURCE
@@ -384,6 +384,7 @@ add_definitions(
 file(GLOB ENGINE src/engine/*.cpp)
 file(GLOB RAFT src/raft/*.cpp)
 file(GLOB RAFT_META src/raft_meta/*.cpp)
+file(GLOB REDIS src/redis/*.cpp)
 file(GLOB STORE src/store/*.cpp)
 list(REMOVE_ITEM STORE src/store/main.cpp)
 
@@ -395,12 +396,7 @@ set(COMMON_INC
         include/engine
         include/raft
         include/store
-        include/reverse
-        include/vector_index
-        include/runtime
-        include/exec
-        include/column
-        include/mem_row
+        include/redis
         include/meta_server
         )
 
@@ -410,6 +406,7 @@ file(GLOB COMMON
         ${ENGINE}
         ${RAFT}
         ${RAFT_META}
+        ${REDIS}
         ${STORE}
         )
 
@@ -426,25 +423,37 @@ add_dependencies(common ${COMMON_DEPS})
 target_include_directories(common PUBLIC ${COMMON_INC})
 
 set(CMAKE_VERBOSE_MAKEFILEON ON)
-# baikalMeta
-file(GLOB META_SERVER src/meta_server/*.cpp)
-set(BAIKALMETA_INC ${COMMON_INC} include/meta_server)
-add_executable(baikalMeta ${META_SERVER} ${RAFT_META})
-add_dependencies(baikalMeta common)
-target_include_directories(baikalMeta PUBLIC ${BAIKALMETA_INC})
-target_link_libraries(baikalMeta PUBLIC common ${DEP_LIB})
 
-# baikalStore
+# neoMeta (neo-redis): keep only cluster/region management + store heartbeat + TSO.
+# All SQL-relational managers are excluded from this target.
+set(META_SERVER
+        src/meta_server/main.cpp
+        src/meta_server/meta_server.cpp
+        src/meta_server/meta_state_machine.cpp
+        src/meta_server/common_state_machine.cpp
+        src/meta_server/meta_rocksdb.cpp
+        src/meta_server/cluster_manager.cpp
+        src/meta_server/region_manager.cpp
+        src/meta_server/schema_manager.cpp
+        src/meta_server/tso_state_machine.cpp
+)
+set(NEOMETA_INC ${COMMON_INC})
+add_executable(neoMeta ${META_SERVER})
+add_dependencies(neoMeta common)
+target_include_directories(neoMeta PUBLIC ${NEOMETA_INC})
+target_link_libraries(neoMeta PUBLIC common ${DEP_LIB})
+
+# neoStore
 file(GLOB RAFT_STORE src/raft_store/*.cpp)
-set(BAIKALSTORE_INC ${COMMON_INC})
-add_executable(baikalStore src/store/main.cpp ${RAFT_STORE})
-add_dependencies(baikalStore common)
-target_include_directories(baikalStore PUBLIC ${BAIKALSTORE_INC})
-target_link_libraries(baikalStore PUBLIC common ${DEP_LIB})
+set(NEOSTORE_INC ${COMMON_INC})
+add_executable(neoStore src/store/main.cpp ${RAFT_STORE})
+add_dependencies(neoStore common)
+target_include_directories(neoStore PUBLIC ${NEOSTORE_INC})
+target_link_libraries(neoStore PUBLIC common ${DEP_LIB})
 
-# baikaldb - removed for neo-redis (SQL proxy removed)
+# neokv - removed for neo-redis (SQL proxy removed)
 
-# baikal-client disabled for neo-redis
+# neo-client disabled for neo-redis
 
 # Tests
 if (WITH_TESTS)

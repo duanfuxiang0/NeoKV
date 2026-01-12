@@ -8,7 +8,7 @@
 #include "rocksdb/options.h"
 #include "common.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Wrapper around rocksdb::SstFileWriter for snapshot creation
 class SstFileWriter {
@@ -37,4 +37,4 @@ private:
     rocksdb::SstFileWriter _sst_writer;
 };
 
-} // namespace baikaldb
+} // namespace neokv

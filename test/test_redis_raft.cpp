@@ -24,7 +24,7 @@
 #include <random>
 #include <chrono>
 
-namespace baikaldb {
+namespace neokv {
 
 // ============================================================================
 // Protocol Buffer Message Tests
@@ -602,7 +602,7 @@ TEST_F(RedisEdgeCaseTest, VeryLongKey) {
     EXPECT_EQ(long_key, dec_key);
 }
 
-} // namespace baikaldb
+} // namespace neokv
 
 int main(int argc, char* argv[]) {
     testing::InitGoogleTest(&argc, argv);

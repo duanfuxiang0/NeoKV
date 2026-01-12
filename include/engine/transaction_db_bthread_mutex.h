@@ -5,7 +5,7 @@
 
 #include "rocksdb/utilities/transaction_db.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Neo-redis: No custom mutex factory needed
 // TransactionDB will use its default mutex implementation
@@ -17,4 +17,4 @@ public:
     // The actual mutex factory is set to nullptr in rocks_wrapper.cpp
 };
 
-} // namespace baikaldb
+} // namespace neokv

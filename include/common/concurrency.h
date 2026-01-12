@@ -15,12 +15,12 @@
 #pragma once
 
 #include "common.h"
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(snapshot_load_num);
 DECLARE_int32(raft_write_concurrency);
 DECLARE_int32(service_write_concurrency);
 DECLARE_int32(new_sign_read_concurrency);
-DECLARE_int32(baikal_heartbeat_concurrency);
+DECLARE_int32(neo_heartbeat_concurrency);
 DECLARE_int32(upload_sst_streaming_concurrency);
 DECLARE_int32(global_select_concurrency);
 DECLARE_int32(remote_compaction_server_concurrency);
@@ -36,8 +36,8 @@ struct Concurrency {
     BthreadCond raft_write_concurrency;
     BthreadCond service_write_concurrency;
     BthreadCond new_sign_read_concurrency; // 新sql读并发控制
-    BthreadCond baikal_heartbeat_concurrency;
-    BthreadCond baikal_other_heartbeat_concurrency;
+    BthreadCond neo_heartbeat_concurrency;
+    BthreadCond neo_other_heartbeat_concurrency;
     BthreadCond upload_sst_streaming_concurrency;
     BthreadCond global_select_concurrency; // 全局读并发控制
     BthreadCond remote_compaction_server_concurrency;
@@ -48,8 +48,8 @@ private:
                    raft_write_concurrency(-FLAGS_raft_write_concurrency), 
                    service_write_concurrency(-FLAGS_service_write_concurrency),
                    new_sign_read_concurrency(-FLAGS_new_sign_read_concurrency),
-                   baikal_heartbeat_concurrency(-FLAGS_baikal_heartbeat_concurrency),
-                   baikal_other_heartbeat_concurrency(-FLAGS_baikal_heartbeat_concurrency),
+                   neo_heartbeat_concurrency(-FLAGS_neo_heartbeat_concurrency),
+                   neo_other_heartbeat_concurrency(-FLAGS_neo_heartbeat_concurrency),
                    upload_sst_streaming_concurrency(-FLAGS_upload_sst_streaming_concurrency),
                    global_select_concurrency(-FLAGS_global_select_concurrency),
                    remote_compaction_server_concurrency(-FLAGS_remote_compaction_server_concurrency) {

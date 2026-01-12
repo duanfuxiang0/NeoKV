@@ -16,7 +16,7 @@
 #include <sys/types.h>
 #include "common.h"
 
-namespace baikaldb {
+namespace neokv {
 void scramble(uint8_t* to, const char* message, const char* password);
 
-} //namespace baikaldb
+} //namespace neokv

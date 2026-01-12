@@ -1,7 +1,7 @@
 #include "redis_service.h"
 #include <gtest/gtest.h>
 
-namespace baikaldb {
+namespace neokv {
 
 TEST(RedisSlotTest, CrcMatchesRedis) {
     EXPECT_EQ(0x31C3, redis_crc16("123456789"));
@@ -13,7 +13,7 @@ TEST(RedisSlotTest, HashTagRule) {
     EXPECT_EQ(redis_slot("plain_key"), redis_slot("plain_key"));
 }
 
-} // namespace baikaldb
+} // namespace neokv
 
 int main(int argc, char* argv[]) {
     testing::InitGoogleTest(&argc, argv);

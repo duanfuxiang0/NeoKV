@@ -24,7 +24,7 @@
 #include "proto/meta.interface.pb.h"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 class CommonStateMachine;
 struct MetaServerClosure : public braft::Closure {
     virtual void Run();
@@ -173,6 +173,6 @@ private:
     bool                _have_data = false;
 };
 
-} //namespace baikaldb
+} //namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

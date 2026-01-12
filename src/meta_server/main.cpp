@@ -29,37 +29,37 @@
 #include "rocks_wrapper.h"
 #include "memory_profile.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_int32(meta_port);
 DECLARE_string(meta_server_bns);
 DECLARE_int32(meta_replica_number);
 }
 
 int main(int argc, char **argv) {
-#ifdef BAIKALDB_REVISION
-    google::SetVersionString(BAIKALDB_REVISION);
-    static bvar::Status<std::string> baikaldb_version("baikaldb_version", "");
-    baikaldb_version.set_value(BAIKALDB_REVISION);
+#ifdef NEOKV_REVISION
+    google::SetVersionString(NEOKV_REVISION);
+    static bvar::Status<std::string> neokv_version("neokv_version", "");
+    neokv_version.set_value(NEOKV_REVISION);
 #endif
     google::SetCommandLineOption("flagfile", "conf/gflags.conf");
     google::ParseCommandLineFlags(&argc, &argv, true);
     boost::filesystem::path remove_path("init.success");
     boost::filesystem::remove_all(remove_path); 
     // Initail log
-    if (baikaldb::init_log(argv[0]) != 0) {
+    if (neokv::init_log(argv[0]) != 0) {
         fprintf(stderr, "log init failed.");
         return -1;
     }
     DB_WARNING("log file load success");
 
     // 注册自定义的raft log的存储方式
-    baikaldb::register_myraft_extension();
+    neokv::register_myraft_extension();
 
     //add service
     brpc::Server server;
     butil::EndPoint addr;
     addr.ip = butil::IP_ANY;
-    addr.port = baikaldb::FLAGS_meta_port;
+    addr.port = neokv::FLAGS_meta_port;
     //将raft加入到baidu-rpc server中
     if (0 != braft::add_service(&server, addr)) {
         DB_FATAL("Fail to init raft");
@@ -75,9 +75,9 @@ int main(int argc, char **argv) {
     bool use_bns = false;
 #ifdef BAIDU_INTERNAL
     //指定的是ip:port的形式
-    if (baikaldb::FLAGS_meta_server_bns.find(":") != std::string::npos) {
+    if (neokv::FLAGS_meta_server_bns.find(":") != std::string::npos) {
         std::vector<std::string> list_raft_peers;
-        boost::split(list_raft_peers, baikaldb::FLAGS_meta_server_bns, boost::is_any_of(","));
+        boost::split(list_raft_peers, neokv::FLAGS_meta_server_bns, boost::is_any_of(","));
         for (auto & raft_peer : list_raft_peers) {
             DB_WARNING("raft_peer:%s", raft_peer.c_str());
             braft::PeerId peer(raft_peer);
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
         }
     } else {
         do {
-            baikaldb::get_instance_from_bns(&ret, baikaldb::FLAGS_meta_server_bns, instances);
+            neokv::get_instance_from_bns(&ret, neokv::FLAGS_meta_server_bns, instances);
         } while (ret != webfoot::WEBFOOT_RET_SUCCESS &&
                  ret != webfoot::WEBFOOT_SERVICE_NOTEXIST &&
                  ret != webfoot::WEBFOOT_SERVICE_BEYOND_THRSHOLD);
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 #else
     //指定的是ip:port的形式
     std::vector<std::string> list_raft_peers;
-    boost::split(list_raft_peers, baikaldb::FLAGS_meta_server_bns, boost::is_any_of(","));
+    boost::split(list_raft_peers, neokv::FLAGS_meta_server_bns, boost::is_any_of(","));
     for (auto & raft_peer : list_raft_peers) {
         DB_WARNING("raft_peer:%s", raft_peer.c_str());
         braft::PeerId peer(raft_peer);
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
     }
 #endif
      
-    baikaldb::MetaServer* meta_server = baikaldb::MetaServer::get_instance();
+    neokv::MetaServer* meta_server = neokv::MetaServer::get_instance();
     //注册处理meta逻辑的service服务
     if (0 != server.AddService(meta_server, brpc::SERVER_DOESNT_OWN_SERVICE)) {
         DB_FATAL("Fail to Add idonlyeService");
@@ -123,15 +123,15 @@ int main(int argc, char **argv) {
     if (completely_deploy) {
         std::ofstream init_fs("init.success", std::ofstream::out | std::ofstream::trunc);
         while (1) {
-            baikaldb::get_instance_from_bns(&ret, baikaldb::FLAGS_meta_server_bns, instances);
-            if ((int)instances.size() == baikaldb::FLAGS_meta_replica_number) {
+            neokv::get_instance_from_bns(&ret, neokv::FLAGS_meta_server_bns, instances);
+            if ((int)instances.size() == neokv::FLAGS_meta_replica_number) {
                 for (auto &instance : instances) {
                     braft::PeerId peer(instance);
                     peers.push_back(peer);
                 }
                 break;
             }
-            DB_WARNING("bns not generate, bns_name:%s", baikaldb::FLAGS_meta_server_bns.c_str());
+            DB_WARNING("bns not generate, bns_name:%s", neokv::FLAGS_meta_server_bns.c_str());
             sleep(1);
         }
     }
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
         DB_FATAL("meta server init fail");
         return -1;
     }
-    baikaldb::MemoryGCHandler::get_instance()->init();
+    neokv::MemoryGCHandler::get_instance()->init();
     if (!completely_deploy && use_bns) {
         // 循环等待数据加载成功, ip_list配置区分不了全新/更新部署
         while (!meta_server->have_data()) {
@@ -156,8 +156,8 @@ int main(int argc, char **argv) {
     DB_WARNING("recevie kill signal, begin to quit"); 
     meta_server->shutdown_raft();
     meta_server->close();
-    baikaldb::MemoryGCHandler::get_instance()->close();
-    baikaldb::RocksWrapper::get_instance()->close();
+    neokv::MemoryGCHandler::get_instance()->close();
+    neokv::RocksWrapper::get_instance()->close();
     DB_WARNING("raft shut down, rocksdb close");
     server.Stop(0);
     server.Join();

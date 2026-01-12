@@ -26,11 +26,11 @@
 #include "proto/meta.interface.pb.h"
 #include "proto/common.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // TTLInfo definition - also defined in transaction_pool.h, use #ifndef guard
-#ifndef BAIKALDB_TTLINFO_DEFINED
-#define BAIKALDB_TTLINFO_DEFINED
+#ifndef NEOKV_TTLINFO_DEFINED
+#define NEOKV_TTLINFO_DEFINED
 struct TTLInfo {
     int64_t ttl_duration_s = 0;
     int64_t online_ttl_expire_time_us = 0;
@@ -91,6 +91,11 @@ struct IndexInfo {
 };
 typedef std::shared_ptr<IndexInfo> SmartIndex;
 
+// Schema configuration stub for neo-redis
+struct SchemaConf {
+    int32_t pk_prefix_balance() const { return 0; }  // No prefix balance in neo-redis
+};
+
 // Minimal TableInfo for Redis
 struct TableInfo {
     int64_t id = 0;
@@ -99,11 +104,15 @@ struct TableInfo {
     std::string name;
     std::string short_name;
     std::string namespace_;
+    pb::Charset charset = pb::UTF8;
     
     std::vector<int64_t> indices;
     
     // Stub for sign blacklist (SQL feature, not used in neo-redis)
     std::set<uint64_t> sign_blacklist;
+    
+    // Schema conf stub
+    SchemaConf schema_conf;
 };
 typedef std::shared_ptr<TableInfo> SmartTable;
 
@@ -191,6 +200,68 @@ public:
         return IndexInfo();  // Return empty IndexInfo if not found
     }
     
+    // Get table info - stub for neo-redis
+    TableInfo get_table_info(int64_t table_id) {
+        std::lock_guard<std::mutex> lock(_mutex);
+        auto it = _table_info_mapping.find(table_id);
+        if (it != _table_info_mapping.end() && it->second) {
+            return *(it->second);
+        }
+        TableInfo info;
+        info.id = -1;  // Indicate not found
+        return info;
+    }
+    
+    // Get separate switch - stub for neo-redis (no storage-compute separation)
+    bool get_separate_switch(int64_t /*table_id*/) {
+        return false;  // Neo-redis doesn't use storage-compute separation
+    }
+    
+    // Is OLAP table - stub for neo-redis
+    bool is_olap_table(int64_t /*table_id*/, int64_t /*partition_id*/ = 0, bool* is_cold = nullptr) {
+        if (is_cold) *is_cold = false;
+        return false;  // Neo-redis doesn't use OLAP
+    }
+    
+    // Update tables from heartbeat response - stub for neo-redis
+    void update_tables_double_buffer_sync(const google::protobuf::RepeatedPtrField<pb::SchemaInfo>& /*schema_info*/) {
+        // Stub - neo-redis doesn't use SQL schema updates
+    }
+    
+    // Get region capacity - stub for neo-redis
+    int64_t get_region_capacity(int64_t /*table_id*/) {
+        return 100 * 1024 * 1024;  // Default 100MB
+    }
+    
+    int64_t get_region_capacity(int64_t /*table_id*/, int64_t& /*split_lines*/) {
+        return 100 * 1024 * 1024;  // Default 100MB
+    }
+    
+    // Get tail split nums - stub for neo-redis
+    int64_t get_tail_split_nums(int64_t /*table_id*/) {
+        return 1;  // Default split into 1 region
+    }
+    
+    // Check if in fast importer mode - stub for neo-redis
+    bool is_in_fast_importer(int64_t /*table_id*/) {
+        return false;  // Not in fast import mode
+    }
+    
+    // Get merge switch - stub for neo-redis
+    bool get_merge_switch(int64_t /*table_id*/) {
+        return false;  // No merge in neo-redis
+    }
+    
+    // Update table - stub for neo-redis
+    void update_table(const pb::SchemaInfo& /*schema_info*/) {
+        // Stub - neo-redis doesn't use SQL tables
+    }
+    
+    // Get all table versions - stub for neo-redis
+    void get_all_table_version(std::unordered_map<int64_t, int64_t>& /*table_versions*/) {
+        // Stub - returns empty map
+    }
+    
     // Region info management
     void update_region(const pb::RegionInfo& region) {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -218,4 +289,4 @@ private:
     std::unordered_map<int64_t, TableRegionInfo> _table_region_mapping;
 };
 
-} // namespace baikaldb
+} // namespace neokv

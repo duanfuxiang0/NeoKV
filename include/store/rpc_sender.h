@@ -17,7 +17,7 @@
 #include "store_interact.hpp"
 #include "proto/store.interface.pb.h"
 
-namespace baikaldb {
+namespace neokv {
 class RpcSender {
 public:
     static int send_no_op_request(const std::string& instance,

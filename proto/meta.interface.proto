@@ -4,7 +4,7 @@ import "optype.proto";
 import "raft.proto";
 import "statistics.proto";
 import "expr.proto";
-package baikaldb.pb;
+package neokv.pb;
 option cc_generic_services = true;
 //option cc_enable_arenas = true;
 
@@ -171,7 +171,7 @@ message PartitionInfo {
 };
 
 enum DBLinkType {
-    LT_BAIKALDB = 1;
+    LT_NEOKV = 1;
     LT_MYSQL = 2;
 };
 
@@ -768,7 +768,7 @@ message BaikalHeartBeatRequest {
     //物理机房和逻辑机房对应关系
     repeated BaikalSchemaHeartBeat schema_infos    = 1;
     optional int64        last_updated_index       = 2;
-    // optional bool         not_need_statistics      = 3; // meta能识别到时，说明baikaldb已经升级，不再通过该心跳更新统计信息
+    // optional bool         not_need_statistics      = 3; // meta能识别到时，说明neokv已经升级，不再通过该心跳更新统计信息
     repeated RegionDdlWork region_ddl_works        = 4;
     repeated DdlWorkInfo  ddl_works                = 5;
     optional bool can_do_ddlwork                   = 6;
@@ -788,7 +788,7 @@ message BaikalOtherHeartBeat {
 
 message BaikalOtherHeartBeatRequest {
     repeated BaikalOtherHeartBeat schema_infos    = 1;
-    optional string baikaldb_resource_tag         = 2;
+    optional string neokv_resource_tag         = 2;
 };
 
 message BaikalOtherHeartBeatResponse {
@@ -796,7 +796,7 @@ message BaikalOtherHeartBeatResponse {
     optional string errmsg                        = 2;
     optional string leader                        = 3;
     repeated Statistics   statistics              = 4;
-    repeated InstanceParam instance_param         = 5; // baikaldb动态参数
+    repeated InstanceParam instance_param         = 5; // neokv动态参数
 };
 
 message IdcInfo {
@@ -1176,11 +1176,11 @@ service MetaService {
     rpc raft_control(RaftControlRequest) returns (RaftControlResponse);
     rpc meta_manager(MetaManagerRequest) returns (MetaManagerResponse);
     rpc store_heartbeat(StoreHeartBeatRequest) returns (StoreHeartBeatResponse);
-    rpc baikal_heartbeat(BaikalHeartBeatRequest) returns (BaikalHeartBeatResponse);
+    rpc neo_heartbeat(BaikalHeartBeatRequest) returns (BaikalHeartBeatResponse);
     rpc query(QueryRequest) returns (QueryResponse);
     rpc migrate(MigrateRequest) returns (MigrateResponse);
     rpc console_heartbeat(ConsoleHeartBeatRequest) returns (ConsoleHeartBeatResponse);
     rpc tso_service(TsoRequest) returns (TsoResponse);
-    rpc baikal_other_heartbeat(BaikalOtherHeartBeatRequest) returns (BaikalOtherHeartBeatResponse);
+    rpc neo_other_heartbeat(BaikalOtherHeartBeatRequest) returns (BaikalOtherHeartBeatResponse);
 };
 

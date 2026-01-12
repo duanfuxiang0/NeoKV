@@ -14,7 +14,7 @@
 #include <boost/algorithm/string.hpp>
 #include "qos.h"
 
-namespace baikaldb {
+namespace neokv {
 DEFINE_int64(qps_statistics_minutes_ago,     60,     "qps_statistics_minutes_ago, default: 1h"); // 默认以前一小时的统计信息作为参考
 DEFINE_int64(max_tokens_per_second,          100000, "max_tokens_per_second, default: 10w");
 DEFINE_int64(use_token_bucket,               0,      "use_token_bucket, 0:close; 1:open, default: 0");
@@ -405,4 +405,4 @@ int StoreQos::mark_need_reject_sql() {
     return 0;
 }
 
-} // namespace baikaldb
+} // namespace neokv

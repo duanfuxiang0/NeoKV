@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "backup_stream.h"
-namespace baikaldb {
+namespace neokv {
 int StreamReceiver::on_received_messages(brpc::StreamId id, 
     butil::IOBuf *const messages[],
     size_t size) {
@@ -130,4 +130,4 @@ int StreamReceiver::on_received_messages(brpc::StreamId id,
     return 0;
 }
 
-}  // baikaldb
+}  // neokv

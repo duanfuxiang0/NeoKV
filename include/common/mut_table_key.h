@@ -7,7 +7,7 @@
 #include <cstdint>
 #include "key_encoder.h"
 
-namespace baikaldb {
+namespace neokv {
 
 // Simplified MutableKey for region/raft key encoding
 class MutTableKey {
@@ -104,4 +104,4 @@ private:
     std::string _data;
 };
 
-} // namespace baikaldb
+} // namespace neokv

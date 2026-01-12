@@ -1,20 +1,17 @@
-# Neo-Redis 设计方案（V2：复用 BaikalDB 的强一致 Redis Cluster）
-#
-# 说明：
-# - 本文档替换旧版方案（V1 已弃用）
-# - 目标：在 BaikalDB 代码库内，以“最小侵入 + 最大复用”的方式实现强一致 Redis Cluster
-#
+# NeoKV 设计方案
+
+在 NEOKV 代码库内，以“最小侵入 + 最大复用”的方式实现强一致 Redis Cluster
 
 ## 1. 目标与非目标
 
 ### 1.1 目标
 - **协议兼容**：支持 Redis RESP 协议，兼容 `redis-cli`/常见 SDK
-- **强一致**：这里 BaikalDB 已经实现了 leader lease
+- **强一致**：这里 NEOKV 已经实现了 leader lease
 - **Redis Cluster 语义一致**：
   - 多 key 命令要求 **同 slot**，否则返回 `CROSSSLOT`
   - 访问非 leader/非负责节点返回 `MOVED slot ip:port`
 - **水平扩展**：采用 **slot-range Region（Multi-Raft）**，每个 Region 管理一个连续 slot 范围
-- **最大化复用 BaikalDB**：
+- **最大化复用 NEOKV**：
   - MetaServer 的 Region 分配/调度/成员变更
   - Store 的 Region（braft StateMachine）、`MyRaftLogStorage/MyRaftMetaStorage`
   - `RocksWrapper`（单机 1 个 RocksDB 实例，多 Region 共享）
@@ -31,7 +28,7 @@
 ## 2. 总体架构（进程内 RedisService）
 
 ### 2.1 进程/端口
-在 **BaikalDB Store 进程内**新增一个 Redis 端口，使用 brpc 的 RedisService：
+在 **NEOKV Store 进程内**新增一个 Redis 端口，使用 brpc 的 RedisService：
 - Store 已存在：store RPC、raft service、region 管理、RocksDB
 - 新增：`brpc::RedisService` 监听 `--redis_port`
 
@@ -65,7 +62,7 @@ RocksDB (RocksWrapper)
 
 ---
 
-## 3. 复用 BaikalDB 的关键点
+## 3. 复用 NEOKV 的关键点
 
 ### 3.1 MetaServer / Region 调度复用
 复用 `meta_server/region_manager.*`、`store/store.cpp` 的心跳与 region 拉起流程：
@@ -81,7 +78,7 @@ RocksDB (RocksWrapper)
 ### 3.3 SplitCompactionFilter 复用（决定 key 结构）
 `SplitCompactionFilter` 在 compaction 末层会依据 `region_id + index_id` 前缀解析 key，并使用 `region_info.end_key` 比较来清理 split 后“超出新范围”的数据。
 因此：Redis 的 RocksDB key 必须满足：
-- 前 16 字节：必须与 BaikalDB 的 `TableKey/MutTableKey` 编码一致（**不能写裸 int64**）：
+- 前 16 字节：必须与 NEOKV 的 `TableKey/MutTableKey` 编码一致（**不能写裸 int64**）：
   - 具体要求：使用 `MutTableKey.append_i64(region_id).append_i64(index_id)` 形成前缀（即 mem-comparable + big-endian + SIGN_MASK 翻转后的字节序列）
 - `region_info.start_key/end_key` 定义在 **prefix 之后的 suffix 空间**，并且是 **exclusive upper bound**（`end_key` 为空表示无上界）
 
@@ -98,7 +95,7 @@ RocksDB (RocksWrapper)
 - **suffix 的排序规则**：以 `slot_id`（big-endian uint16）开头，保证同 slot 的 key 连续聚集（后续字段使用可解析的二进制安全编码，见 6.2）
 - `start_key`：`encode_u16be(slot_start)`
 - `end_key`（exclusive）：
-  - 若 `slot_end == 16383`：`end_key = ""`（tail region，沿用 BaikalDB “空 end_key 表示无上界” 的语义）
+  - 若 `slot_end == 16383`：`end_key = ""`（tail region，沿用 NEOKV “空 end_key 表示无上界” 的语义）
   - 否则：`end_key = encode_u16be(slot_end + 1)`
 
 > 注：这样 `end_key` 的比较天然实现 “只保留 slot < slot_end+1 的所有 key”，无需拼接 `0xFF`。
@@ -172,7 +169,7 @@ Store 侧维护一个 slot-range 路由表（来自 MetaServer）：
 [region_id:8][primary_index_id:8][suffix...]
 ```
 
-说明：这里的 `[region_id:8][primary_index_id:8]` 是“字节长度为 16 的前缀”，但它的**字节内容必须使用 BaikalDB 的 i64 mem-comparable 编码**（见 3.3），避免 compaction filter / range 判断失效。
+说明：这里的 `[region_id:8][primary_index_id:8]` 是“字节长度为 16 的前缀”，但它的**字节内容必须使用 NEOKV 的 i64 mem-comparable 编码**（见 3.3），避免 compaction filter / range 判断失效。
 
 其中 suffix（Redis 逻辑 key 空间，必须二进制安全且可解析）：
 
@@ -231,7 +228,7 @@ MVP TTL 策略：
 - **follower read（可选）**：在 `--enable_follower_read=true` 时允许；流程同样为 ReadIndex（向 leader 获取 read index + 本地 wait apply），然后本地读
 
 性能优化（可选，需满足前置条件）：
-- 若 BaikalDB 已实现并验证了 braft 的 leader lease/term 安全读，可在满足条件时对 leader 读走 lease 快路径；否则保持 ReadIndex 作为默认。
+- 若 NEOKV 已实现并验证了 braft 的 leader lease/term 安全读，可在满足条件时对 leader 读走 lease 快路径；否则保持 ReadIndex 作为默认。
 
 ---
 
@@ -239,7 +236,7 @@ MVP TTL 策略：
 
 原则：
 - **禁止整库 checkpoint**（单机 1 DB，多 region 共享；整库 checkpoint 会把所有 region 混在一个 snapshot）
-- 采用 BaikalDB 现有思路：**Region 粒度导出/ingest**（SST 或文件集合）
+- 采用 NEOKV 现有思路：**Region 粒度导出/ingest**（SST 或文件集合）
 
 对 Redis region：
 - snapshot_save：导出该 region 的数据范围（按 `[region_id,index_id]` 前缀，取 `[prefix+start_key, prefix+end_key)`；tail region 的 `end_key==""` 表示无上界）
@@ -263,7 +260,7 @@ MVP 支持：
 
 ---
 
-## 10. 运维与调度（基于 BaikalDB Region 调度）
+## 10. 运维与调度（基于 NEOKV Region 调度）
 
 ### 10.1 扩缩容
 复用 meta 的调度：

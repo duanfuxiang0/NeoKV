@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include "rocksdb/slice.h"
 
-namespace baikaldb {
+namespace neokv {
 
 class KeyEncoder {
 public:
@@ -93,4 +93,4 @@ public:
     }
 };
 
-} // namespace baikaldb
+} // namespace neokv

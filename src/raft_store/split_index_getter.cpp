@@ -15,7 +15,7 @@
 #include "split_index_getter.h"
 #include "store.h"
 
-namespace baikaldb { 
+namespace neokv { 
 int64_t SplitIndexGetter::get_split_index(int64_t region_id) {
     return Store::get_instance()->get_split_index_for_region(region_id);
 }

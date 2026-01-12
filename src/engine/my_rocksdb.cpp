@@ -15,7 +15,7 @@
 #include "my_rocksdb.h"
 #include "qos.h"
 
-namespace baikaldb {
+namespace neokv {
 DEFINE_int32(rocksdb_cost_sample, 100, "rocksdb_cost_sample");
 
 namespace myrocksdb {
@@ -309,4 +309,4 @@ rocksdb::Status Transaction::Merge(rocksdb::ColumnFamilyHandle* column_family, c
 }
  
 } // namespace myrocksdb
-} // namespace baikaldb
+} // namespace neokv

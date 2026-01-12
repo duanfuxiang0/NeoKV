@@ -16,7 +16,7 @@
 
 #include "rocks_wrapper.h"
 
-namespace baikaldb {
+namespace neokv {
 class MetaRocksdb {
 public:
     virtual ~MetaRocksdb() {}
@@ -43,6 +43,6 @@ private:
     rocksdb::ColumnFamilyHandle* _handle = NULL;
 }; //class
 
-}//namespace baikaldb
+}//namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

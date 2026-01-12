@@ -23,7 +23,7 @@
 #include "closure.h"
 #include "raft_control.h"
 
-namespace baikaldb {
+namespace neokv {
 DECLARE_string(snapshot_uri);
 DECLARE_string(stable_uri);
 DECLARE_int64(transfer_leader_catchup_time_threshold);

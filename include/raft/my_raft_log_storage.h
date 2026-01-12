@@ -35,7 +35,7 @@
 #endif
 #include "index_term_map.h"
 
-namespace baikaldb {
+namespace neokv {
 
 struct LogHead {
     explicit LogHead(const rocksdb::Slice& raw) {

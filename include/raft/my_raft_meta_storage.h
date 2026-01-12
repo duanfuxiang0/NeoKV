@@ -39,7 +39,7 @@ typedef braft::StableStorage RaftMetaStorage;
 typedef braft::RaftMetaStorage RaftMetaStorage;
 #endif
 
-namespace baikaldb {
+namespace neokv {
 // Implementation of RaftMetaStorage based on RocksDB
 class MyRaftMetaStorage : public RaftMetaStorage {
 public:

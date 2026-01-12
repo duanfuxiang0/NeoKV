@@ -23,7 +23,7 @@
 #endif
 #include <time.h>
 
-namespace baikaldb {
+namespace neokv {
 
 class TSOStateMachine;
 class TsoTimer : public braft::RepeatedTimerTask {
@@ -42,7 +42,7 @@ struct TsoObj {
     int64_t last_save_physical;
 };
 
-class TSOStateMachine : public baikaldb::CommonStateMachine {
+class TSOStateMachine : public neokv::CommonStateMachine {
 public:
     TSOStateMachine(const braft::PeerId& peerId):
                 CommonStateMachine(2, "tso_raft", "/tso", peerId) {
@@ -93,6 +93,6 @@ private:
     bool    _is_healty = true;
 };
 
-} //namespace baikaldb
+} //namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

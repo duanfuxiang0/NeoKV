@@ -15,7 +15,7 @@
 
 #include <gflags/gflags.h>
 
-namespace baikaldb{
+namespace neokv{
 DEFINE_int64(store_heart_beat_interval_us, 30 * 1000 * 1000, "store heart interval (30 s)");
 DEFINE_int32(balance_periodicity, 60, "times of store heart beat"); 
 DEFINE_int32(region_faulty_interval_times, 3, "region faulty interval times of heart beat interval");
@@ -31,7 +31,7 @@ DEFINE_int32(global_select_concurrency, 24, "global_select_concurrency");
 DEFINE_int32(key_point_collector_interval, 0, "key points collector interval,defult(0). 0 means not use collector");
 DEFINE_bool(use_arrow_vector, false, "whether use arrow vector");
 DEFINE_int32(chunk_size, 10960, "chunk size for arrow vectorize, default(10960)");
-DEFINE_int32(baikal_faulty_interval_times, 3, "baikal faulty interval times of heart beat");
-DEFINE_int32(baikal_clear_faulty_interval_times, 30, "baikal clear faulty instances interval times of heart beat");
+DEFINE_int32(neo_faulty_interval_times, 3, "neo faulty interval times of heart beat");
+DEFINE_int32(neo_clear_faulty_interval_times, 30, "neo clear faulty instances interval times of heart beat");
 }
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */
