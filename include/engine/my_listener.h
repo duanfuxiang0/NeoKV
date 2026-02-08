@@ -20,19 +20,20 @@
 namespace neokv {
 class MyListener : public rocksdb::EventListener {
 public:
-    virtual ~MyListener() {}
-    virtual void OnStallConditionsChanged(const rocksdb::WriteStallInfo& info) {
-        bool is_stall = info.condition.cur != rocksdb::WriteStallCondition::kNormal;
-        DB_WARNING("OnStallConditionsChanged, cf:%s is_stall:%d", info.cf_name.c_str(), is_stall);
-    }
-    virtual void OnFlushCompleted(rocksdb::DB* /*db*/, const rocksdb::FlushJobInfo& info) {
-        uint64_t file_number = info.file_number;
-        RocksWrapper::get_instance()->set_flush_file_number(info.cf_name, file_number);
-        DB_WARNING("OnFlushCompleted, cf:%s file_number:%lu", info.cf_name.c_str(), file_number);
-    }
-    virtual void OnExternalFileIngested(rocksdb::DB* /*db*/, const rocksdb::ExternalFileIngestionInfo& info) {
-        DB_WARNING("OnExternalFileIngested, cf:%s table_properties:%s", 
-                info.cf_name.c_str(), info.table_properties.ToString().c_str());
-    }
+	virtual ~MyListener() {
+	}
+	virtual void OnStallConditionsChanged(const rocksdb::WriteStallInfo& info) {
+		bool is_stall = info.condition.cur != rocksdb::WriteStallCondition::kNormal;
+		DB_WARNING("OnStallConditionsChanged, cf:%s is_stall:%d", info.cf_name.c_str(), is_stall);
+	}
+	virtual void OnFlushCompleted(rocksdb::DB* /*db*/, const rocksdb::FlushJobInfo& info) {
+		uint64_t file_number = info.file_number;
+		RocksWrapper::get_instance()->set_flush_file_number(info.cf_name, file_number);
+		DB_WARNING("OnFlushCompleted, cf:%s file_number:%lu", info.cf_name.c_str(), file_number);
+	}
+	virtual void OnExternalFileIngested(rocksdb::DB* /*db*/, const rocksdb::ExternalFileIngestionInfo& info) {
+		DB_WARNING("OnExternalFileIngested, cf:%s table_properties:%s", info.cf_name.c_str(),
+		           info.table_properties.ToString().c_str());
+	}
 };
-}
+} // namespace neokv

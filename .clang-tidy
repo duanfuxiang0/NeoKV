@@ -1,0 +1,106 @@
+Checks: >
+  -*,
+  clang-diagnostic-*,
+  bugprone-*,
+  performance-*,
+  google-explicit-constructor,
+  google-build-using-namespace,
+  google-runtime-int,
+  google-global-names-in-headers,
+  misc-definitions-in-headers,
+  misc-throw-by-value-catch-by-reference,
+  hicpp-exception-baseclass,
+  modernize-use-nullptr,
+  modernize-use-override,
+  modernize-use-emplace,
+  modernize-use-bool-literals,
+  readability-braces-around-statements,
+  readability-container-size-empty,
+  readability-identifier-naming,
+  cppcoreguidelines-pro-type-cstyle-cast,
+  cppcoreguidelines-pro-type-const-cast,
+  cppcoreguidelines-avoid-non-const-global-variables,
+  cppcoreguidelines-interfaces-global-init,
+  cppcoreguidelines-slicing,
+  cppcoreguidelines-rvalue-reference-param-not-moved,
+  cppcoreguidelines-virtual-class-destructor,
+  misc-use-internal-linkage,
+  readability-static-definition-in-anonymous-namespace,
+  -bugprone-macro-parentheses,
+  -bugprone-branch-clone,
+  -bugprone-signed-char-misuse,
+  -bugprone-misplaced-widening-cast,
+  -bugprone-sizeof-expression,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-exception-escape,
+  -bugprone-unused-local-non-trivial-variable,
+  -bugprone-empty-catch,
+  -performance-inefficient-string-concatenation,
+  -performance-no-int-to-ptr,
+  -performance-enum-size,
+  -llvm-header-guard
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '^include/.*'
+FormatStyle: none
+
+CheckOptions:
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.EnumCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           lower_case
+  - key:             readability-identifier-naming.MethodCase
+    value:           lower_case
+  - key:             readability-identifier-naming.NamespaceCase
+    value:           lower_case
+
+  - key:             readability-identifier-naming.MemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.ProtectedMemberPrefix
+    value:           _
+  - key:             readability-identifier-naming.PrivateMemberPrefix
+    value:           _
+  - key:             readability-identifier-naming.ParameterCase
+    value:           lower_case
+  - key:             readability-identifier-naming.VariableCase
+    value:           lower_case
+  - key:             readability-identifier-naming.GlobalVariableCase
+    value:           aNy_CasE
+  - key:             readability-identifier-naming.StaticVariableCase
+    value:           lower_case
+
+  - key:             readability-identifier-naming.MacroDefinitionCase
+    value:           UPPER_CASE
+  - key:             readability-identifier-naming.EnumConstantCase
+    value:           UPPER_CASE
+
+  # Keep constants relaxed for now to reduce noise.
+  - key:             readability-identifier-naming.ConstantCase
+    value:           aNy_CasE
+  - key:             readability-identifier-naming.ConstexprVariableCase
+    value:           aNy_CasE
+  - key:             readability-identifier-naming.ConstantMemberCase
+    value:           aNy_CasE
+  - key:             readability-identifier-naming.ConstantParameterCase
+    value:           aNy_CasE
+  - key:             readability-identifier-naming.StaticConstantCase
+    value:           aNy_CasE
+  - key:             readability-identifier-naming.ClassConstantCase
+    value:           aNy_CasE
+
+  - key:             readability-identifier-naming.TypedefCase
+    value:           lower_case
+  - key:             readability-identifier-naming.TypedefSuffix
+    value:           _t
+
+  - key:             readability-identifier-naming.TemplateTemplateParameterCase
+    value:           UPPER_CASE
+  - key:             readability-identifier-naming.TypeTemplateParameterCase
+    value:           UPPER_CASE
+
+  - key:             modernize-use-emplace.SmartPointers
+    value:           '::std::unique_ptr;::std::shared_ptr;::std::weak_ptr'
+  - key:             cppcoreguidelines-rvalue-reference-param-not-moved.IgnoreUnnamedParams
+    value:           true

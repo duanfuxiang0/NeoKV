@@ -22,95 +22,99 @@ namespace neokv {
 
 class MemoryGCHandler {
 public:
-    virtual ~MemoryGCHandler() {}
-    static MemoryGCHandler* get_instance() {
-        static MemoryGCHandler _instance;
-        return &_instance;
-    }
+	virtual ~MemoryGCHandler() {
+	}
+	static MemoryGCHandler* get_instance() {
+		static MemoryGCHandler _instance;
+		return &_instance;
+	}
 
-    void memory_gc_thread();
+	void memory_gc_thread();
 
-    int init() {
+	int init() {
 #ifdef NEO_TCMALLOC
-        _memory_gc_bth.run([this]() {memory_gc_thread();});
+		_memory_gc_bth.run([this]() { memory_gc_thread(); });
 #endif
-        return 0;
-    }
-    void close() {
-        _shutdown = true;
-        _memory_gc_bth.join();
-    }
-private:
-    MemoryGCHandler() {}
-    bool _shutdown = false;
-    Bthread _memory_gc_bth;
+		return 0;
+	}
+	void close() {
+		_shutdown = true;
+		_memory_gc_bth.join();
+	}
 
-    DISALLOW_COPY_AND_ASSIGN(MemoryGCHandler);
+private:
+	MemoryGCHandler() {
+	}
+	bool _shutdown = false;
+	Bthread _memory_gc_bth;
+
+	DISALLOW_COPY_AND_ASSIGN(MemoryGCHandler);
 };
 
 #ifndef NEOKV_MEMTRACKER_DEFINED
 #define NEOKV_MEMTRACKER_DEFINED
 class MemTracker {
 public:
-    explicit MemTracker(uint64_t log_id, int64_t bytes_limit, MemTracker* parent = nullptr);
-    ~MemTracker();
+	explicit MemTracker(uint64_t log_id, int64_t bytes_limit, MemTracker* parent = nullptr);
+	~MemTracker();
 
-    bool check_bytes_limit() {
-        return _bytes_limit > 0 && _bytes_consumed > _bytes_limit;
-    }
-    bool any_limit_exceeded() {
-        if (limit_exceeded() || (_parent !=nullptr && _parent->any_limit_exceeded())) {
-            return true;
-        }
-        return false;
-    }
+	bool check_bytes_limit() {
+		return _bytes_limit > 0 && _bytes_consumed > _bytes_limit;
+	}
+	bool any_limit_exceeded() {
+		if (limit_exceeded() || (_parent != nullptr && _parent->any_limit_exceeded())) {
+			return true;
+		}
+		return false;
+	}
 
-    bool limit_exceeded() const { return _bytes_limit >= 0 && bytes_consumed() > _bytes_limit; }
+	bool limit_exceeded() const {
+		return _bytes_limit >= 0 && bytes_consumed() > _bytes_limit;
+	}
 
-    void consume(int64_t bytes) {
-        _last_active_time = butil::gettimeofday_us();
-        if (bytes <= 0) {
-            return ;
-        }
-        _bytes_consumed.fetch_add(bytes, std::memory_order_relaxed);
-        if (_parent != nullptr) {
-            _parent->_bytes_consumed.fetch_add(bytes, std::memory_order_relaxed);
-        }
-    }
+	void consume(int64_t bytes) {
+		_last_active_time = butil::gettimeofday_us();
+		if (bytes <= 0) {
+			return;
+		}
+		_bytes_consumed.fetch_add(bytes, std::memory_order_relaxed);
+		if (_parent != nullptr) {
+			_parent->_bytes_consumed.fetch_add(bytes, std::memory_order_relaxed);
+		}
+	}
 
-    void release(int64_t bytes) {
-        _last_active_time = butil::gettimeofday_us();
-        if (bytes <= 0) {
-            return ;
-        }
-        _bytes_consumed.fetch_sub(bytes, std::memory_order_relaxed);
-        if (_parent != nullptr) {
-            _parent->_bytes_consumed.fetch_sub(bytes, std::memory_order_relaxed);
-        }
-    }
-    uint64_t log_id() const {
-        return _log_id;
-    }
-    int64_t bytes_limit() const {
-        return _bytes_limit;
-    }
-    int64_t last_active_time() const {
-        return _last_active_time;
-    }
-    int64_t bytes_consumed() const {
-        return _bytes_consumed.load(std::memory_order_relaxed);
-    }
-    MemTracker* get_parent() {
-        return _parent;
-    }
+	void release(int64_t bytes) {
+		_last_active_time = butil::gettimeofday_us();
+		if (bytes <= 0) {
+			return;
+		}
+		_bytes_consumed.fetch_sub(bytes, std::memory_order_relaxed);
+		if (_parent != nullptr) {
+			_parent->_bytes_consumed.fetch_sub(bytes, std::memory_order_relaxed);
+		}
+	}
+	uint64_t log_id() const {
+		return _log_id;
+	}
+	int64_t bytes_limit() const {
+		return _bytes_limit;
+	}
+	int64_t last_active_time() const {
+		return _last_active_time;
+	}
+	int64_t bytes_consumed() const {
+		return _bytes_consumed.load(std::memory_order_relaxed);
+	}
+	MemTracker* get_parent() {
+		return _parent;
+	}
 
 private:
-
-    uint64_t _log_id;
-    int64_t _bytes_limit;
-    int64_t  _last_active_time;
-    std::atomic<int64_t> _bytes_consumed;
-    MemTracker* _parent = nullptr;
+	uint64_t _log_id;
+	int64_t _bytes_limit;
+	int64_t _last_active_time;
+	std::atomic<int64_t> _bytes_consumed;
+	MemTracker* _parent = nullptr;
 };
 
 typedef std::shared_ptr<MemTracker> SmartMemTracker;
@@ -118,33 +122,32 @@ typedef std::shared_ptr<MemTracker> SmartMemTracker;
 
 class MemTrackerPool {
 public:
-    static MemTrackerPool* get_instance() {
-        static MemTrackerPool _instance;
-        return &_instance;
-    }
+	static MemTrackerPool* get_instance() {
+		static MemTrackerPool _instance;
+		return &_instance;
+	}
 
-    SmartMemTracker get_mem_tracker(uint64_t log_id);
+	SmartMemTracker get_mem_tracker(uint64_t log_id);
 
-    void tracker_gc_thread();
+	void tracker_gc_thread();
 
-    int init();
+	int init();
 
-    void close() {
-        _shutdown = true;
-        _tracker_gc_bth.join();
-    }
+	void close() {
+		_shutdown = true;
+		_tracker_gc_bth.join();
+	}
 
 private:
-    MemTrackerPool() {}
-    int64_t _query_bytes_limit;
-    bool _shutdown = false;
-    SmartMemTracker _root_tracker = nullptr;
-    Bthread _tracker_gc_bth;
-    ThreadSafeMap<uint64_t, SmartMemTracker> _mem_tracker_pool;
+	MemTrackerPool() {
+	}
+	int64_t _query_bytes_limit;
+	bool _shutdown = false;
+	SmartMemTracker _root_tracker = nullptr;
+	Bthread _tracker_gc_bth;
+	ThreadSafeMap<uint64_t, SmartMemTracker> _mem_tracker_pool;
 
-    DISALLOW_COPY_AND_ASSIGN(MemTrackerPool);
+	DISALLOW_COPY_AND_ASSIGN(MemTrackerPool);
 };
 
-
-
-} //namespace neokv
+} // namespace neokv

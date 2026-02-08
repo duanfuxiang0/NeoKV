@@ -43,55 +43,53 @@ namespace neokv {
 // Implementation of RaftMetaStorage based on RocksDB
 class MyRaftMetaStorage : public RaftMetaStorage {
 public:
-    /* raft_log_cf data format
-     * Key:RegionId(8 bytes) + 0x03
-     * Value : StablePBMeta
-     */ 
-    static const size_t RAFT_META_KEY_SIZE = sizeof(int64_t) + 1;
-    static const uint8_t RAFT_META_IDENTIFY = 0x03;                     
-    MyRaftMetaStorage() {
-    }
+	/* raft_log_cf data format
+	 * Key:RegionId(8 bytes) + 0x03
+	 * Value : StablePBMeta
+	 */
+	static const size_t RAFT_META_KEY_SIZE = sizeof(int64_t) + 1;
+	static const uint8_t RAFT_META_IDENTIFY = 0x03;
+	MyRaftMetaStorage() {
+	}
 
-    // set current term
-    virtual int set_term(const int64_t term);
+	// set current term
+	virtual int set_term(const int64_t term);
 
-    // get current term
-    virtual int64_t get_term();
+	// get current term
+	virtual int64_t get_term();
 
-    // set votefor information
-    virtual int set_votedfor(const braft::PeerId& peer_id);
+	// set votefor information
+	virtual int set_votedfor(const braft::PeerId& peer_id);
 
-    // get votefor information
-    virtual int get_votedfor(braft::PeerId* peer_id);
+	// get votefor information
+	virtual int get_votedfor(braft::PeerId* peer_id);
 
-    // set term and peer_id
-    virtual int set_term_and_votedfor(const int64_t term, const braft::PeerId& peer_id);
-    // init stable storage
-    virtual butil::Status init();
-    // set term and votedfor information
-    virtual butil::Status set_term_and_votedfor(const int64_t term, 
-                            const braft::PeerId& peer_id, const braft::VersionedGroupId& group);
-    // get term and votedfor information
-    virtual butil::Status get_term_and_votedfor(int64_t* term, braft::PeerId* peer_id, 
-                                                   const braft::VersionedGroupId& group);
+	// set term and peer_id
+	virtual int set_term_and_votedfor(const int64_t term, const braft::PeerId& peer_id);
+	// init stable storage
+	virtual butil::Status init();
+	// set term and votedfor information
+	virtual butil::Status set_term_and_votedfor(const int64_t term, const braft::PeerId& peer_id,
+	                                            const braft::VersionedGroupId& group);
+	// get term and votedfor information
+	virtual butil::Status get_term_and_votedfor(int64_t* term, braft::PeerId* peer_id,
+	                                            const braft::VersionedGroupId& group);
 
-    RaftMetaStorage* new_instance(const std::string& uri) const override;
+	RaftMetaStorage* new_instance(const std::string& uri) const override;
 
 private:
+	MyRaftMetaStorage(int64_t region_id, RocksWrapper* db, rocksdb::ColumnFamilyHandle* handle);
+	int load();
+	int save();
 
-    MyRaftMetaStorage(int64_t region_id, RocksWrapper* db,
-                        rocksdb::ColumnFamilyHandle* handle);
-    int load();
-    int save();
+	bool _is_inited = false;
+	int64_t _region_id = 0;
+	int64_t _term = 1;
+	braft::PeerId _votedfor;
+	RocksWrapper* _db = nullptr;
+	rocksdb::ColumnFamilyHandle* _handle = nullptr;
+}; // class
 
-    bool _is_inited = false;
-    int64_t _region_id = 0; 
-    int64_t _term = 1;
-    braft::PeerId _votedfor;
-    RocksWrapper* _db = nullptr; 
-    rocksdb::ColumnFamilyHandle* _handle = nullptr;
-}; // class 
-
-} //namespace raft
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

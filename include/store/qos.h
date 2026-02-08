@@ -10,17 +10,21 @@ namespace neokv {
 // Stub for QoS - simplified for neo-redis
 class QoS {
 public:
-    static QoS* get_instance() {
-        static QoS instance;
-        return &instance;
-    }
-    
-    void init() {}
-    
-    // Return true to allow all operations (no throttling for neo-redis)
-    bool need_reject() { return false; }
-    
-    void update_statistics(int64_t /*region_id*/, int64_t /*qps*/, int64_t /*cost*/) {}
+	static QoS* get_instance() {
+		static QoS instance;
+		return &instance;
+	}
+
+	void init() {
+	}
+
+	// Return true to allow all operations (no throttling for neo-redis)
+	bool need_reject() {
+		return false;
+	}
+
+	void update_statistics(int64_t /*region_id*/, int64_t /*qps*/, int64_t /*cost*/) {
+	}
 };
 
 } // namespace neokv

@@ -19,31 +19,28 @@
 namespace neokv {
 
 // ============================================================================
-// Redis 静态配置 - 不需要创建 SQL 表
+// Redis ID conventions
 // ============================================================================
-
-// 固定的 Redis table_id 和 index_id
-// 这些值是硬编码的，不需要通过 SQL 创建表
-// 选择一个不太可能与用户表冲突的值 (负数或很大的正数)
-// NEOKV 的 table_id 通常从 1 开始递增，我们使用一个特殊的区间
-
-// Redis 使用的 table_id (= index_id for primary key)
-// 使用一个特殊的值，避免与用户表冲突
-constexpr int64_t REDIS_TABLE_ID = 0x7FFFFFFFFF000001LL;  // 大正数，不会与普通表冲突
-constexpr int64_t REDIS_INDEX_ID = REDIS_TABLE_ID;        // 对于 primary key，index_id = table_id
+//
+// Redis data in neo-redis uses RegionInfo.table_id as both table_id/index_id
+// for key encoding and routing. There is no globally fixed hard-coded table id.
+//
+// The constants below are kept only for legacy compatibility; runtime logic
+// must not depend on them. A value of 0 means "dynamic/resolved from region".
+constexpr int64_t REDIS_TABLE_ID = 0;
+constexpr int64_t REDIS_INDEX_ID = 0;
 
 // Redis slot 数量 (与 Redis Cluster 一致)
 constexpr uint16_t REDIS_SLOT_COUNT = 16384;
 
 // 检查一个 table_id 是否是 Redis 表
 inline bool is_redis_table(int64_t table_id) {
-    return table_id == REDIS_TABLE_ID;
+	return table_id > 0;
 }
 
 // 检查一个 index_id 是否是 Redis 索引
 inline bool is_redis_index(int64_t index_id) {
-    return index_id == REDIS_INDEX_ID;
+	return index_id > 0;
 }
 
 } // namespace neokv
-

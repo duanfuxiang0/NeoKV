@@ -18,16 +18,19 @@
 namespace neokv {
 class CanAddPeerSetter {
 public:
-    virtual ~CanAddPeerSetter() {}
+	virtual ~CanAddPeerSetter() {
+	}
 
-    static CanAddPeerSetter* get_instance() {
-        static CanAddPeerSetter _instance;
-        return &_instance;
-    }
-    void set_can_add_peer(int64_t region_id); 
+	static CanAddPeerSetter* get_instance() {
+		static CanAddPeerSetter _instance;
+		return &_instance;
+	}
+	void set_can_add_peer(int64_t region_id);
+
 private:
-    CanAddPeerSetter() {}
+	CanAddPeerSetter() {
+	}
 };
-}
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

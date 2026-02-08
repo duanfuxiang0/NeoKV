@@ -28,6 +28,13 @@ enum RedisCmd {
     REDIS_MSET      = 4;
 };
 
+// SET condition options.
+enum RedisSetCondition {
+    REDIS_SET_CONDITION_NONE = 0;
+    REDIS_SET_CONDITION_NX   = 1;
+    REDIS_SET_CONDITION_XX   = 2;
+};
+
 // A single Redis write operation
 message RedisKv {
     optional bytes  key         = 1;  // user key (without region/index prefix)
@@ -40,6 +47,7 @@ message RedisWriteRequest {
     optional RedisCmd   cmd     = 1;
     repeated RedisKv    kvs     = 2;  // key-value pairs for this command
     optional uint32     slot    = 3;  // computed slot (for verification)
+    optional RedisSetCondition set_condition = 4;  // used by REDIS_SET
 };
 
 // CachePlan is used in three place:

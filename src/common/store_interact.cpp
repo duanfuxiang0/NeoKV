@@ -17,9 +17,7 @@
 #include <gflags/gflags.h>
 
 namespace neokv {
-DEFINE_int32(store_request_timeout, 60000, 
-            "store as server request timeout, default:60000ms");
-DEFINE_int32(store_connect_timeout, 5000, 
-            "store as server connect timeout, default:5000ms");
-}
+DEFINE_int32(store_request_timeout, 60000, "store as server request timeout, default:60000ms");
+DEFINE_int32(store_connect_timeout, 5000, "store as server connect timeout, default:5000ms");
+} // namespace neokv
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

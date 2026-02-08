@@ -14,34 +14,34 @@ constexpr int64_t META_ID_SHIFT = 48;
 constexpr int64_t MAX_META_ID = 0x7FFF;
 
 inline std::string get_del_meta_name(const std::string& name) {
-    std::string del_meta_name = name;
-    size_t pos = del_meta_name.find("\001");
-    if (pos != std::string::npos) {
-        del_meta_name = del_meta_name.substr(pos + 1);
-    }
-    return del_meta_name;
+	std::string del_meta_name = name;
+	size_t pos = del_meta_name.find("\001");
+	if (pos != std::string::npos) {
+		del_meta_name = del_meta_name.substr(pos + 1);
+	}
+	return del_meta_name;
 }
 
 inline std::string get_add_meta_name(const int64_t meta_id, const std::string& name) {
-    if (meta_id == 0) {
-        return name;   
-    }
-    return std::to_string(meta_id) + "\001" + name;
+	if (meta_id == 0) {
+		return name;
+	}
+	return std::to_string(meta_id) + "\001" + name;
 }
 
 inline int64_t get_del_meta_id(const int64_t id) {
-    return id & (~META_ID_MASK);
+	return id & (~META_ID_MASK);
 }
 
 inline int64_t get_add_meta_id(const int64_t meta_id, const int64_t id) {
-    if (meta_id == 0) {
-        return id;
-    }
-    return id | (meta_id << META_ID_SHIFT);
+	if (meta_id == 0) {
+		return id;
+	}
+	return id | (meta_id << META_ID_SHIFT);
 }
 
 inline int64_t get_meta_id(const int64_t id) {
-    return (id & META_ID_MASK) >> META_ID_SHIFT;
+	return (id & META_ID_MASK) >> META_ID_SHIFT;
 }
 
 /**
@@ -50,7 +50,7 @@ inline int64_t get_meta_id(const int64_t id) {
  */
 template <typename Request>
 int del_meta_info(Request& request) {
-    return -1;
+	return -1;
 }
 
 int del_meta_info(pb::BaikalHeartBeatRequest& request);
@@ -73,13 +73,13 @@ int del_meta_info(pb::UpdateNode& update_node);
 int del_meta_info(pb::PossibleIndex& possible_index);
 int del_meta_info(pb::FulltextIndex& fulltext_index);
 
-/** 
+/**
  *  @brief 将meta表示信息添加到response中，涉及内容:
  *         namespace_id、database_id、table_id、index_id、binlog_id、namespace_name等
  */
 template <typename Response>
 int add_meta_info(Response& response, const int64_t meta_id) {
-    return -1;
+	return -1;
 }
 
 int add_meta_info(pb::BaikalHeartBeatResponse& response, const int64_t meta_id);

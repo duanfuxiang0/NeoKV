@@ -13,8 +13,6 @@
 # limitations under the License.
 
 INCLUDE(ExternalProject)
-# Always invoke `FIND_PACKAGE(Protobuf)` for importing function protobuf_generate_cpp
-FIND_PACKAGE(Protobuf QUIET)
 macro(UNSET_VAR VAR_NAME)
     UNSET(${VAR_NAME} CACHE)
     UNSET(${VAR_NAME})
@@ -34,11 +32,13 @@ UNSET_VAR(Protobuf_PROTOC_EXECUTABLE)
 macro(PROMPT_PROTOBUF_LIB)
     SET(protobuf_DEPS ${ARGN})
 
-    MESSAGE(STATUS "Protobuf protoc executable: ${PROTOBUF_PROTOC_EXECUTABLE}")
-    MESSAGE(STATUS "Protobuf-lite library: ${PROTOBUF_LITE_LIBRARY}")
-    MESSAGE(STATUS "Protobuf library: ${PROTOBUF_LIBRARY}")
-    MESSAGE(STATUS "Protoc library: ${PROTOBUF_PROTOC_LIBRARY}")
-    MESSAGE(STATUS "Protobuf version: ${PROTOBUF_VERSION}")
+    if (NEOKV_VERBOSE_CONFIG)
+        MESSAGE(STATUS "Protobuf protoc executable: ${PROTOBUF_PROTOC_EXECUTABLE}")
+        MESSAGE(STATUS "Protobuf-lite library: ${PROTOBUF_LITE_LIBRARY}")
+        MESSAGE(STATUS "Protobuf library: ${PROTOBUF_LIBRARY}")
+        MESSAGE(STATUS "Protoc library: ${PROTOBUF_PROTOC_LIBRARY}")
+        MESSAGE(STATUS "Protobuf version: ${PROTOBUF_VERSION}")
+    endif ()
     INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
 
     # Assuming that all the protobuf libraries are of the same type.
@@ -80,7 +80,9 @@ endmacro()
 set(PROTOBUF_ROOT "" CACHE PATH "Folder contains protobuf")
 
 if (NOT "${PROTOBUF_ROOT}" STREQUAL "")
-    message("found system protobuf")
+    if (NEOKV_VERBOSE_CONFIG)
+        message(STATUS "found system protobuf")
+    endif ()
 
     find_path(PROTOBUF_INCLUDE_DIR google/protobuf/message.h PATHS ${PROTOBUF_ROOT}/include NO_DEFAULT_PATH)
     find_library(PROTOBUF_LIBRARY protobuf libprotobuf.lib PATHS ${PROTOBUF_ROOT}/lib NO_DEFAULT_PATH)
@@ -148,7 +150,9 @@ ENDFUNCTION()
 SET(PROTOBUF_VERSION 3.18.0)
 
 IF (NOT PROTOBUF_FOUND)
-    message("build protobuf")
+    if (NEOKV_VERBOSE_CONFIG)
+        message(STATUS "build protobuf")
+    endif ()
 
     build_protobuf(extern_protobuf)
 

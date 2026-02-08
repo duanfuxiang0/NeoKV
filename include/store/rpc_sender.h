@@ -20,35 +20,24 @@
 namespace neokv {
 class RpcSender {
 public:
-    static int send_no_op_request(const std::string& instance,
-                            int64_t recevie_region_id,
-                            int64_t request_version,
-                            int times = 5);
+	static int send_no_op_request(const std::string& instance, int64_t recevie_region_id, int64_t request_version,
+	                              int times = 5);
 
-    static int get_peer_applied_index(const std::string& peer, int64_t region_id,
-                            int64_t& applied_index, int64_t& dml_latency);
-    static void get_peer_snapshot_size(const std::string& peer, int64_t region_id, 
-            uint64_t* data_size, uint64_t* meta_size, int64_t* snapshot_index);
-    static int send_query_method(const pb::StoreReq& request, 
-                const std::string& instance, 
-                int64_t receive_region_id);
-    static int send_query_method(const pb::StoreReq& request,
-                                 pb::StoreRes& response,
-                                 const std::string& instance,
-                                 int64_t receive_region_id);
-    static int send_async_apply_log(const pb::BatchStoreReq& request,
-                                    pb::BatchStoreRes& response,
-                                    const std::string& instance,
-                                    butil::IOBuf* attachment_data);
-    static int get_leader_read_index(const std::string& leader, 
-                                int64_t region_id, 
-                                pb::StoreRes& response, 
-                                bool need_raft_log_index);
-    static void send_remove_region_method(int64_t drop_region_id, const std::string& instance);
-    static int send_init_region_method(const std::string& instance_address, 
-                const pb::InitRegion& init_region_request, 
-                pb::StoreRes& response);
-    static int get_peer_binlog_oldest_ts(const std::string& instance, const pb::StoreReq& request, int64_t& oldest_ts);
-    static int get_peer_offline_binlog_info(const std::string& instance, const pb::StoreReq& req, pb::StoreRes& res);
+	static int get_peer_applied_index(const std::string& peer, int64_t region_id, int64_t& applied_index,
+	                                  int64_t& dml_latency);
+	static void get_peer_snapshot_size(const std::string& peer, int64_t region_id, uint64_t* data_size,
+	                                   uint64_t* meta_size, int64_t* snapshot_index);
+	static int send_query_method(const pb::StoreReq& request, const std::string& instance, int64_t receive_region_id);
+	static int send_query_method(const pb::StoreReq& request, pb::StoreRes& response, const std::string& instance,
+	                             int64_t receive_region_id);
+	static int send_async_apply_log(const pb::BatchStoreReq& request, pb::BatchStoreRes& response,
+	                                const std::string& instance, butil::IOBuf* attachment_data);
+	static int get_leader_read_index(const std::string& leader, int64_t region_id, pb::StoreRes& response,
+	                                 bool need_raft_log_index);
+	static void send_remove_region_method(int64_t drop_region_id, const std::string& instance);
+	static int send_init_region_method(const std::string& instance_address, const pb::InitRegion& init_region_request,
+	                                   pb::StoreRes& response);
+	static int get_peer_binlog_oldest_ts(const std::string& instance, const pb::StoreReq& request, int64_t& oldest_ts);
+	static int get_peer_offline_binlog_info(const std::string& instance, const pb::StoreReq& req, pb::StoreRes& res);
 };
-} // end of namespace
+} // namespace neokv

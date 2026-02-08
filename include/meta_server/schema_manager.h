@@ -23,37 +23,36 @@ namespace neokv {
 typedef std::shared_ptr<pb::RegionInfo> SmartRegionInfo;
 class SchemaManager {
 public:
-    static const std::string MAX_NAMESPACE_ID_KEY;
-    static const std::string MAX_DATABASE_ID_KEY;
-    static const std::string MAX_TABLE_ID_KEY;
-    static const std::string MAX_REGION_ID_KEY;
-    static SchemaManager* get_instance() {
-        static SchemaManager instance;
-        return &instance;
-    }
-    ~SchemaManager() {}
-    void process_schema_info(google::protobuf::RpcController* controller,
-                  const pb::MetaManagerRequest* request, 
-                  pb::MetaManagerResponse* response,
-                  google::protobuf::Closure* done); 
-    void set_meta_state_machine(MetaStateMachine* meta_state_machine) {
-        _meta_state_machine = meta_state_machine;
-    }
-    bool get_unsafe_decision() {
-        return _meta_state_machine->get_unsafe_decision();
-    }
+	static const std::string MAX_NAMESPACE_ID_KEY;
+	static const std::string MAX_DATABASE_ID_KEY;
+	static const std::string MAX_TABLE_ID_KEY;
+	static const std::string MAX_REGION_ID_KEY;
+	static SchemaManager* get_instance() {
+		static SchemaManager instance;
+		return &instance;
+	}
+	~SchemaManager() {
+	}
+	void process_schema_info(google::protobuf::RpcController* controller, const pb::MetaManagerRequest* request,
+	                         pb::MetaManagerResponse* response, google::protobuf::Closure* done);
+	void set_meta_state_machine(MetaStateMachine* meta_state_machine) {
+		_meta_state_machine = meta_state_machine;
+	}
+	bool get_unsafe_decision() {
+		return _meta_state_machine->get_unsafe_decision();
+	}
+
 private:
-    SchemaManager() {}
-    int pre_process_for_merge_region(const pb::MetaManagerRequest* request,
-                                    pb::MetaManagerResponse* response,
-                                    uint64_t log_id);
-    int pre_process_for_split_region(const pb::MetaManagerRequest* request, 
-                                    pb::MetaManagerResponse* response,
-                                    uint64_t log_id);
+	SchemaManager() {
+	}
+	int pre_process_for_merge_region(const pb::MetaManagerRequest* request, pb::MetaManagerResponse* response,
+	                                 uint64_t log_id);
+	int pre_process_for_split_region(const pb::MetaManagerRequest* request, pb::MetaManagerResponse* response,
+	                                 uint64_t log_id);
 
-    MetaStateMachine* _meta_state_machine;
-}; //class
+	MetaStateMachine* _meta_state_machine;
+}; // class
 
-}//namespace
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

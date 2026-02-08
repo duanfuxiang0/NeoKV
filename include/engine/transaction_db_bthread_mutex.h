@@ -13,8 +13,8 @@ namespace neokv {
 // Stub class - not actually used but keeps compilation compatible
 class TransactionDBBthreadFactory {
 public:
-    // This stub is here only for compilation compatibility
-    // The actual mutex factory is set to nullptr in rocks_wrapper.cpp
+	// This stub is here only for compilation compatibility
+	// The actual mutex factory is set to nullptr in rocks_wrapper.cpp
 };
 
 } // namespace neokv

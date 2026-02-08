@@ -15,28 +15,10 @@
 #include "can_add_peer_setter.h"
 #include "store.h"
 
-namespace neokv { 
+namespace neokv {
 void CanAddPeerSetter::set_can_add_peer(int64_t region_id) {
-    Store::get_instance()->set_can_add_peer_for_region(region_id);
+	Store::get_instance()->set_can_add_peer_for_region(region_id);
 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

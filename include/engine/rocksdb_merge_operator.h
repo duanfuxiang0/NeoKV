@@ -12,20 +12,19 @@ namespace neokv {
 
 class MyMergeOperator : public rocksdb::MergeOperator {
 public:
-    const char* Name() const override {
-        return "MyMergeOperator";
-    }
-    
-    bool FullMergeV2(const MergeOperationInput& merge_in,
-                     MergeOperationOutput* merge_out) const override {
-        // Just return the last value
-        if (!merge_in.operand_list.empty()) {
-            merge_out->new_value = merge_in.operand_list.back().ToString();
-        } else if (merge_in.existing_value) {
-            merge_out->new_value = merge_in.existing_value->ToString();
-        }
-        return true;
-    }
+	const char* Name() const override {
+		return "MyMergeOperator";
+	}
+
+	bool FullMergeV2(const MergeOperationInput& merge_in, MergeOperationOutput* merge_out) const override {
+		// Just return the last value
+		if (!merge_in.operand_list.empty()) {
+			merge_out->new_value = merge_in.operand_list.back().ToString();
+		} else if (merge_in.existing_value) {
+			merge_out->new_value = merge_in.existing_value->ToString();
+		}
+		return true;
+	}
 };
 
 // OLAPMergeOperator - for compatibility, just an alias

@@ -25,34 +25,34 @@ DECLARE_int32(upload_sst_streaming_concurrency);
 DECLARE_int32(global_select_concurrency);
 DECLARE_int32(remote_compaction_server_concurrency);
 struct Concurrency {
-    static Concurrency* get_instance() {
-        static Concurrency _instance;
-        return &_instance;
-    }
-    //全局做snapshot_load的并发控制
-    BthreadCond snapshot_load_concurrency;
-    BthreadCond recieve_add_peer_concurrency;
-    BthreadCond add_peer_concurrency;
-    BthreadCond raft_write_concurrency;
-    BthreadCond service_write_concurrency;
-    BthreadCond new_sign_read_concurrency; // 新sql读并发控制
-    BthreadCond neo_heartbeat_concurrency;
-    BthreadCond neo_other_heartbeat_concurrency;
-    BthreadCond upload_sst_streaming_concurrency;
-    BthreadCond global_select_concurrency; // 全局读并发控制
-    BthreadCond remote_compaction_server_concurrency;
+	static Concurrency* get_instance() {
+		static Concurrency _instance;
+		return &_instance;
+	}
+	// 全局做snapshot_load的并发控制
+	BthreadCond snapshot_load_concurrency;
+	BthreadCond recieve_add_peer_concurrency;
+	BthreadCond add_peer_concurrency;
+	BthreadCond raft_write_concurrency;
+	BthreadCond service_write_concurrency;
+	BthreadCond new_sign_read_concurrency; // 新sql读并发控制
+	BthreadCond neo_heartbeat_concurrency;
+	BthreadCond neo_other_heartbeat_concurrency;
+	BthreadCond upload_sst_streaming_concurrency;
+	BthreadCond global_select_concurrency; // 全局读并发控制
+	BthreadCond remote_compaction_server_concurrency;
+
 private:
-    Concurrency(): snapshot_load_concurrency(-FLAGS_snapshot_load_num), 
-                   recieve_add_peer_concurrency(-FLAGS_snapshot_load_num), 
-                   add_peer_concurrency(-FLAGS_snapshot_load_num), 
-                   raft_write_concurrency(-FLAGS_raft_write_concurrency), 
-                   service_write_concurrency(-FLAGS_service_write_concurrency),
-                   new_sign_read_concurrency(-FLAGS_new_sign_read_concurrency),
-                   neo_heartbeat_concurrency(-FLAGS_neo_heartbeat_concurrency),
-                   neo_other_heartbeat_concurrency(-FLAGS_neo_heartbeat_concurrency),
-                   upload_sst_streaming_concurrency(-FLAGS_upload_sst_streaming_concurrency),
-                   global_select_concurrency(-FLAGS_global_select_concurrency),
-                   remote_compaction_server_concurrency(-FLAGS_remote_compaction_server_concurrency) {
-                   }
+	Concurrency()
+	    : snapshot_load_concurrency(-FLAGS_snapshot_load_num), recieve_add_peer_concurrency(-FLAGS_snapshot_load_num),
+	      add_peer_concurrency(-FLAGS_snapshot_load_num), raft_write_concurrency(-FLAGS_raft_write_concurrency),
+	      service_write_concurrency(-FLAGS_service_write_concurrency),
+	      new_sign_read_concurrency(-FLAGS_new_sign_read_concurrency),
+	      neo_heartbeat_concurrency(-FLAGS_neo_heartbeat_concurrency),
+	      neo_other_heartbeat_concurrency(-FLAGS_neo_heartbeat_concurrency),
+	      upload_sst_streaming_concurrency(-FLAGS_upload_sst_streaming_concurrency),
+	      global_select_concurrency(-FLAGS_global_select_concurrency),
+	      remote_compaction_server_concurrency(-FLAGS_remote_compaction_server_concurrency) {
+	}
 };
-}
+} // namespace neokv

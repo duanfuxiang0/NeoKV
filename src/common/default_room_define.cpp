@@ -15,8 +15,8 @@
 
 #include <gflags/gflags.h>
 
-namespace neokv{
+namespace neokv {
 DEFINE_string(default_logical_room, "default", "default_logical_room");
-DEFINE_string(default_physical_room, "default", "default_physical_room"); 
-}
+DEFINE_string(default_physical_room, "default", "default_physical_room");
+} // namespace neokv
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

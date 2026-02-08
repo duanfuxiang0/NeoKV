@@ -12,19 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 project(NEOKV C CXX)
 
 option(DEBUG "Print debug logs" OFF)
 option(WITH_SYSTEM_LIBS "use system installed headers and libraries instead of auto dependency" OFF)
 option(WITH_DEBUG_SYMBOLS "With debug symbols" OFF)
-option(WITH_TESTS "With tests" OFF)
+option(WITH_TESTS "With tests" ON)
 option(WITH_GPERF "Link tcmalloc and profiler" ON)
+option(NEOKV_VERBOSE_CONFIG "Print verbose configure-time diagnostics" OFF)
 
-message(STATUS "CXX compiler: ${CMAKE_CXX_COMPILER}, version: "
-        "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "C compiler: ${CMAKE_C_COMPILER}, version: "
-        "${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}")
+if (POLICY CMP0135)
+    cmake_policy(SET CMP0135 NEW)
+endif ()
+
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "CXX compiler: ${CMAKE_CXX_COMPILER}, version: "
+            "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+    message(STATUS "C compiler: ${CMAKE_C_COMPILER}, version: "
+            "${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}")
+endif ()
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -57,7 +64,9 @@ SET(EXTERNAL_PROJECT_LOG_ARGS
 include(ProcessorCount)
 #ProcessorCount(NUM_OF_PROCESSOR)
 SET(NUM_OF_PROCESSOR 4)
-message(NUM_OF_PROCESSOR: ${NUM_OF_PROCESSOR})
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "NUM_OF_PROCESSOR:${NUM_OF_PROCESSOR}")
+endif ()
 
 #thread
 include(FindThreads)
@@ -65,8 +74,10 @@ include(FindThreads)
 #openssl
 find_package(OpenSSL REQUIRED)
 
-message(STATUS "ssl:" ${OPENSSL_SSL_LIBRARY})
-message(STATUS "crypto:" ${OPENSSL_CRYPTO_LIBRARY})
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "ssl:" ${OPENSSL_SSL_LIBRARY})
+    message(STATUS "crypto:" ${OPENSSL_CRYPTO_LIBRARY})
+endif ()
 
 ADD_LIBRARY(ssl SHARED IMPORTED GLOBAL)
 SET_PROPERTY(TARGET ssl PROPERTY IMPORTED_LOCATION ${OPENSSL_SSL_LIBRARY})
@@ -96,7 +107,13 @@ else ()
     include(boost)
     include_directories(SYSTEM ${BOOST_INSTALL_DIR}/include)
 endif ()
-message(boost: ${Boost_VERSION}, ${Boost_LIB_VERSION}, DIRS: ${Boost_INCLUDE_DIRS}, LIBS: ${Boost_LIBRARIES})
+if (NEOKV_VERBOSE_CONFIG)
+    message(
+            STATUS
+            "Boost: ${Boost_VERSION}, ${Boost_LIB_VERSION}, DIRS: ${Boost_INCLUDE_DIRS}, "
+            "LIBS: ${Boost_LIBRARIES}"
+    )
+endif ()
 
 #rapidjson
 if (WITH_SYSTEM_LIBS)
@@ -231,7 +248,9 @@ else ()
     include(leveldb)
     include(brpc)
 endif ()
-message(BRPC:${BRPC_INCLUDE_DIR}, ${BRPC_LIBRARIES})
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "BRPC:${BRPC_INCLUDE_DIR}, ${BRPC_LIBRARIES}")
+endif ()
 
 #braft
 if (WITH_SYSTEM_LIBS)
@@ -243,7 +262,9 @@ if (WITH_SYSTEM_LIBS)
 else ()
     include(braft)
 endif ()
-message(braft lib : ${BRAFT_LIBRARIES})
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "braft lib : ${BRAFT_LIBRARIES}")
+endif ()
 
 # mariadb/mysql client - removed for neo-redis (SQL features removed)
 
@@ -262,13 +283,23 @@ endif ()
 
 # apache arrow - removed for neo-redis (OLAP features removed)
 
-message(CUR_DIR : ${CMAKE_CURRENT_BINARY_DIR}, SRC_DIR : ${CMAKE_SOURCE_DIR})
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "CUR_DIR : ${CMAKE_CURRENT_BINARY_DIR}, SRC_DIR : ${CMAKE_SOURCE_DIR}")
+endif ()
 
 file(GLOB PROTO_FILES ${CMAKE_SOURCE_DIR}/proto/*.proto)
-message("protoc: ${PROTOBUF_PROTOC_EXECUTABLE}, proto inc: ${PROTOBUF_INCLUDE_DIRS}, lib: ${PROTOBUF_LIBRARIES}, ${PROTOBUF_PROTOC_LIBRARY}, protos: ${PROTO_FILES}")
+if (NEOKV_VERBOSE_CONFIG)
+    message(
+            STATUS
+            "protoc: ${PROTOBUF_PROTOC_EXECUTABLE}, proto inc: ${PROTOBUF_INCLUDE_DIRS}, "
+            "lib: ${PROTOBUF_LIBRARIES}, ${PROTOBUF_PROTOC_LIBRARY}, protos: ${PROTO_FILES}"
+    )
+endif ()
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/proto)
 foreach (PROTO ${PROTO_FILES})
-    message(proto : ${PROTO})
+    if (NEOKV_VERBOSE_CONFIG)
+        message(STATUS "proto : ${PROTO}")
+    endif ()
     get_filename_component(PROTO_WE ${PROTO} NAME)
     string(REPLACE ".proto" "" PROTO_WE ${PROTO_WE})
     list(APPEND PROTO_HDRS "${CMAKE_CURRENT_BINARY_DIR}/proto/${PROTO_WE}.pb.h")
@@ -283,7 +314,9 @@ foreach (PROTO ${PROTO_FILES})
     )
 endforeach ()
 add_library(PROTO_OBJS OBJECT ${PROTO_SRCS} ${PROTO_HDRS})
-message("protoc: ${PROTOBUF_PROTOC_EXECUTABLE}, proto srcs : ${PROTO_SRCS}")
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "protoc: ${PROTOBUF_PROTOC_EXECUTABLE}, proto srcs : ${PROTO_SRCS}")
+endif ()
 
 # sql parser - removed for neo-redis (SQL features removed)
 
@@ -355,8 +388,10 @@ SET(DEP_LIB
         unwind
         )
 
-message("DEP INCLUDES: ${DEP_INC}")
-message("DEP LIBRARYS: ${DEP_LIB}")
+if (NEOKV_VERBOSE_CONFIG)
+    message(STATUS "DEP INCLUDES: ${DEP_INC}")
+    message(STATUS "DEP LIBRARYS: ${DEP_LIB}")
+endif ()
 
 if (WITH_DEBUG_SYMBOLS)
     SET(DEBUG_SYMBOL "-ggdb")

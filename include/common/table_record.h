@@ -12,14 +12,14 @@ namespace neokv {
 // Stub TableRecord - SQL record structure not used in neo-redis
 class TableRecord {
 public:
-    TableRecord() = default;
-    ~TableRecord() = default;
+	TableRecord() = default;
+	~TableRecord() = default;
 };
 
 typedef std::shared_ptr<TableRecord> SmartRecord;
 
 inline SmartRecord create_record() {
-    return std::make_shared<TableRecord>();
+	return std::make_shared<TableRecord>();
 }
 
 } // namespace neokv

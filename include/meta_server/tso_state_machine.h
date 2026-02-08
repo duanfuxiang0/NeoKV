@@ -28,71 +28,71 @@ namespace neokv {
 class TSOStateMachine;
 class TsoTimer : public braft::RepeatedTimerTask {
 public:
-    TsoTimer() : _node(NULL) {}
-    virtual ~TsoTimer() {}
-    int init(TSOStateMachine* node, int timeout_ms);
-    virtual void run();
+	TsoTimer() : _node(NULL) {
+	}
+	virtual ~TsoTimer() {
+	}
+	int init(TSOStateMachine* node, int timeout_ms);
+	virtual void run();
+
 protected:
-    virtual void on_destroy() {}
-    TSOStateMachine* _node;
+	virtual void on_destroy() {
+	}
+	TSOStateMachine* _node;
 };
 
 struct TsoObj {
-    pb::TsoTimestamp current_timestamp;
-    int64_t last_save_physical;
+	pb::TsoTimestamp current_timestamp;
+	int64_t last_save_physical;
 };
 
 class TSOStateMachine : public neokv::CommonStateMachine {
 public:
-    TSOStateMachine(const braft::PeerId& peerId):
-                CommonStateMachine(2, "tso_raft", "/tso", peerId) {
-        bthread_mutex_init(&_tso_mutex, nullptr);
-    }
-    
-    virtual ~TSOStateMachine() {
-        _tso_update_timer.stop();
-        _tso_update_timer.destroy();
-        bthread_mutex_destroy(&_tso_mutex);
-    }
+	TSOStateMachine(const braft::PeerId& peerId) : CommonStateMachine(2, "tso_raft", "/tso", peerId) {
+		bthread_mutex_init(&_tso_mutex, nullptr);
+	}
 
-    virtual int init(const std::vector<braft::PeerId>& peers);
+	virtual ~TSOStateMachine() {
+		_tso_update_timer.stop();
+		_tso_update_timer.destroy();
+		bthread_mutex_destroy(&_tso_mutex);
+	}
 
-    // state machine method
-    virtual void on_apply(braft::Iterator& iter);
-    void process(google::protobuf::RpcController* controller,
-                               const pb::TsoRequest* request,
-                               pb::TsoResponse* response,
-                               google::protobuf::Closure* done);
-    
-    void gen_tso(const pb::TsoRequest* request, pb::TsoResponse* response);
-    void reset_tso(const pb::TsoRequest& request, braft::Closure* done);
-    void update_tso(const pb::TsoRequest& request, braft::Closure* done);
+	virtual int init(const std::vector<braft::PeerId>& peers);
 
-    int load_tso(const std::string& tso_file);
-    int sync_timestamp(const pb::TsoTimestamp& current_timestamp, int64_t save_physical);
-    void update_timestamp();
+	// state machine method
+	virtual void on_apply(braft::Iterator& iter);
+	void process(google::protobuf::RpcController* controller, const pb::TsoRequest* request, pb::TsoResponse* response,
+	             google::protobuf::Closure* done);
 
-    virtual void on_snapshot_save(braft::SnapshotWriter* writer, braft::Closure* done);
-    void save_snapshot(braft::Closure* done,
-                       braft::SnapshotWriter* writer,
-                       std::string sto_str);
+	void gen_tso(const pb::TsoRequest* request, pb::TsoResponse* response);
+	void reset_tso(const pb::TsoRequest& request, braft::Closure* done);
+	void update_tso(const pb::TsoRequest& request, braft::Closure* done);
 
-    virtual int on_snapshot_load(braft::SnapshotReader* reader);
+	int load_tso(const std::string& tso_file);
+	int sync_timestamp(const pb::TsoTimestamp& current_timestamp, int64_t save_physical);
+	void update_timestamp();
 
-    virtual void on_leader_start();
+	virtual void on_snapshot_save(braft::SnapshotWriter* writer, braft::Closure* done);
+	void save_snapshot(braft::Closure* done, braft::SnapshotWriter* writer, std::string sto_str);
 
-    virtual void on_leader_stop();
+	virtual int on_snapshot_load(braft::SnapshotReader* reader);
 
-    static const  std::string SNAPSHOT_TSO_FILE;;
-    static const  std::string SNAPSHOT_TSO_FILE_WITH_SLASH;
+	virtual void on_leader_start();
+
+	virtual void on_leader_stop();
+
+	static const std::string SNAPSHOT_TSO_FILE;
+	;
+	static const std::string SNAPSHOT_TSO_FILE_WITH_SLASH;
 
 private:
-    TsoTimer  _tso_update_timer;
-    TsoObj    _tso_obj;
-    bthread_mutex_t _tso_mutex;  // 保护_tso_obj，C++20 atomic<std::shared_ptr<U>>
-    bool    _is_healty = true;
+	TsoTimer _tso_update_timer;
+	TsoObj _tso_obj;
+	bthread_mutex_t _tso_mutex; // 保护_tso_obj，C++20 atomic<std::shared_ptr<U>>
+	bool _is_healty = true;
 };
 
-} //namespace neokv
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

@@ -16,10 +16,10 @@
 #include "store.h"
 
 namespace neokv {
-void UpdateRegionStatus::reset_region_status(int64_t region_id) { 
-    DB_WARNING("region status was reset, reigon_id: %ld", region_id);
-    Store::get_instance()->reset_region_status(region_id);
+void UpdateRegionStatus::reset_region_status(int64_t region_id) {
+	DB_WARNING("region status was reset, reigon_id: %ld", region_id);
+	Store::get_instance()->reset_region_status(region_id);
 }
-}
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

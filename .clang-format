@@ -1,0 +1,37 @@
+BasedOnStyle: LLVM
+Language: Cpp
+
+SortIncludes: false
+IncludeBlocks: Regroup
+
+TabWidth: 4
+IndentWidth: 4
+UseTab: ForIndentation
+ColumnLimit: 120
+
+AllowShortFunctionsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Inline
+AllowShortLoopsOnASingleLine: false
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+AlignConsecutiveMacros: true
+AlignTrailingComments: true
+AlignAfterOpenBracket: Align
+
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+
+AlwaysBreakTemplateDeclarations: Yes
+AccessModifierOffset: -4
+KeepEmptyLinesAtTheStartOfBlocks: false

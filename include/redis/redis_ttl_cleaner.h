@@ -25,46 +25,52 @@ namespace neokv {
 // Periodically scans and deletes keys that have exceeded their TTL
 class RedisTTLCleaner {
 public:
-    static RedisTTLCleaner* get_instance() {
-        static RedisTTLCleaner instance;
-        return &instance;
-    }
+	static RedisTTLCleaner* get_instance() {
+		static RedisTTLCleaner instance;
+		return &instance;
+	}
 
-    // Initialize and start the cleaner thread
-    // interval_seconds: how often to run cleanup (0 = disabled)
-    int init(int interval_seconds = 60);
+	// Initialize and start the cleaner thread
+	// interval_seconds: how often to run cleanup (0 = disabled)
+	int init(int interval_seconds = 60);
 
-    // Stop the cleaner thread
-    void shutdown();
+	// Stop the cleaner thread
+	void shutdown();
 
-    // Manually trigger a cleanup cycle (for testing)
-    void trigger_cleanup();
+	// Manually trigger a cleanup cycle (for testing)
+	void trigger_cleanup();
 
-    // Get statistics
-    int64_t get_total_cleaned() const { return _total_cleaned.load(); }
-    int64_t get_last_cleanup_count() const { return _last_cleanup_count.load(); }
-    int64_t get_last_cleanup_time_ms() const { return _last_cleanup_time_ms.load(); }
+	// Get statistics
+	int64_t get_total_cleaned() const {
+		return _total_cleaned.load();
+	}
+	int64_t get_last_cleanup_count() const {
+		return _last_cleanup_count.load();
+	}
+	int64_t get_last_cleanup_time_ms() const {
+		return _last_cleanup_time_ms.load();
+	}
 
 private:
-    RedisTTLCleaner() = default;
-    ~RedisTTLCleaner();
-    RedisTTLCleaner(const RedisTTLCleaner&) = delete;
-    RedisTTLCleaner& operator=(const RedisTTLCleaner&) = delete;
+	RedisTTLCleaner() = default;
+	~RedisTTLCleaner();
+	RedisTTLCleaner(const RedisTTLCleaner&) = delete;
+	RedisTTLCleaner& operator=(const RedisTTLCleaner&) = delete;
 
-    void cleanup_thread_func();
-    int64_t do_cleanup();
+	void cleanup_thread_func();
+	int64_t do_cleanup();
 
-    std::atomic<bool> _running{false};
-    std::atomic<bool> _shutdown_requested{false};
-    int _interval_seconds{60};
-    
-    std::thread _cleanup_thread;
-    std::mutex _mutex;
-    std::condition_variable _cv;
+	std::atomic<bool> _running {false};
+	std::atomic<bool> _shutdown_requested {false};
+	int _interval_seconds {60};
 
-    std::atomic<int64_t> _total_cleaned{0};
-    std::atomic<int64_t> _last_cleanup_count{0};
-    std::atomic<int64_t> _last_cleanup_time_ms{0};
+	std::thread _cleanup_thread;
+	std::mutex _mutex;
+	std::condition_variable _cv;
+
+	std::atomic<int64_t> _total_cleaned {0};
+	std::atomic<int64_t> _last_cleanup_count {0};
+	std::atomic<int64_t> _last_cleanup_time_ms {0};
 };
 
 } // namespace neokv

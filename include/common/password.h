@@ -19,4 +19,4 @@
 namespace neokv {
 void scramble(uint8_t* to, const char* message, const char* password);
 
-} //namespace neokv
+} // namespace neokv

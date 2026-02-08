@@ -18,16 +18,19 @@
 namespace neokv {
 class SplitIndexGetter {
 public:
-    virtual ~SplitIndexGetter() {}
+	virtual ~SplitIndexGetter() {
+	}
 
-    static SplitIndexGetter* get_instance() {
-        static SplitIndexGetter _instance;
-        return &_instance;
-    }
-    int64_t get_split_index(int64_t region_id); 
+	static SplitIndexGetter* get_instance() {
+		static SplitIndexGetter _instance;
+		return &_instance;
+	}
+	int64_t get_split_index(int64_t region_id);
+
 private:
-    SplitIndexGetter() {}
+	SplitIndexGetter() {
+	}
 };
-}
+} // namespace neokv
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

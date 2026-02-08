@@ -15,12 +15,12 @@
 #pragma once
 
 #ifdef BAIDU_INTERNAL
-#include <raft/raft.h>                    
+#include <raft/raft.h>
 #include <baidu/rpc/channel.h>
 #include <baidu/rpc/server.h>
 #include <baidu/rpc/controller.h>
 #else
-#include <braft/raft.h>                    
+#include <braft/raft.h>
 #include <brpc/channel.h>
 #include <brpc/server.h>
 #include <brpc/controller.h>
@@ -29,11 +29,8 @@
 #include "common.h"
 
 namespace neokv {
-extern void common_raft_control(google::protobuf::RpcController* controller,
-                         const pb::RaftControlRequest* request,
-                         pb::RaftControlResponse* response,
-                         google::protobuf::Closure* done,
-                         braft::Node* node);
+extern void common_raft_control(google::protobuf::RpcController* controller, const pb::RaftControlRequest* request,
+                                pb::RaftControlResponse* response, google::protobuf::Closure* done, braft::Node* node);
 }
 
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */

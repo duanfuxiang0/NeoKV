@@ -18,15 +18,18 @@
 namespace neokv {
 class UpdateRegionStatus {
 public:
-    virtual ~UpdateRegionStatus() {}
+	virtual ~UpdateRegionStatus() {
+	}
 
-    static UpdateRegionStatus* get_instance() {
-        static UpdateRegionStatus _instance;
-        return &_instance;
-    }
-    void reset_region_status(int64_t region_id); 
+	static UpdateRegionStatus* get_instance() {
+		static UpdateRegionStatus _instance;
+		return &_instance;
+	}
+	void reset_region_status(int64_t region_id);
+
 private:
-    UpdateRegionStatus() {}
+	UpdateRegionStatus() {
+	}
 };
-}
+} // namespace neokv
 /* vim: set expandtab ts=4 sw=4 sts=4 tw=100: */
