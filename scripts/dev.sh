@@ -2,7 +2,7 @@
 #
 # NeoKV Development Script
 # Usage:
-#   ./scripts/dev.sh build [target]     - Build (all, baikalMeta, baikalStore, neokv, test_xxx)
+#   ./scripts/dev.sh build [target]     - Build (all, neoMeta, neoStore, neokv, test_xxx)
 #   ./scripts/dev.sh start [service]    - Start service (all, meta, store/kv)
 #   ./scripts/dev.sh stop [service]     - Stop service (all, meta, store/kv)
 #   ./scripts/dev.sh restart [service]  - Restart service (all, meta, store/kv)
@@ -63,13 +63,13 @@ do_build() {
         all)
             cmake . && make -j$(nproc)
             ;;
-        meta|baikalMeta)
-            cmake . && make -j$(nproc) baikalMeta
+        meta)
+            cmake . && make -j$(nproc) neoMeta
             ;;
-        store|kv|baikalStore)
-            cmake . && make -j$(nproc) baikalStore
+        store)
+            cmake . && make -j$(nproc) neoStore
             ;;
-        db|neokv)
+        neokv)
             cmake . && make -j$(nproc) neokv
             ;;
         test_*)
@@ -94,10 +94,10 @@ get_pid() {
     local service="$1"
     case "$service" in
         meta)
-            pgrep -f "bin/baikalMeta" 2>/dev/null | head -1 || true
+            pgrep -f "bin/neoMeta" 2>/dev/null | head -1 || true
             ;;
         store|kv)
-            pgrep -f "bin/baikalStore" 2>/dev/null | head -1 || true
+            pgrep -f "bin/neoStore" 2>/dev/null | head -1 || true
             ;;
     esac
 }
@@ -167,49 +167,49 @@ do_start() {
             ;;
         meta)
             if is_running meta; then
-                log_warn "baikalMeta is already running (PID: $(get_pid meta))"
+                log_warn "neoMeta is already running (PID: $(get_pid meta))"
                 return 0
             fi
             
-            log_step "Starting baikalMeta..."
-            ./output/bin/baikalMeta \
-                --flagfile=conf/baikalMeta/gflags.conf \
+            log_step "Starting neoMeta..."
+            ./output/bin/neoMeta \
+                --flagfile=conf/neoMeta/gflags.conf \
                 --db_path="$META_DATA_DIR/rocks_db" \
                 --snapshot_uri="local://$META_DATA_DIR/raft_data/snapshot" \
                 >/dev/null 2>&1 &
             
             if wait_for_port $META_PORT 10; then
-                log_info "baikalMeta started (PID: $(get_pid meta))"
+                log_info "neoMeta started (PID: $(get_pid meta))"
                 wait_for_raft_leader 20 || true
             else
-                log_error "Failed to start baikalMeta"
+                log_error "Failed to start neoMeta"
                 return 1
             fi
             ;;
         store|kv|redis)
             if is_running store; then
-                log_warn "baikalStore is already running (PID: $(get_pid store))"
+                log_warn "neoStore is already running (PID: $(get_pid store))"
                 return 0
             fi
             
             # Ensure meta is running first
             if ! is_running meta; then
-                log_warn "baikalMeta is not running, starting it first..."
+                log_warn "neoMeta is not running, starting it first..."
                 do_start meta
             fi
             
-            log_step "Starting baikalStore (with Redis/KV on port $REDIS_PORT)..."
-            ./output/bin/baikalStore \
-                --flagfile=conf/baikalStore/gflags.conf \
+            log_step "Starting neoStore (with Redis/KV on port $REDIS_PORT)..."
+            ./output/bin/neoStore \
+                --flagfile=conf/neoStore/gflags.conf \
                 --db_path="$STORE_DATA_DIR/rocks_db" \
                 --snapshot_uri="local://$STORE_DATA_DIR/raft_data/snapshot" \
                 --redis_port=$REDIS_PORT \
                 >/dev/null 2>&1 &
             
             if wait_for_port $REDIS_PORT 15; then
-                log_info "baikalStore started (PID: $(get_pid store)), Redis/KV on port $REDIS_PORT"
+                log_info "neoStore started (PID: $(get_pid store)), Redis/KV on port $REDIS_PORT"
             else
-                log_error "Failed to start baikalStore"
+                log_error "Failed to start neoStore"
                 return 1
             fi
             ;;
@@ -231,31 +231,31 @@ do_stop() {
         meta)
             local pid=$(get_pid meta)
             if [ -n "$pid" ]; then
-                log_step "Stopping baikalMeta (PID: $pid)..."
+                log_step "Stopping neoMeta (PID: $pid)..."
                 kill $pid 2>/dev/null || true
                 sleep 2
                 # Force kill if still running
                 if is_running meta; then
                     kill -9 $(get_pid meta) 2>/dev/null || true
                 fi
-                log_info "baikalMeta stopped"
+                log_info "neoMeta stopped"
             else
-                log_info "baikalMeta is not running"
+                log_info "neoMeta is not running"
             fi
             ;;
         store|kv|redis)
             local pid=$(get_pid store)
             if [ -n "$pid" ]; then
-                log_step "Stopping baikalStore (PID: $pid)..."
+                log_step "Stopping neoStore (PID: $pid)..."
                 kill $pid 2>/dev/null || true
                 sleep 2
                 # Force kill if still running
                 if is_running store; then
                     kill -9 $(get_pid store) 2>/dev/null || true
                 fi
-                log_info "baikalStore stopped"
+                log_info "neoStore stopped"
             else
-                log_info "baikalStore is not running"
+                log_info "neoStore is not running"
             fi
             ;;
         *)
@@ -281,12 +281,12 @@ do_status() {
     # Meta status
     local meta_pid=$(get_pid meta)
     if [ -n "$meta_pid" ]; then
-        echo -e "baikalMeta:  ${GREEN}RUNNING${NC} (PID: $meta_pid)"
+        echo -e "neoMeta:  ${GREEN}RUNNING${NC} (PID: $meta_pid)"
         local state=$(curl -s "http://${META_SERVER_IP}:${META_PORT}/raft_stat/meta_raft" 2>/dev/null | grep "^state:" | awk '{print $2}')
         echo "             Raft state: $state"
         echo "             Port: $META_PORT"
     else
-        echo -e "baikalMeta:  ${RED}STOPPED${NC}"
+        echo -e "neoMeta:  ${RED}STOPPED${NC}"
     fi
     
     echo ""
@@ -294,7 +294,7 @@ do_status() {
     # Store status
     local store_pid=$(get_pid store)
     if [ -n "$store_pid" ]; then
-        echo -e "baikalStore: ${GREEN}RUNNING${NC} (PID: $store_pid)"
+        echo -e "neoStore: ${GREEN}RUNNING${NC} (PID: $store_pid)"
         echo "             Store port: $STORE_PORT"
         echo "             Redis port: $REDIS_PORT"
         
@@ -305,7 +305,7 @@ do_status() {
             echo -e "             Redis:      ${RED}NOT RESPONDING${NC}"
         fi
     else
-        echo -e "baikalStore: ${RED}STOPPED${NC}"
+        echo -e "neoStore: ${RED}STOPPED${NC}"
     fi
     
     echo ""
@@ -512,12 +512,12 @@ show_help() {
     echo "                     Services: meta, store/kv"
     echo ""
     echo "Examples:"
-    echo "  $0 build store          # Build only baikalStore"
+    echo "  $0 build store          # Build only neoStore"
     echo "  $0 build test_redis_slot # Build specific test"
     echo "  $0 start meta           # Start meta service"
     echo "  $0 start store          # Start store/kv service"
     echo "  $0 start kv             # Start store/kv service (alias)"
-    echo "  $0 restart store        # Restart baikalStore"
+    echo "  $0 restart store        # Restart neoStore"
     echo "  $0 test redis           # Test Redis commands"
     echo "  $0 status               # Show all service status"
     echo ""

@@ -900,7 +900,7 @@ std::string store_or_db_bns_to_meta_bns(const std::string& bns) {
     bns_group = "group" + bns_group.substr(pos1, pos2 - pos1 + 1) + "all";
     bns_group2 = bns_group2.substr(pos1 + 1);
     bool is_store_bns = false;
-    if (bns_group.find("baikalStore") != bns_group.npos || bns_group.find("baikalBinlog") != bns_group.npos) {
+    if (bns_group.find("neoStore") != bns_group.npos || bns_group.find("baikalBinlog") != bns_group.npos) {
         is_store_bns = true;
     }
 
@@ -945,7 +945,7 @@ std::string store_or_db_bns_to_meta_bns(const std::string& bns) {
         option.set_case_sensitive(false);
         option.set_perl_classes(true);
 
-        re2::RE2 reg(".*(group.*baikalMeta.*all).*", option);
+        re2::RE2 reg(".*(group.*neoMeta.*all).*", option);
         meta_bns.clear();
         if (!RE2::Extract(response, reg, "\\1", &meta_bns)) {
             DB_WARNING("extract commit error. response: %s", response.c_str());

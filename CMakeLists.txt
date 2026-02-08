@@ -15,7 +15,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(NEOKV C CXX)
 
-option(WITH_NEO_CLIENT "build neo-client" OFF)
 option(DEBUG "Print debug logs" OFF)
 option(WITH_SYSTEM_LIBS "use system installed headers and libraries instead of auto dependency" OFF)
 option(WITH_DEBUG_SYMBOLS "With debug symbols" OFF)
@@ -450,10 +449,6 @@ add_executable(neoStore src/store/main.cpp ${RAFT_STORE})
 add_dependencies(neoStore common)
 target_include_directories(neoStore PUBLIC ${NEOSTORE_INC})
 target_link_libraries(neoStore PUBLIC common ${DEP_LIB})
-
-# neokv - removed for neo-redis (SQL proxy removed)
-
-# neo-client disabled for neo-redis
 
 # Tests
 if (WITH_TESTS)

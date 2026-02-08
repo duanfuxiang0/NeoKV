@@ -257,7 +257,7 @@ test_persistence() {
         $REDIS_CLI SET "persist_test_$i" "data_$i" >/dev/null
     done
     
-    log_info "Restarting baikalStore to test persistence..."
+    log_info "Restarting neoStore to test persistence..."
     
     # Restart store
     "$SCRIPT_DIR/dev.sh" restart store >/dev/null 2>&1

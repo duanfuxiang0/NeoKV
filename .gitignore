@@ -43,11 +43,6 @@ cmake-build-debug
 cmake-build-release
 .DS_Store
 
-# eclipse
-.cproject
-.project
-.settings/language.settings.xml
-
 # bazel
 bazel-NEOKV
 bazel-bin
@@ -78,7 +73,6 @@ Testing
 
 # CMake in-source Makefiles (avoid ignoring real Makefiles like sysbench/)
 /Makefile
-/baikal-client/Makefile
 
 # Cursor IDE / local workspace
 /.cursor
