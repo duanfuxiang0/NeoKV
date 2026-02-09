@@ -14,11 +14,14 @@
 
 #pragma once
 
+#include <array>
+#include <atomic>
 #include <cstdint>
+#include <functional>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <memory>
-#include <functional>
 #ifdef BAIDU_INTERNAL
 #include <butil/strings/string_piece.h>
 #else
@@ -29,6 +32,9 @@ namespace neokv {
 
 class Region;
 using SmartRegion = std::shared_ptr<Region>;
+
+// Redis Cluster slot count
+static constexpr uint16_t SLOT_TABLE_SIZE = 16384;
 
 // Key extraction pattern for Redis commands
 struct RedisKeyPattern {
@@ -57,6 +63,17 @@ struct RedisRouteResult {
 	std::string error_msg;
 };
 
+// Snapshot of the slot→Region routing table.
+// Immutable once built; replaced atomically via shared_ptr swap.
+struct SlotTable {
+	struct Entry {
+		SmartRegion region;
+		int64_t region_id = 0;
+	};
+	std::array<Entry, SLOT_TABLE_SIZE> slots {};
+};
+using SlotTablePtr = std::shared_ptr<const SlotTable>;
+
 // Redis router for slot calculation and region routing
 class RedisRouter {
 public:
@@ -81,34 +98,29 @@ public:
 		return _initialized;
 	}
 
+	// Rebuild the slot→Region index table from the current Store region map.
+	// Should be called when regions change (split/merge/add/remove/leader change).
+	void rebuild_slot_table();
+
 	// Calculate slot for a key (with {tag} support)
-	// This is the same as redis_slot() but provided here for convenience
 	static uint16_t calc_slot(const std::string& key);
 
 	// Extract hash tag from key if present
-	// Returns the original key if no valid tag found
 	static std::string extract_hash_tag(const std::string& key);
 
 	// Get key extraction pattern for a command
-	// Returns nullptr if command has no keys or is unknown
 	static const RedisKeyPattern* get_key_pattern(const butil::StringPiece& cmd);
 
 	// Extract keys from command arguments
-	// args[0] is the command name
-	// Returns empty vector if no keys or invalid command
 	static std::vector<std::string> extract_keys(const std::vector<butil::StringPiece>& args);
 
 	// Check if all keys hash to the same slot
-	// Returns the slot if all keys are in the same slot, or -1 if CROSSSLOT
 	static int32_t check_same_slot(const std::vector<std::string>& keys);
 
 	// Route a command to a region
-	// args[0] is the command name
-	// Returns routing result with status and region info
 	RedisRouteResult route(const std::vector<butil::StringPiece>& args);
 
-	// Find region by slot
-	// Returns nullptr if no region serves this slot
+	// Find region by slot (O(1) lookup via slot table)
 	SmartRegion find_region_by_slot(uint16_t slot, int64_t* region_id = nullptr);
 
 	// Build MOVED error response string
@@ -126,9 +138,16 @@ private:
 	RedisRouter(const RedisRouter&) = delete;
 	RedisRouter& operator=(const RedisRouter&) = delete;
 
+	// Fallback: linear scan when slot table has no entry (e.g. during startup)
+	SmartRegion find_region_by_slot_slow(uint16_t slot, int64_t* region_id);
+
 	bool _initialized = false;
 	int64_t _redis_table_id = 0;
 	int64_t _redis_index_id = 0;
+
+	// Slot routing table — read via atomic shared_ptr, rebuilt on region changes
+	std::mutex _slot_table_mutex;
+	SlotTablePtr _slot_table;
 };
 
 } // namespace neokv

@@ -36,6 +36,7 @@
 #include "rocks_wrapper.h"
 #include "table_record.h"
 #include "meta_server_interact.hpp"
+#include "redis_router.h"
 namespace neokv {
 DECLARE_int32(snapshot_load_num);
 DECLARE_int32(raft_write_concurrency);
@@ -179,6 +180,8 @@ public:
 			return 1;
 		};
 		_region_mapping.Modify(call, region);
+		// Keep slot→Region routing table in sync with region map changes
+		RedisRouter::get_instance()->rebuild_slot_table();
 	}
 	void erase_region(int64_t region_id) {
 		auto call = [](std::unordered_map<int64_t, SmartRegion>& map, int64_t region_id) {
@@ -186,6 +189,8 @@ public:
 			return 1;
 		};
 		_region_mapping.Modify(call, region_id);
+		// Keep slot→Region routing table in sync with region map changes
+		RedisRouter::get_instance()->rebuild_slot_table();
 	}
 	void traverse_region_map(const std::function<void(const SmartRegion& region)>& call) {
 		DoubleBufRegion::ScopedPtr ptr;

@@ -1,14 +1,23 @@
 # NEOKV Development Guidelines
 
 ## Build Commands
-- Build: `mkdir build && cd build && cmake .. && make -j$(nproc)`
-- Build with tests: `cmake -DWITH_TESTS=ON . && make -j$(nproc)`
-- Build with debug: `cmake -DDEBUG=ON -DWITH_DEBUG_SYMBOLS=ON . && make -j$(nproc)`
+- Build: `mkdir -p build && cd build && cmake .. && make -j$(nproc)`
+- Build with tests: `mkdir -p build && cd build && cmake -DWITH_TESTS=ON .. && make -j$(nproc)`
+- Build with debug: `mkdir -p build && cd build && cmake -DDEBUG=ON -DWITH_DEBUG_SYMBOLS=ON .. && make -j$(nproc)`
 
 ## Test Commands
-- Run all tests: `make test` (after building with WITH_TESTS=ON)
-- Run single test: `./output/bin/test_<test_name>` (e.g., `./output/bin/test_schema_factory`)
-- Test files are located in `test/` directory with naming pattern `test_*.cpp`
+- C++ tests (after building with `-DWITH_TESTS=ON`):
+  - Run all tests: `make test`
+  - Run single test: `./output/bin/test_<test_name>` (e.g., `./output/bin/test_redis_slot`)
+- Redis integration tests (Go, under `tests/gocase/`):
+  - Run all unit suites:
+    - `cd tests/gocase && mkdir -p workspace`
+    - `go test -count=1 ./unit/... -args -binPath=/home/ubuntu/NeoKV/output/bin/neo_redis_standalone -workspace=/home/ubuntu/NeoKV/tests/gocase/workspace`
+  - Run single suite:
+    - `go test -count=1 -v ./unit/type/<suite> -args -binPath=... -workspace=...`
+  - If `go` is not in `PATH`, use toolchain binary directly:
+    - `/home/ubuntu/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.13.linux-amd64/bin/go test ...`
+- Go test files are under `tests/gocase/unit/`
 
 ## Code Style Guidelines
 

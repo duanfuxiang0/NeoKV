@@ -118,6 +118,8 @@ public:
 	static const std::string METAINFO_CF;
 	static const std::string COLD_DATA_CF;
 	static const std::string COLD_BINLOG_CF;
+	static const std::string REDIS_METADATA_CF;
+	static const std::string REDIS_ZSET_SCORE_CF;
 	static std::atomic<int64_t> raft_cf_remove_range_count;
 	static std::atomic<int64_t> data_cf_remove_range_count;
 	static std::atomic<int64_t> mata_cf_remove_range_count;
@@ -330,6 +332,10 @@ public:
 
 	rocksdb::ColumnFamilyHandle* get_meta_info_handle();
 
+	rocksdb::ColumnFamilyHandle* get_redis_metadata_handle();
+
+	rocksdb::ColumnFamilyHandle* get_redis_zset_score_handle();
+
 	rocksdb::ColumnFamilyHandle* get_cold_data_handle() {
 		return _cold_column_family;
 	}
@@ -490,6 +496,8 @@ private:
 	rocksdb::ColumnFamilyOptions _binlog_cf_option;
 	rocksdb::ColumnFamilyOptions _data_cf_option;
 	rocksdb::ColumnFamilyOptions _meta_info_option;
+	rocksdb::ColumnFamilyOptions _redis_metadata_cf_option;
+	rocksdb::ColumnFamilyOptions _redis_zset_score_cf_option;
 	rocksdb::ColumnFamilyOptions _cold_option;
 	uint64_t _flush_file_number = 0;
 	bvar::Adder<int64_t> _raft_cf_remove_range_count;

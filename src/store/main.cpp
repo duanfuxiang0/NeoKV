@@ -173,6 +173,12 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
+	// Build Redis slot→Region routing table after regions are loaded
+	if (redis_started) {
+		neokv::RedisRouter::get_instance()->rebuild_slot_table();
+		DB_WARNING("Redis slot routing table built");
+	}
+
 	// Initialize Redis TTL cleaner if Redis is enabled
 	if (redis_started && neokv::FLAGS_redis_ttl_cleanup_interval_s > 0) {
 		neokv::RedisTTLCleaner::get_instance()->init(neokv::FLAGS_redis_ttl_cleanup_interval_s);

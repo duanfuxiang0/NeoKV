@@ -26,6 +26,48 @@ enum RedisCmd {
     REDIS_EXPIRE    = 2;
     REDIS_EXPIREAT  = 3;
     REDIS_MSET      = 4;
+    REDIS_FLUSHDB   = 5;
+    REDIS_PERSIST   = 6;
+    // String numeric/manipulation commands
+    REDIS_INCR           = 7;   // INCR/DECR/INCRBY/DECRBY (increment in kv.value)
+    REDIS_INCRBYFLOAT_STR = 8;  // INCRBYFLOAT (float increment in kv.value)
+    REDIS_APPEND         = 9;   // APPEND (append value to existing string)
+    // Hash commands
+    REDIS_HSET      = 10;
+    REDIS_HDEL      = 11;
+    REDIS_HSETNX    = 12;
+    REDIS_HINCRBY   = 13;
+    REDIS_HINCRBYFLOAT = 14;
+    // String read-modify-write commands
+    REDIS_GETSET    = 15;   // GETSET (get old value, set new)
+    REDIS_GETDEL    = 16;   // GETDEL (get value, delete key)
+    REDIS_GETEX     = 17;   // GETEX (get value, update expire)
+    REDIS_SETRANGE  = 18;   // SETRANGE (overwrite part of string)
+    // Set commands
+    REDIS_SADD      = 20;
+    REDIS_SREM      = 21;
+    REDIS_SPOP      = 22;
+    REDIS_SMOVE     = 23;
+    REDIS_SINTERSTORE = 24;
+    REDIS_SUNIONSTORE = 25;
+    REDIS_SDIFFSTORE  = 26;
+    // Sorted Set commands
+    REDIS_ZADD        = 40;
+    REDIS_ZREM        = 41;
+    REDIS_ZINCRBY     = 42;
+    REDIS_ZPOPMIN     = 43;
+    REDIS_ZPOPMAX     = 44;
+    // List commands
+    REDIS_LPUSH     = 30;
+    REDIS_RPUSH     = 31;
+    REDIS_LPOP      = 32;
+    REDIS_RPOP      = 33;
+    REDIS_LSET      = 34;
+    REDIS_LINSERT   = 35;
+    REDIS_LREM      = 36;
+    REDIS_LTRIM     = 37;
+    REDIS_LMOVE     = 38;
+    REDIS_LMPOP     = 39;
 };
 
 // SET condition options.
@@ -42,12 +84,28 @@ message RedisKv {
     optional int64  expire_ms   = 3;  // absolute expiration timestamp in ms (0=no expire)
 };
 
+// A hash field-value pair (used by HSET/HDEL/HSETNX)
+message RedisHashField {
+    optional bytes  field       = 1;
+    optional bytes  value       = 2;
+};
+
+// A sorted set score-member pair (used by ZADD)
+message RedisZSetEntry {
+    optional double score       = 1;
+    optional bytes  member      = 2;
+};
+
 // Redis write request payload (used with OP_REDIS_WRITE)
 message RedisWriteRequest {
     optional RedisCmd   cmd     = 1;
     repeated RedisKv    kvs     = 2;  // key-value pairs for this command
     optional uint32     slot    = 3;  // computed slot (for verification)
     optional RedisSetCondition set_condition = 4;  // used by REDIS_SET
+    repeated RedisHashField fields = 5;  // hash field-value pairs (used by HSET/HDEL)
+    repeated bytes members = 6;           // set members (used by SADD/SREM/ZREM)
+    repeated bytes list_elements = 7;     // list elements (used by LPUSH/RPUSH)
+    repeated RedisZSetEntry zset_entries = 8;  // sorted set entries (used by ZADD)
 };
 
 // CachePlan is used in three place:

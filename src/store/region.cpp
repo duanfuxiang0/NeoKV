@@ -547,6 +547,20 @@ void Region::do_apply(int64_t term, int64_t index, const pb::StoreReq& request, 
 		break;
 	}
 
+	// Leader election finalizer: on_leader_start() submits this log entry;
+	// when applied, it clears orphan transactions and sets _is_leader = true.
+	// Without this handler, no region can transition to leader state.
+	case pb::OP_CLEAR_APPLYING_TXN: {
+		clear_orphan_transactions(done, _applied_index, term);
+		_meta_writer->update_apply_index(_region_id, _applied_index, _data_index);
+		if (done != nullptr) {
+			leader_start(term);
+		}
+		DB_NOTICE("op_type: %s, region_id: %ld, applied_index:%ld, term:%ld",
+		          pb::OpType_Name(request.op_type()).c_str(), _region_id, _applied_index, term);
+		break;
+	}
+
 	// Basic no-op (heartbeat, leader check)
 	case pb::OP_NONE: {
 		_meta_writer->update_apply_index(_region_id, _applied_index, _data_index);
@@ -598,7 +612,8 @@ void Region::do_apply(int64_t term, int64_t index, const pb::StoreReq& request, 
 		// - OP_KV_BATCH (storage-compute separation)
 		// - OP_PREPARE, OP_COMMIT, OP_ROLLBACK, OP_PARTIAL_ROLLBACK (SQL transactions)
 		// - OP_INSERT, OP_DELETE, OP_UPDATE, OP_TRUNCATE_TABLE, OP_SELECT_FOR_UPDATE, OP_KILL (SQL DML)
-		// - OP_CLEAR_APPLYING_TXN, OP_UPDATE_PRIMARY_TIMESTAMP (SQL transaction management)
+		// - OP_UPDATE_PRIMARY_TIMESTAMP (SQL transaction management)
+		// NOTE: OP_CLEAR_APPLYING_TXN is restored above — required for leader election.
 		// - OP_ROLLUP_REGION_INIT, OP_ROLLUP_REGION_FINISH, OP_ROLLUP_REGION_FAILED (OLAP rollup)
 
 	default:

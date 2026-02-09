@@ -13,13 +13,33 @@ namespace neokv {
 
 class KeyEncoder {
 public:
-	// Big-endian encoding for slot and region keys
+	// ========================================================================
+	// Byte-order conversion utilities
+	// ========================================================================
+	// NOTE: to_endian_u{16,32,64} are self-inverse (swap between host and
+	// big-endian byte order). The semantic aliases below make call-site intent
+	// clearer; prefer using them in new code.
+
+	// Swap between host byte order and big-endian (network) byte order.
+	// Self-inverse: host_to_be16(be_to_host16(x)) == x.
 	static uint16_t to_endian_u16(uint16_t in) {
 		return ntohs(in);
+	}
+	static uint16_t host_to_be16(uint16_t in) {
+		return to_endian_u16(in);
+	}
+	static uint16_t be_to_host16(uint16_t in) {
+		return to_endian_u16(in);
 	}
 
 	static uint32_t to_endian_u32(uint32_t in) {
 		return ntohl(in);
+	}
+	static uint32_t host_to_be32(uint32_t in) {
+		return to_endian_u32(in);
+	}
+	static uint32_t be_to_host32(uint32_t in) {
+		return to_endian_u32(in);
 	}
 
 	static uint64_t to_endian_u64(uint64_t in) {
@@ -28,6 +48,12 @@ public:
 		ret = ((uint64_t)p[0] << 56) | ((uint64_t)p[1] << 48) | ((uint64_t)p[2] << 40) | ((uint64_t)p[3] << 32) |
 		      ((uint64_t)p[4] << 24) | ((uint64_t)p[5] << 16) | ((uint64_t)p[6] << 8) | ((uint64_t)p[7]);
 		return ret;
+	}
+	static uint64_t host_to_be64(uint64_t in) {
+		return to_endian_u64(in);
+	}
+	static uint64_t be_to_host64(uint64_t in) {
+		return to_endian_u64(in);
 	}
 
 	// Encode signed int64 to sortable format (flip sign bit for proper ordering)

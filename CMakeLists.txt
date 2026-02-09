@@ -485,6 +485,13 @@ add_dependencies(neoStore common)
 target_include_directories(neoStore PUBLIC ${NEOSTORE_INC})
 target_link_libraries(neoStore PUBLIC common ${DEP_LIB})
 
+# neo_redis_standalone: single-process test server (no MetaServer dependency)
+file(GLOB RAFT_STORE_STANDALONE src/raft_store/*.cpp)
+add_executable(neo_redis_standalone src/redis/neo_redis_standalone.cpp ${RAFT_STORE_STANDALONE})
+add_dependencies(neo_redis_standalone common)
+target_include_directories(neo_redis_standalone PUBLIC ${COMMON_INC})
+target_link_libraries(neo_redis_standalone PUBLIC common ${DEP_LIB})
+
 # Tests
 if (WITH_TESTS)
     include(FetchContent)

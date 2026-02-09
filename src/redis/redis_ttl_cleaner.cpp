@@ -118,16 +118,26 @@ int64_t RedisTTLCleaner::do_cleanup() {
 	int64_t total_deleted = 0;
 	int64_t current_time_ms = RedisCodec::current_time_ms();
 
-	// Iterate through all regions on this store
+	// Iterate through all regions on this store.
+	// Only clean up on leader regions to avoid inconsistency:
+	// - TTL cleanup bypasses Raft (direct RocksDB delete), so it must only
+	//   run on the leader where the data is authoritative
+	// - Expired keys are already filtered at read time, so followers serve
+	//   correct results even without local cleanup
+	// - After leader transfer, the new leader will pick up cleanup duty
 	store->traverse_region_map([&](const SmartRegion& region) {
 		if (_shutdown_requested.load()) {
+			return;
+		}
+
+		// Skip non-leader regions to avoid leader/follower data divergence
+		if (!region->is_leader()) {
 			return;
 		}
 
 		int64_t region_id = region->get_region_id();
 		int64_t table_id = region->get_table_id();
 		if (table_id <= 0) {
-			DB_WARNING("skip ttl cleanup for invalid table_id, region_id: %ld, table_id: %ld", region_id, table_id);
 			return;
 		}
 

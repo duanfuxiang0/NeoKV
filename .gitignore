@@ -31,6 +31,12 @@
 *.out
 *.app
 
+proto/**.pb.cc
+proto/**.pb.h
+
+# tests
+tests/gocase/workspace/*
+
 # Swap
 [._]*.s[a-v][a-z]
 [._]*.sw[a-p]

@@ -116,6 +116,8 @@ const std::string RocksWrapper::DATA_CF = "data";
 const std::string RocksWrapper::METAINFO_CF = "meta_info";
 const std::string RocksWrapper::COLD_DATA_CF = "cold_data";
 const std::string RocksWrapper::COLD_BINLOG_CF = "cold_binlog";
+const std::string RocksWrapper::REDIS_METADATA_CF = "redis_metadata";
+const std::string RocksWrapper::REDIS_ZSET_SCORE_CF = "redis_zset_score";
 std::atomic<int64_t> RocksWrapper::raft_cf_remove_range_count = {0};
 std::atomic<int64_t> RocksWrapper::data_cf_remove_range_count = {0};
 std::atomic<int64_t> RocksWrapper::mata_cf_remove_range_count = {0};
@@ -283,6 +285,67 @@ int32_t RocksWrapper::init(const std::string& path) {
 	// 等待心跳成功后再开启rocksdb compaction
 	_data_cf_option.disable_auto_compactions = true;
 
+	// Redis metadata CF: stores per-key metadata (type, expire, version, size, inline value for strings)
+	// Same prefix structure as data CF: region_id(8) + index_id(8)
+	_redis_metadata_cf_option.prefix_extractor.reset(rocksdb::NewFixedPrefixTransform(sizeof(int64_t) * 2));
+	_redis_metadata_cf_option.memtable_prefix_bloom_size_ratio = 0.1;
+	_redis_metadata_cf_option.memtable_whole_key_filtering = true;
+	_redis_metadata_cf_option.OptimizeLevelStyleCompaction();
+	_redis_metadata_cf_option.compaction_pri = static_cast<rocksdb::CompactionPri>(FLAGS_rocks_data_compaction_pri);
+	if (FLAGS_rocks_use_sst_partitioner_fixed_prefix) {
+#if ROCKSDB_MAJOR >= 7 || (ROCKSDB_MAJOR == 6 && ROCKSDB_MINOR > 22)
+		_redis_metadata_cf_option.sst_partitioner_factory =
+		    rocksdb::NewSstPartitionerFixedPrefixFactory(sizeof(int64_t));
+#endif
+	}
+	_redis_metadata_cf_option.table_factory.reset(rocksdb::NewBlockBasedTableFactory(table_options));
+	_redis_metadata_cf_option.compaction_style = rocksdb::kCompactionStyleLevel;
+	_redis_metadata_cf_option.level0_file_num_compaction_trigger = FLAGS_level0_file_num_compaction_trigger;
+	_redis_metadata_cf_option.level0_slowdown_writes_trigger = FLAGS_slowdown_write_sst_cnt;
+	_redis_metadata_cf_option.level0_stop_writes_trigger = FLAGS_stop_write_sst_cnt;
+	_redis_metadata_cf_option.max_write_buffer_number = FLAGS_max_write_buffer_number;
+	_redis_metadata_cf_option.max_write_buffer_number_to_maintain = _redis_metadata_cf_option.max_write_buffer_number;
+	_redis_metadata_cf_option.write_buffer_size = FLAGS_write_buffer_size;
+	_redis_metadata_cf_option.min_write_buffer_number_to_merge = FLAGS_min_write_buffer_number_to_merge;
+	_redis_metadata_cf_option.level_compaction_dynamic_level_bytes = FLAGS_rocks_data_dynamic_level_bytes;
+	_redis_metadata_cf_option.compression_per_level = {
+	    rocksdb::CompressionType::kNoCompression,  rocksdb::CompressionType::kLZ4Compression,
+	    rocksdb::CompressionType::kLZ4Compression, rocksdb::CompressionType::kLZ4Compression,
+	    rocksdb::CompressionType::kLZ4Compression, rocksdb::CompressionType::kLZ4Compression,
+	    rocksdb::CompressionType::kLZ4Compression};
+	_redis_metadata_cf_option.disable_auto_compactions = true;
+
+	// Redis zset score CF: stores score->member mapping for sorted sets
+	// Same prefix structure as data CF: region_id(8) + index_id(8)
+	_redis_zset_score_cf_option.prefix_extractor.reset(rocksdb::NewFixedPrefixTransform(sizeof(int64_t) * 2));
+	_redis_zset_score_cf_option.memtable_prefix_bloom_size_ratio = 0.1;
+	_redis_zset_score_cf_option.memtable_whole_key_filtering = true;
+	_redis_zset_score_cf_option.OptimizeLevelStyleCompaction();
+	_redis_zset_score_cf_option.compaction_pri = static_cast<rocksdb::CompactionPri>(FLAGS_rocks_data_compaction_pri);
+	if (FLAGS_rocks_use_sst_partitioner_fixed_prefix) {
+#if ROCKSDB_MAJOR >= 7 || (ROCKSDB_MAJOR == 6 && ROCKSDB_MINOR > 22)
+		_redis_zset_score_cf_option.sst_partitioner_factory =
+		    rocksdb::NewSstPartitionerFixedPrefixFactory(sizeof(int64_t));
+#endif
+	}
+	_redis_zset_score_cf_option.table_factory.reset(rocksdb::NewBlockBasedTableFactory(table_options));
+	_redis_zset_score_cf_option.compaction_style = rocksdb::kCompactionStyleLevel;
+	_redis_zset_score_cf_option.level0_file_num_compaction_trigger = FLAGS_level0_file_num_compaction_trigger;
+	_redis_zset_score_cf_option.level0_slowdown_writes_trigger = FLAGS_slowdown_write_sst_cnt;
+	_redis_zset_score_cf_option.level0_stop_writes_trigger = FLAGS_stop_write_sst_cnt;
+	_redis_zset_score_cf_option.max_write_buffer_number = FLAGS_max_write_buffer_number;
+	_redis_zset_score_cf_option.max_write_buffer_number_to_maintain =
+	    _redis_zset_score_cf_option.max_write_buffer_number;
+	_redis_zset_score_cf_option.write_buffer_size = FLAGS_write_buffer_size;
+	_redis_zset_score_cf_option.min_write_buffer_number_to_merge = FLAGS_min_write_buffer_number_to_merge;
+	_redis_zset_score_cf_option.level_compaction_dynamic_level_bytes = FLAGS_rocks_data_dynamic_level_bytes;
+	_redis_zset_score_cf_option.compression_per_level = {
+	    rocksdb::CompressionType::kNoCompression,  rocksdb::CompressionType::kLZ4Compression,
+	    rocksdb::CompressionType::kLZ4Compression, rocksdb::CompressionType::kLZ4Compression,
+	    rocksdb::CompressionType::kLZ4Compression, rocksdb::CompressionType::kLZ4Compression,
+	    rocksdb::CompressionType::kLZ4Compression};
+	_redis_zset_score_cf_option.disable_auto_compactions = true;
+
 	// todo
 	// prefix: 0x01-0xFF,分别用来存储不同的meta信息
 	rocksdb::BlockBasedTableOptions meta_table_options;
@@ -367,6 +430,12 @@ int32_t RocksWrapper::init(const std::string& path) {
 				column_family_desc.push_back(rocksdb::ColumnFamilyDescriptor(DATA_CF, _data_cf_option));
 			} else if (column_family_name == METAINFO_CF) {
 				column_family_desc.push_back(rocksdb::ColumnFamilyDescriptor(METAINFO_CF, _meta_info_option));
+			} else if (column_family_name == REDIS_METADATA_CF) {
+				column_family_desc.push_back(
+				    rocksdb::ColumnFamilyDescriptor(REDIS_METADATA_CF, _redis_metadata_cf_option));
+			} else if (column_family_name == REDIS_ZSET_SCORE_CF) {
+				column_family_desc.push_back(
+				    rocksdb::ColumnFamilyDescriptor(REDIS_ZSET_SCORE_CF, _redis_zset_score_cf_option));
 			} else {
 				column_family_desc.push_back(
 				    rocksdb::ColumnFamilyDescriptor(column_family_name, rocksdb::ColumnFamilyOptions()));
@@ -470,6 +539,30 @@ int32_t RocksWrapper::init(const std::string& path) {
 			_column_families[BIN_LOG_CF] = bin_log_handle;
 		} else {
 			DB_FATAL("create column family fail, column family:%s, err_message:%s", BIN_LOG_CF.c_str(),
+			         s.ToString().c_str());
+			return -1;
+		}
+	}
+	if (0 == _column_families.count(REDIS_METADATA_CF)) {
+		rocksdb::ColumnFamilyHandle* redis_meta_handle;
+		s = _txn_db->CreateColumnFamily(_redis_metadata_cf_option, REDIS_METADATA_CF, &redis_meta_handle);
+		if (s.ok()) {
+			DB_WARNING("create column family success, column family:%s", REDIS_METADATA_CF.c_str());
+			_column_families[REDIS_METADATA_CF] = redis_meta_handle;
+		} else {
+			DB_FATAL("create column family fail, column family:%s, err_message:%s", REDIS_METADATA_CF.c_str(),
+			         s.ToString().c_str());
+			return -1;
+		}
+	}
+	if (0 == _column_families.count(REDIS_ZSET_SCORE_CF)) {
+		rocksdb::ColumnFamilyHandle* redis_score_handle;
+		s = _txn_db->CreateColumnFamily(_redis_zset_score_cf_option, REDIS_ZSET_SCORE_CF, &redis_score_handle);
+		if (s.ok()) {
+			DB_WARNING("create column family success, column family:%s", REDIS_ZSET_SCORE_CF.c_str());
+			_column_families[REDIS_ZSET_SCORE_CF] = redis_score_handle;
+		} else {
+			DB_FATAL("create column family fail, column family:%s, err_message:%s", REDIS_ZSET_SCORE_CF.c_str(),
 			         s.ToString().c_str());
 			return -1;
 		}
@@ -854,6 +947,28 @@ rocksdb::ColumnFamilyHandle* RocksWrapper::get_meta_info_handle() {
 		return nullptr;
 	}
 	return _column_families[METAINFO_CF];
+}
+rocksdb::ColumnFamilyHandle* RocksWrapper::get_redis_metadata_handle() {
+	if (!_is_init) {
+		DB_FATAL("rocksdb has not been inited");
+		return nullptr;
+	}
+	if (0 == _column_families.count(REDIS_METADATA_CF)) {
+		DB_FATAL("rocksdb has no redis_metadata column family");
+		return nullptr;
+	}
+	return _column_families[REDIS_METADATA_CF];
+}
+rocksdb::ColumnFamilyHandle* RocksWrapper::get_redis_zset_score_handle() {
+	if (!_is_init) {
+		DB_FATAL("rocksdb has not been inited");
+		return nullptr;
+	}
+	if (0 == _column_families.count(REDIS_ZSET_SCORE_CF)) {
+		DB_FATAL("rocksdb has no redis_zset_score column family");
+		return nullptr;
+	}
+	return _column_families[REDIS_ZSET_SCORE_CF];
 }
 void RocksWrapper::begin_split_adjust_option() {
 	if (++_split_num > 1) {

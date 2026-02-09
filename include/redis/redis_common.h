@@ -30,17 +30,21 @@ namespace neokv {
 constexpr int64_t REDIS_TABLE_ID = 0;
 constexpr int64_t REDIS_INDEX_ID = 0;
 
-// Redis slot 数量 (与 Redis Cluster 一致)
+// Redis slot count (matches Redis Cluster)
 constexpr uint16_t REDIS_SLOT_COUNT = 16384;
 
-// 检查一个 table_id 是否是 Redis 表
-inline bool is_redis_table(int64_t table_id) {
-	return table_id > 0;
-}
+// Check if a table_id belongs to the Redis subsystem.
+// Uses the RedisRouter's resolved table_id for accurate identification.
+// This avoids false positives when SQL tables coexist on the same Store.
+//
+// Forward-declared here; implemented in redis_common_impl.cpp to avoid
+// circular header dependencies with redis_router.h.
+bool is_redis_table(int64_t table_id);
 
-// 检查一个 index_id 是否是 Redis 索引
+// Check if an index_id belongs to the Redis subsystem.
+// In neo-redis, index_id == table_id for the primary index.
 inline bool is_redis_index(int64_t index_id) {
-	return index_id > 0;
+	return is_redis_table(index_id);
 }
 
 } // namespace neokv
