@@ -1,5 +1,16 @@
 # NeoKV
 
+> **⚠️ Disclaimer — Learning Project Only**
+>
+> This project is built primarily for learning and practicing **Multi Braft** concepts. It is **NOT intended for production use**.
+>
+> Much of the underlying code is derived from studying the following excellent open-source projects:
+> - [BaikalDB](https://github.com/baidu/BaikalDB)
+> - [Kvrocks](https://github.com/apache/kvrocks)
+> - [Pika](https://github.com/OpenAtomFoundation/pika)
+>
+> Any code originating from these projects remains subject to their respective original open-source licenses.
+
 NeoKV is a strongly consistent distributed KV store built on **Braft + RocksDB**, with a **Redis-compatible protocol layer (RESP)** on top. You can connect directly using `redis-cli` or any Redis SDK.
 
 For more detailed design documentation, see:
