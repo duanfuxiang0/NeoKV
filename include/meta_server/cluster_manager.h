@@ -116,8 +116,8 @@ public:
 	void update_instance(const pb::MetaManagerRequest& request, braft::Closure* done);
 
 	// 只在leader内存添加、更新
-	void add_neo_instance(const pb::BaikalStatus& neo_status);
-	void update_neo_instance(const pb::BaikalStatus& neo_status);
+	void add_neo_instance(const pb::NeoStatus& neo_status);
+	void update_neo_instance(const pb::NeoStatus& neo_status);
 
 	void update_instance_param(const pb::MetaManagerRequest& request, braft::Closure* done);
 
@@ -126,12 +126,12 @@ public:
 	void set_instance_migrate(const pb::MetaManagerRequest* request, pb::MetaManagerResponse* response,
 	                          uint64_t log_id);
 	void set_instance_status(const pb::MetaManagerRequest* request, pb::MetaManagerResponse* response, uint64_t log_id);
-	void process_neo_heartbeat(const pb::BaikalHeartBeatRequest* request, pb::BaikalHeartBeatResponse* response);
+	void process_neo_heartbeat(const pb::NeoHeartBeatRequest* request, pb::NeoHeartBeatResponse* response);
 	void process_instance_heartbeat_for_store(const pb::InstanceInfo& request);
 	void process_instance_param_heartbeat_for_store(const pb::StoreHeartBeatRequest* request,
 	                                                pb::StoreHeartBeatResponse* response);
-	void process_instance_param_heartbeat_for_neo(const pb::BaikalOtherHeartBeatRequest* request,
-	                                              pb::BaikalOtherHeartBeatResponse* response);
+	void process_instance_param_heartbeat_for_neo(const pb::NeoOtherHeartBeatRequest* request,
+	                                              pb::NeoOtherHeartBeatResponse* response);
 	void process_peer_heartbeat_for_store(const pb::StoreHeartBeatRequest* request,
 	                                      pb::StoreHeartBeatResponse* response);
 	void process_pk_prefix_load_balance(std::unordered_map<std::string, int64_t>& pk_prefix_region_counts,
@@ -142,8 +142,7 @@ public:
 	                                    std::unordered_map<std::string, int64_t>& pk_prefix_average_counts);
 	void get_switch(const pb::QueryRequest* request, pb::QueryResponse* response);
 	void neo_healthy_check_function();
-	void construct_neo_heartbeat_response(const pb::BaikalHeartBeatRequest* request,
-	                                      pb::BaikalHeartBeatResponse* response);
+	void construct_neo_heartbeat_response(const pb::NeoHeartBeatRequest* request, pb::NeoHeartBeatResponse* response);
 	void store_healthy_check_function();
 	// just for 单测使用
 	void get_network_segment_count(const std::string& resource_tag, size_t& count, size_t& prefix) {
@@ -512,7 +511,7 @@ public:
 
 	// return -1: add instance -2: update instance
 	int update_instance_info(const pb::InstanceInfo& instance_info);
-	int update_neo_instance_info(const pb::BaikalHeartBeatRequest& request);
+	int update_neo_instance_info(const pb::NeoHeartBeatRequest& request);
 
 	int set_migrate_for_instance(const std::string& instance) {
 		return set_status_for_instance(instance, pb::MIGRATE);

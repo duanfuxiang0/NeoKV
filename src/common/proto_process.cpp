@@ -4,7 +4,7 @@
 namespace neokv {
 
 /// 删除meta信息
-int del_meta_info(pb::BaikalHeartBeatRequest& request) {
+int del_meta_info(pb::NeoHeartBeatRequest& request) {
 	for (auto& schema_info : *request.mutable_schema_infos()) {
 		del_meta_info(schema_info);
 	}
@@ -63,19 +63,19 @@ int del_meta_info(pb::StoreReq& request) {
 	return 0;
 }
 
-int del_meta_info(pb::BaikalSchemaHeartBeat& baikal_schema_heartbeat) {
-	if (baikal_schema_heartbeat.has_table_id()) {
-		baikal_schema_heartbeat.set_table_id(get_del_meta_id(baikal_schema_heartbeat.table_id()));
+int del_meta_info(pb::NeoSchemaHeartBeat& neo_schema_heartbeat) {
+	if (neo_schema_heartbeat.has_table_id()) {
+		neo_schema_heartbeat.set_table_id(get_del_meta_id(neo_schema_heartbeat.table_id()));
 	}
 	return 0;
 }
 
-int del_meta_info(pb::BaikalHeartBeatTable& baikal_heartbeat_table) {
-	if (baikal_heartbeat_table.has_namespace_name()) {
-		baikal_heartbeat_table.set_namespace_name(get_del_meta_name(baikal_heartbeat_table.namespace_name()));
+int del_meta_info(pb::NeoHeartBeatTable& neo_heartbeat_table) {
+	if (neo_heartbeat_table.has_namespace_name()) {
+		neo_heartbeat_table.set_namespace_name(get_del_meta_name(neo_heartbeat_table.namespace_name()));
 	}
-	if (baikal_heartbeat_table.has_table_id()) {
-		baikal_heartbeat_table.set_table_id(get_del_meta_id(baikal_heartbeat_table.table_id()));
+	if (neo_heartbeat_table.has_table_id()) {
+		neo_heartbeat_table.set_table_id(get_del_meta_id(neo_heartbeat_table.table_id()));
 	}
 	return 0;
 }
@@ -265,7 +265,7 @@ int del_meta_info(pb::FulltextIndex& fulltext_index) {
 }
 
 /// 添加meta信息
-int add_meta_info(pb::BaikalHeartBeatResponse& response, const int64_t meta_id) {
+int add_meta_info(pb::NeoHeartBeatResponse& response, const int64_t meta_id) {
 	for (auto& schema_info : *response.mutable_schema_change_info()) {
 		add_meta_info(schema_info, meta_id);
 	}

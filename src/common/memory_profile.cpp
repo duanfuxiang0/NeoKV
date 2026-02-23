@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "memory_profile.h"
-#ifdef BAIKAL_TCMALLOC
+#ifdef NEO_TCMALLOC
 #include <gperftools/malloc_extension.h>
 #endif
 
@@ -28,7 +28,7 @@ DEFINE_int64(process_memory_limit_bytes, -1, "all memory use size, default: -1")
 DEFINE_int64(query_memory_limit_ratio, 90, "query memory use ratio , default: 90%");
 
 void MemoryGCHandler::memory_gc_thread() {
-#ifdef BAIKAL_TCMALLOC
+#ifdef NEO_TCMALLOC
 	char stats_buffer[1000] = {0};
 	const size_t BYTES_TO_GC = 8 * 1024 * 1024;
 	TimeCost stats_cost;

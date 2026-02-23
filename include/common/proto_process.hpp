@@ -53,12 +53,12 @@ int del_meta_info(Request& request) {
 	return -1;
 }
 
-int del_meta_info(pb::BaikalHeartBeatRequest& request);
+int del_meta_info(pb::NeoHeartBeatRequest& request);
 int del_meta_info(pb::MetaManagerRequest& request);
 int del_meta_info(pb::StoreReq& request);
 
-int del_meta_info(pb::BaikalSchemaHeartBeat& baikal_schema_heartbeat);
-int del_meta_info(pb::BaikalHeartBeatTable& baikal_heartbeat_table);
+int del_meta_info(pb::NeoSchemaHeartBeat& neo_schema_heartbeat);
+int del_meta_info(pb::NeoHeartBeatTable& neo_heartbeat_table);
 int del_meta_info(pb::VirtualIndexInfluence& virtual_index_influence);
 int del_meta_info(pb::AutoIncrementRequest& auto_increment_request);
 int del_meta_info(pb::TupleDescriptor& tuple_descriptor);
@@ -82,7 +82,7 @@ int add_meta_info(Response& response, const int64_t meta_id) {
 	return -1;
 }
 
-int add_meta_info(pb::BaikalHeartBeatResponse& response, const int64_t meta_id);
+int add_meta_info(pb::NeoHeartBeatResponse& response, const int64_t meta_id);
 int add_meta_info(pb::MetaManagerResponse& response, const int64_t meta_id);
 int add_meta_info(pb::StoreRes& response, const int64_t meta_id);
 

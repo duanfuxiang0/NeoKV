@@ -71,12 +71,12 @@ public:
 	virtual void store_heartbeat(google::protobuf::RpcController* controller, const pb::StoreHeartBeatRequest* request,
 	                             pb::StoreHeartBeatResponse* response, google::protobuf::Closure* done);
 
-	virtual void neo_heartbeat(google::protobuf::RpcController* controller, const pb::BaikalHeartBeatRequest* request,
-	                           pb::BaikalHeartBeatResponse* response, google::protobuf::Closure* done);
+	virtual void neo_heartbeat(google::protobuf::RpcController* controller, const pb::NeoHeartBeatRequest* request,
+	                           pb::NeoHeartBeatResponse* response, google::protobuf::Closure* done);
 
 	virtual void neo_other_heartbeat(google::protobuf::RpcController* controller,
-	                                 const pb::BaikalOtherHeartBeatRequest* request,
-	                                 pb::BaikalOtherHeartBeatResponse* response, google::protobuf::Closure* done);
+	                                 const pb::NeoOtherHeartBeatRequest* request,
+	                                 pb::NeoOtherHeartBeatResponse* response, google::protobuf::Closure* done);
 
 	virtual void console_heartbeat(google::protobuf::RpcController* controller,
 	                               const pb::ConsoleHeartBeatRequest* request, pb::ConsoleHeartBeatResponse* response,

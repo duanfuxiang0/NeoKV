@@ -152,7 +152,7 @@ enum DDLType {
 message ScanNode {
     required int32 tuple_id = 1;  //tuple中记录有读取列信息与table信息
     required int64 table_id = 2;
-    repeated bytes indexes = 3; //baikal列举可能的index，region自己决定用哪个
+    repeated bytes indexes = 3; //neo列举可能的index，region自己决定用哪个
     repeated int64 use_indexes = 4;
     optional Engine engine = 5;
     repeated int64 ignore_indexes = 6;

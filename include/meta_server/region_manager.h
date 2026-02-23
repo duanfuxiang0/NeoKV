@@ -86,7 +86,7 @@ public:
 	bool binlog_peer_can_delete(const std::string& instance, int64_t region_id, int64_t table_id);
 	bool check_binlog_regions_can_migrate(const std::string& instance);
 
-	void add_region_info(const std::vector<int64_t>& new_add_region_ids, pb::BaikalHeartBeatResponse* response);
+	void add_region_info(const std::vector<int64_t>& new_add_region_ids, pb::NeoHeartBeatResponse* response);
 	SmartRegionInfo get_region_info(int64_t region_id);
 	void get_region_info(const std::vector<int64_t>& region_ids, std::vector<SmartRegionInfo>& region_infos);
 
@@ -495,7 +495,7 @@ public:
 	}
 	void put_incremental_regioninfo(const int64_t apply_index, std::vector<pb::RegionInfo>& region_infos);
 	bool check_and_update_incremental(
-	    const pb::BaikalHeartBeatRequest* request, pb::BaikalHeartBeatResponse* response, int64_t applied_index,
+	    const pb::NeoHeartBeatRequest* request, pb::NeoHeartBeatResponse* response, int64_t applied_index,
 	    const std::unordered_map<int64_t, std::unordered_set<int64_t>>& heartbeat_table_partition_map);
 
 	bool check_table_in_resource_tags(int64_t table_id, const std::set<std::string>& resource_tags);

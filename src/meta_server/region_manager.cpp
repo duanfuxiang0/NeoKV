@@ -752,7 +752,7 @@ bool RegionManager::check_binlog_regions_can_migrate(const std::string& instance
 }
 
 void RegionManager::add_region_info(const std::vector<int64_t>& new_add_region_ids,
-                                    pb::BaikalHeartBeatResponse* response) {
+                                    pb::NeoHeartBeatResponse* response) {
 	for (auto& region_id : new_add_region_ids) {
 		SmartRegionInfo region_ptr = _region_info_map.get(region_id);
 		if (region_ptr != nullptr) {
@@ -1701,7 +1701,7 @@ void RegionManager::put_incremental_regioninfo(const int64_t apply_index, std::v
 }
 
 bool RegionManager::check_and_update_incremental(
-    const pb::BaikalHeartBeatRequest* request, pb::BaikalHeartBeatResponse* response, int64_t applied_index,
+    const pb::NeoHeartBeatRequest* request, pb::NeoHeartBeatResponse* response, int64_t applied_index,
     const std::unordered_map<int64_t, std::unordered_set<int64_t>>& heartbeat_table_partition_map) {
 	int64_t last_updated_index = request->last_updated_index();
 	bool need_heartbeat_table = request->has_need_heartbeat_table() && request->need_heartbeat_table();

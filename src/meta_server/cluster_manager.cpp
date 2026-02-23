@@ -516,7 +516,7 @@ void ClusterManager::update_instance(const pb::MetaManagerRequest& request, braf
 	DB_NOTICE("modify tag success, request:%s", request.ShortDebugString().c_str());
 }
 
-void ClusterManager::add_neo_instance(const pb::BaikalStatus& neo_status) {
+void ClusterManager::add_neo_instance(const pb::NeoStatus& neo_status) {
 	std::string address = neo_status.address();
 	std::string resource_tag = neo_status.resource_tag();
 
@@ -551,7 +551,7 @@ void ClusterManager::add_neo_instance(const pb::BaikalStatus& neo_status) {
 	DB_NOTICE("add neo instance success, neo address:%s , new resource_tag:%s", address.c_str(), resource_tag.c_str());
 }
 
-void ClusterManager::update_neo_instance(const pb::BaikalStatus& neo_status) {
+void ClusterManager::update_neo_instance(const pb::NeoStatus& neo_status) {
 	std::string address = neo_status.address();
 	std::string resource_tag = neo_status.resource_tag();
 
@@ -809,8 +809,7 @@ void ClusterManager::set_instance_status(const pb::MetaManagerRequest* request, 
 		return;
 	}
 }
-void ClusterManager::process_neo_heartbeat(const pb::BaikalHeartBeatRequest* request,
-                                           pb::BaikalHeartBeatResponse* response) {
+void ClusterManager::process_neo_heartbeat(const pb::NeoHeartBeatRequest* request, pb::NeoHeartBeatResponse* response) {
 	auto idc_info_ptr = response->mutable_idc_info();
 	{
 		BAIDU_SCOPED_LOCK(_physical_mutex);
@@ -846,29 +845,29 @@ void ClusterManager::process_neo_heartbeat(const pb::BaikalHeartBeatRequest* req
 	}
 
 	if (ret == -1) {
-		add_neo_instance(request->baikal_status());
+		add_neo_instance(request->neo_status());
 	} else if (ret == -2) {
-		update_neo_instance(request->baikal_status());
+		update_neo_instance(request->neo_status());
 	}
 	construct_neo_heartbeat_response(request, response);
 }
 
-void ClusterManager::construct_neo_heartbeat_response(const pb::BaikalHeartBeatRequest* request,
-                                                      pb::BaikalHeartBeatResponse* response) {
-	if (!request->has_baikal_status()) {
+void ClusterManager::construct_neo_heartbeat_response(const pb::NeoHeartBeatRequest* request,
+                                                      pb::NeoHeartBeatResponse* response) {
+	if (!request->has_neo_status()) {
 		return;
 	}
-	std::string resource_tag = request->baikal_status().resource_tag();
+	std::string resource_tag = request->neo_status().resource_tag();
 	if (resource_tag.empty() || 0 == _resource_tag_neo_instances_map.count(resource_tag)) {
 		return;
 	}
 
 	for (auto& address : _resource_tag_neo_instances_map[resource_tag]) {
-		pb::BaikalStatus* baikal_status = response->add_baikal_status();
-		baikal_status->set_address(address);
-		baikal_status->set_status(_neo_instance_info[address].state);
-		baikal_status->set_resource_tag(resource_tag);
-		baikal_status->set_last_heartbeat_timestamp(_neo_instance_info[address].timestamp);
+		pb::NeoStatus* neo_status = response->add_neo_status();
+		neo_status->set_address(address);
+		neo_status->set_status(_neo_instance_info[address].state);
+		neo_status->set_resource_tag(resource_tag);
+		neo_status->set_last_heartbeat_timestamp(_neo_instance_info[address].timestamp);
 	}
 }
 
@@ -911,8 +910,8 @@ void ClusterManager::process_instance_param_heartbeat_for_store(const pb::StoreH
 }
 
 // 获取实例参数
-void ClusterManager::process_instance_param_heartbeat_for_neo(const pb::BaikalOtherHeartBeatRequest* request,
-                                                              pb::BaikalOtherHeartBeatResponse* response) {
+void ClusterManager::process_instance_param_heartbeat_for_neo(const pb::NeoOtherHeartBeatRequest* request,
+                                                              pb::NeoOtherHeartBeatResponse* response) {
 	if (request->has_neokv_resource_tag()) {
 		BAIDU_SCOPED_LOCK(_instance_param_mutex);
 
@@ -1163,7 +1162,7 @@ void ClusterManager::neo_healthy_check_function() {
 		    FLAGS_neo_heartbeat_interval_us * FLAGS_neo_clear_faulty_interval_times) {
 			// 超过清理时长获取不了心跳清除记录
 			instance_pair = _neo_instance_info.erase(instance_pair);
-			DB_WARNING("baikal instance %s: No heartbeat received for more than %d seconds, cleared",
+			DB_WARNING("neo instance %s: No heartbeat received for more than %d seconds, cleared",
 			           instance_name.c_str(),
 			           FLAGS_neo_heartbeat_interval_us * FLAGS_neo_clear_faulty_interval_times / 1000000);
 
@@ -1188,7 +1187,7 @@ void ClusterManager::neo_healthy_check_function() {
 			// 超时获取不了心跳设置为FAULTY
 			state_info.state = pb::FAULTY;
 			++instance_pair;
-			DB_WARNING("baikal instance %s: No heartbeat received for more than %d seconds, set as 'FAULTY'",
+			DB_WARNING("neo instance %s: No heartbeat received for more than %d seconds, set as 'FAULTY'",
 			           instance_name.c_str(),
 			           FLAGS_neo_heartbeat_interval_us * FLAGS_neo_faulty_interval_times / 1000000);
 		} else {
@@ -1917,12 +1916,12 @@ int ClusterManager::load_logical_snapshot(const std::string& logical_prefix, con
 	return 0;
 }
 
-int ClusterManager::update_neo_instance_info(const pb::BaikalHeartBeatRequest& request) {
-	if (!request.has_baikal_status()) {
+int ClusterManager::update_neo_instance_info(const pb::NeoHeartBeatRequest& request) {
+	if (!request.has_neo_status()) {
 		return 0;
 	}
-	std::string address = request.baikal_status().address();
-	std::string resource_tag = request.baikal_status().resource_tag();
+	std::string address = request.neo_status().address();
+	std::string resource_tag = request.neo_status().resource_tag();
 	if (address.empty() || resource_tag.empty()) {
 		return 0;
 	}
@@ -1936,7 +1935,7 @@ int ClusterManager::update_neo_instance_info(const pb::BaikalHeartBeatRequest& r
 		return -2;
 	}
 
-	if (_neo_instance_info[address].state != request.baikal_status().status()) {
+	if (_neo_instance_info[address].state != request.neo_status().status()) {
 		// 状态更新，需要同步到follower
 		return -2;
 	}

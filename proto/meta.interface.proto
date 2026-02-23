@@ -339,7 +339,7 @@ message RegionInfo {
     required int64 partition_id            = 4;
     required int64 replica_num             = 5;
     required int64 version                 = 6;
-    required int64 conf_version            = 7;//用于baikal和meta_server之间同步peer和leader信息
+    required int64 conf_version            = 7;//用于neo和meta_server之间同步peer和leader信息
     optional bytes start_key               = 8;
     optional bytes end_key                 = 9;
     repeated string peers                  = 10;//包含leader
@@ -448,7 +448,7 @@ message InstanceInfo {
     optional string init_address    = 18;
 };
 
-message BaikalStatus {
+message NeoStatus {
     required string address                         = 1;
     required string resource_tag                    = 2;
     required Status status                          = 3;
@@ -748,13 +748,13 @@ message RegionHeartBeat {
     optional int64  used_size            = 7;
 };
 
-message BaikalSchemaHeartBeat {
+message NeoSchemaHeartBeat {
     required int64 table_id             = 1;
     required int64 version              = 2;
     //repeated RegionHeartBeat regions    = 3;
 };
 
-message BaikalHeartBeatTable {
+message NeoHeartBeatTable {
     required string namespace_name = 1;
     required string database       = 2;
     required string table_name     = 3;
@@ -764,9 +764,9 @@ message BaikalHeartBeatTable {
 };
 
 // 增加新字段时，考虑是否对该字段增删meta标识，对应dblink表场景!!!
-message BaikalHeartBeatRequest {
+message NeoHeartBeatRequest {
     //物理机房和逻辑机房对应关系
-    repeated BaikalSchemaHeartBeat schema_infos    = 1;
+    repeated NeoSchemaHeartBeat schema_infos       = 1;
     optional int64        last_updated_index       = 2;
     // optional bool         not_need_statistics      = 3; // meta能识别到时，说明neokv已经升级，不再通过该心跳更新统计信息
     repeated RegionDdlWork region_ddl_works        = 4;
@@ -776,22 +776,22 @@ message BaikalHeartBeatRequest {
     repeated VirtualIndexInfluence info_affect     = 8;  // 影响面信息 
     optional bool need_heartbeat_table             = 9;  // 指定是否心跳按需返回
     optional bool need_binlog_heartbeat            = 10; // 指定是否binlog capturer的心跳 
-    repeated BaikalHeartBeatTable heartbeat_tables = 11; // 指定需要进行同步的表全名
+    repeated NeoHeartBeatTable heartbeat_tables    = 11; // 指定需要进行同步的表全名
     optional bool need_global_index_heartbeat      = 12; // 指定心跳按需返回是否包含全局索引
-    optional BaikalStatus baikal_status            = 13;
+    optional NeoStatus neo_status                  = 13;
 };
 
-message BaikalOtherHeartBeat {
+message NeoOtherHeartBeat {
     required int64 table_id             = 1;
     optional int64 statis_version       = 2;
 };
 
-message BaikalOtherHeartBeatRequest {
-    repeated BaikalOtherHeartBeat schema_infos    = 1;
+message NeoOtherHeartBeatRequest {
+    repeated NeoOtherHeartBeat schema_infos       = 1;
     optional string neokv_resource_tag         = 2;
 };
 
-message BaikalOtherHeartBeatResponse {
+message NeoOtherHeartBeatResponse {
     required ErrCode errcode                      = 1;
     optional string errmsg                        = 2;
     optional string leader                        = 3;
@@ -807,7 +807,7 @@ message IdcInfo {
 };
 
 // 增加新字段时，考虑是否对该字段增删meta标识，对应dblink表场景!!!
-message BaikalHeartBeatResponse {
+message NeoHeartBeatResponse {
     required ErrCode errcode                      = 1;
     optional string errmsg                        = 2;
     optional string leader                        = 3;
@@ -821,7 +821,7 @@ message BaikalHeartBeatResponse {
     repeated RegionDdlWork region_ddl_works       = 11;
     repeated DdlWorkInfo  ddl_works               = 12;
     repeated NameSpaceInfo ns_info                = 13; //全部同步
-    repeated BaikalStatus baikal_status           = 14;
+    repeated NeoStatus neo_status                 = 14;
 };
 
 enum QueryOpType {
@@ -971,7 +971,7 @@ message QueryRegion {
     optional int64 partition_id            = 3;
     optional int64 replica_num             = 4;
     optional int64 version                 = 5;
-    optional int64 conf_version            = 6;//用于baikal和meta_server之间同步peer和leader信息
+    optional int64 conf_version            = 6;//用于neo和meta_server之间同步peer和leader信息
     optional bytes start_key              = 7;
     optional bytes end_key                = 8;
     optional string peers                  = 9;//包含leader
@@ -1176,11 +1176,11 @@ service MetaService {
     rpc raft_control(RaftControlRequest) returns (RaftControlResponse);
     rpc meta_manager(MetaManagerRequest) returns (MetaManagerResponse);
     rpc store_heartbeat(StoreHeartBeatRequest) returns (StoreHeartBeatResponse);
-    rpc neo_heartbeat(BaikalHeartBeatRequest) returns (BaikalHeartBeatResponse);
+    rpc neo_heartbeat(NeoHeartBeatRequest) returns (NeoHeartBeatResponse);
     rpc query(QueryRequest) returns (QueryResponse);
     rpc migrate(MigrateRequest) returns (MigrateResponse);
     rpc console_heartbeat(ConsoleHeartBeatRequest) returns (ConsoleHeartBeatResponse);
     rpc tso_service(TsoRequest) returns (TsoResponse);
-    rpc neo_other_heartbeat(BaikalOtherHeartBeatRequest) returns (BaikalOtherHeartBeatResponse);
+    rpc neo_other_heartbeat(NeoOtherHeartBeatRequest) returns (NeoOtherHeartBeatResponse);
 };
 

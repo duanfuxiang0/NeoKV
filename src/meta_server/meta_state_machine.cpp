@@ -89,7 +89,7 @@ void MetaStateMachine::store_heartbeat(google::protobuf::RpcController* controll
 }
 
 void MetaStateMachine::neo_heartbeat(google::protobuf::RpcController* controller,
-                                     const pb::BaikalHeartBeatRequest* request, pb::BaikalHeartBeatResponse* response,
+                                     const pb::NeoHeartBeatRequest* request, pb::NeoHeartBeatResponse* response,
                                      google::protobuf::Closure* done) {
 	brpc::ClosureGuard done_guard(done);
 	brpc::Controller* cntl = static_cast<brpc::Controller*>(controller);
@@ -111,9 +111,8 @@ void MetaStateMachine::neo_heartbeat(google::protobuf::RpcController* controller
 }
 
 void MetaStateMachine::neo_other_heartbeat(google::protobuf::RpcController* controller,
-                                           const pb::BaikalOtherHeartBeatRequest* request,
-                                           pb::BaikalOtherHeartBeatResponse* response,
-                                           google::protobuf::Closure* done) {
+                                           const pb::NeoOtherHeartBeatRequest* request,
+                                           pb::NeoOtherHeartBeatResponse* response, google::protobuf::Closure* done) {
 	brpc::ClosureGuard done_guard(done);
 	brpc::Controller* cntl = static_cast<brpc::Controller*>(controller);
 	uint64_t log_id = 0;

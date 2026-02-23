@@ -862,7 +862,7 @@ std::string store_or_db_bns_to_meta_bns(const std::string& bns) {
 	bns_group = "group" + bns_group.substr(pos1, pos2 - pos1 + 1) + "all";
 	bns_group2 = bns_group2.substr(pos1 + 1);
 	bool is_store_bns = false;
-	if (bns_group.find("neoStore") != bns_group.npos || bns_group.find("baikalBinlog") != bns_group.npos) {
+	if (bns_group.find("neoStore") != bns_group.npos || bns_group.find("neoBinlog") != bns_group.npos) {
 		is_store_bns = true;
 	}
 

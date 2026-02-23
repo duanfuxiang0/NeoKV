@@ -34,12 +34,11 @@ public:
 	void store_heartbeat(google::protobuf::RpcController* controller, const pb::StoreHeartBeatRequest* request,
 	                     pb::StoreHeartBeatResponse* response, google::protobuf::Closure* done);
 
-	void neo_heartbeat(google::protobuf::RpcController* controller, const pb::BaikalHeartBeatRequest* request,
-	                   pb::BaikalHeartBeatResponse* response, google::protobuf::Closure* done);
+	void neo_heartbeat(google::protobuf::RpcController* controller, const pb::NeoHeartBeatRequest* request,
+	                   pb::NeoHeartBeatResponse* response, google::protobuf::Closure* done);
 
-	void neo_other_heartbeat(google::protobuf::RpcController* controller,
-	                         const pb::BaikalOtherHeartBeatRequest* request, pb::BaikalOtherHeartBeatResponse* response,
-	                         google::protobuf::Closure* done);
+	void neo_other_heartbeat(google::protobuf::RpcController* controller, const pb::NeoOtherHeartBeatRequest* request,
+	                         pb::NeoOtherHeartBeatResponse* response, google::protobuf::Closure* done);
 
 	void console_heartbeat(google::protobuf::RpcController* controller, const pb::ConsoleHeartBeatRequest* request,
 	                       pb::ConsoleHeartBeatResponse* response, google::protobuf::Closure* done);
