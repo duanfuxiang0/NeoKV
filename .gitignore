@@ -82,6 +82,8 @@ Testing
 
 # Cursor IDE / local workspace
 /.cursor
+AGENTS.md
+CLAUDE.md
 
 # Runtime logs / data directories (generated at runtime)
 /log
