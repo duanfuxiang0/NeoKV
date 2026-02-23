@@ -7,7 +7,7 @@ Usage:
   ./scripts/make_dist.sh [--out DIR] [--name NAME] [--with-docs] [--with-tests]
 
 Default bundle includes:
-  - output/bin/{neoMeta,neoStore,neo_redis_standalone}
+  - (output/bin or build/output/bin)/{neoMeta,neoStore,neo_redis_standalone}
   - conf/
   - LICENSE
 
@@ -24,6 +24,7 @@ out_dir="${repo_root}/dist"
 bundle_name="neokv"
 with_docs="0"
 with_tests="0"
+bin_dir=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -72,6 +73,30 @@ require_exec() {
   fi
 }
 
+detect_bin_dir() {
+  local -a candidates=(
+    "${repo_root}/output/bin"
+    "${repo_root}/build/output/bin"
+  )
+  for dir in "${candidates[@]}"; do
+    if [[ -x "${dir}/neoMeta" && -x "${dir}/neoStore" && -x "${dir}/neo_redis_standalone" ]]; then
+      echo "${dir}"
+      return 0
+    fi
+  done
+
+  cat >&2 <<EOF
+error: cannot find built binaries.
+expected one of:
+  - ${repo_root}/output/bin/{neoMeta,neoStore,neo_redis_standalone}
+  - ${repo_root}/build/output/bin/{neoMeta,neoStore,neo_redis_standalone}
+
+tip: build first, e.g.:
+  mkdir -p build && cd build && cmake .. && make -j\$(nproc)
+EOF
+  exit 1
+}
+
 copy_dir_if_exists() {
   local src="$1"
   local dst="$2"
@@ -82,9 +107,10 @@ copy_dir_if_exists() {
 }
 
 mkdir -p "${bundle_dir}/bin"
+bin_dir="$(detect_bin_dir)"
 for bin in neoMeta neoStore neo_redis_standalone; do
-  require_exec "${repo_root}/output/bin/${bin}"
-  cp -a "${repo_root}/output/bin/${bin}" "${bundle_dir}/bin/"
+  require_exec "${bin_dir}/${bin}"
+  cp -a "${bin_dir}/${bin}" "${bundle_dir}/bin/"
 done
 
 copy_dir_if_exists "${repo_root}/conf" "${bundle_dir}/conf"
