@@ -1,19 +1,18 @@
 # NeoKV
 
-NeoKV 是一个基于 **Braft + RocksDB** 的强一致分布式 KV 存储，并在其上提供 **Redis 协议兼容层（RESP）**，
-可以直接使用 `redis-cli` 或 Redis SDK 访问。
+NeoKV is a strongly consistent distributed KV store built on **Braft + RocksDB**, with a **Redis-compatible protocol layer (RESP)** on top. You can connect directly using `redis-cli` or any Redis SDK.
 
-更详细的设计说明见：
+For more detailed design documentation, see:
 - `doc/neokv设计.md`
 - `doc/Redis协议实现.md`
 
-## 主要组件 / 二进制
+## Components
 
-- `neoMeta`：集群元数据管理（Region 分配/调度等）
-- `neoStore`：数据节点（内部 brpc + 对外 Redis/RESP）
-- `neo_redis_standalone`：单进程测试模式（嵌入 RocksDB + 单副本 Raft Region，无需 MetaServer，适合本地开发与 `tests/gocase`）
+- `neoMeta` — Cluster metadata management (region allocation, scheduling, etc.)
+- `neoStore` — Data node (internal brpc + external Redis/RESP interface)
+- `neo_redis_standalone` — Single-process test mode (embedded RocksDB + single-replica Raft region, no MetaServer required; ideal for local development and `tests/gocase`)
 
-## 构建
+## Building
 
 ```bash
 mkdir -p build && cd build
@@ -21,22 +20,22 @@ cmake -DWITH_TESTS=ON ..
 make -j"$(nproc)"
 ```
 
-构建产物默认位于 `build/output/bin/`。
+Build artifacts are placed in `build/output/bin/` by default.
 
-常用 CMake 选项：
-- `-DWITH_TESTS=ON`：构建测试
-- `-DDEBUG=ON -DWITH_DEBUG_SYMBOLS=ON`：调试构建
-- `-DWITH_SYSTEM_LIBS=ON`：优先使用系统库（否则会自动拉取/构建依赖）
+Common CMake options:
+- `-DWITH_TESTS=ON` — Build tests
+- `-DDEBUG=ON -DWITH_DEBUG_SYMBOLS=ON` — Debug build
+- `-DWITH_SYSTEM_LIBS=ON` — Prefer system libraries (otherwise dependencies are fetched and built automatically)
 
-## 快速开始（单进程 Redis 服务器）
+## Quick Start (Standalone Redis Server)
 
-启动（默认 Redis 端口 16379）：
+Start the server (default Redis port 16379):
 
 ```bash
 ./build/output/bin/neo_redis_standalone --redis_port=16379 --data_dir=/tmp/neokv_standalone
 ```
 
-验证：
+Verify:
 
 ```bash
 redis-cli -p 16379 PING
@@ -44,24 +43,24 @@ redis-cli -p 16379 SET k v
 redis-cli -p 16379 GET k
 ```
 
-## 测试
+## Testing
 
-### C++ 单测
+### C++ Unit Tests
 
-> 需要先用 `-DWITH_TESTS=ON` 构建。
+> Requires building with `-DWITH_TESTS=ON`.
 
 ```bash
 cd build
 make test
 ```
 
-或运行单个测试二进制（示例）：
+Or run an individual test binary:
 
 ```bash
 ./output/bin/test_redis_slot
 ```
 
-### Redis 协议集成测试（Go，`tests/gocase/`）
+### Redis Protocol Integration Tests (Go, `tests/gocase/`)
 
 ```bash
 cd tests/gocase && mkdir -p workspace
@@ -72,9 +71,9 @@ go test -count=1 ./unit/... \
   -workspace="${REPO_ROOT}/tests/gocase/workspace"
 ```
 
-如果 `go` 不在 `PATH`，可使用 toolchain 直接运行。
+If `go` is not in your `PATH`, you can invoke the toolchain binary directly.
 
-## 代码风格
+## Code Style
 
 ```bash
 ./scripts/style.sh format
@@ -82,7 +81,7 @@ go test -count=1 ./unit/... \
 ./scripts/style.sh tidy --build-dir build
 ```
 
-## 打包发布
+## Packaging
 
 ```bash
 ./scripts/make_dist.sh --out dist
@@ -90,4 +89,4 @@ go test -count=1 ./unit/... \
 
 ## License
 
-Apache License 2.0，见 `LICENSE`。
+Apache License 2.0 — see `LICENSE`.
