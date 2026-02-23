@@ -1,0 +1,39 @@
+# Keep Docker build context minimal and avoid accidentally shipping internal docs
+# or local build/test artifacts.
+
+.git
+.gitmodules
+.github
+.cache
+.cursor
+.vscode
+
+# CMake / local builds (in-source or out-of-source)
+build
+_deps
+CMakeFiles
+Testing
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+compile_commands.json
+install_manifest*.txt
+
+# Local runtime data/logs
+log
+meta_data
+store_data
+raft_data
+monitor
+init.success
+
+# Internal docs / tests (exclude by default; copy in explicitly if needed)
+doc
+test
+tests
+
+# Local deps/build outputs
+bin
+lib
+third-party
